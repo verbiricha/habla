@@ -1,0 +1,22 @@
+import { useNostrEvents } from "nostr-react-habla";
+import { Card, CardHeader, CardBody } from "@chakra-ui/react";
+
+import User from "./User";
+
+export default function Note({ id }) {
+  const { events } = useNostrEvents({
+    filter: {
+      ids: [id],
+      kinds: [1],
+    },
+  });
+  const note = events[0];
+  return (
+    <Card>
+      <CardHeader>
+        {note && <User linkToProfile={false} pubkey={note.pubkey} />}
+      </CardHeader>
+      <CardBody>{note && note.content}</CardBody>
+    </Card>
+  );
+}

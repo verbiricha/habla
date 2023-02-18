@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:400,700|Lora|Playfair+Display:700i,900');
+
+:root {
+  --highlight: #7139f1;
+  --max-width: 786px;
+  --border-radius: 12px;
+  --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
+    "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
+    "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-size: 16px;
+}
+
+h1,
+h2,
+p,
+i,
+a,
+blockquote,
+.author-name a {
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  text-decoration: underline;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+}
+
+header h1 {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+  font-size: 48px;
+  text-align: left;
+}
+
+a {
+  text-decoration: none;
+}
+
+article h1 {
+  font-family: "Playfair Display", serif;
+  font-size: 48px;
+  text-align: left;
+  margin-bottom: 8px;
+}
+
+.custom-html-style h1 {
+  margin: 0 !important;
+}
+
+article h2 {
+  font-family: "Lato", sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  padding: 0;
+  text-align: left;
+  line-height: 34.5px;
+  letter-spacing: -0.45px;
+}
+
+article h3 {
+  font-family: "Lato", sans-serif;
+  margin: 0 0 24px 0;
+}
+
+article p, article i, article a {
+  margin-top: 21px;
+  font-family: "Lora";
+  font-size: 21px;
+  letter-spacing: -0.03px;
+  line-height: 1.58;
+}
+
+article blockquote {
+  font-family: "Playfair Display", serif;
+  font-size: 30px;
+  font-style: italic;
+  letter-spacing: -0.36px;
+  line-height: 44.4px;
+  overflow-wrap: break-word;
+  /* text-align: center; */
+  padding: 0 0 0 50px;
+}
+
+article .summary {
+  margin: 55px 0 55px 0;
+}
+
+code {
+  font-size: 18px;
+  background: rgba(0,0,0,.05);
+  border-radius: 2px;
+  padding: 3px 5px;
+  font-family: var(--font-mono);
+}
+
+mark, .highlighted {
+  background: var(--highlight);
+}
+
+::selection{background-color: #ffff99;}
+
+article {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+article img {
+  width: 100%;
+  max-height: 420px;
+  border-radius: var(--border-radius);
+  object-fit: contain;
+}
+
+article .article-image {
+  object-fit: cover;
+}
+
+article p a {
+  color: var(--highlight);
+  text-decoration: underline;
+}
+
+.editor {
+  width: 100%;
+  min-height: 60vh;
+}
+
+.editor .rc-md-editor {
+  height: 100%;
+}
+
+article li p {
+  margin-top: -28px;
+}
+
