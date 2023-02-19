@@ -1,13 +1,14 @@
 import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { bech32ToHex } from "./nostr";
 
+import ArticleLink from "./ArticleLink";
 import Naddr from "./Naddr";
 import Note from "./Note";
 import Mention from "./Mention";
-import Hashtag from "./Hashtag";
 
 export const MentionRegex = /(#\[\d+\])/gi;
 
@@ -29,7 +30,11 @@ function extractMentions(fragments, tags) {
                   return <Note id={ref[1]} />;
                 }
                 case "t": {
-                  return <Hashtag tag={ref[1]} />;
+                  return <Link to={`/t/${ref[1]}`}>{ref[1]}</Link>;
+                }
+                case "a": {
+                  const [, p, d] = ref[1].split(":");
+                  return <ArticleLink d={d} pubkey={p} />;
                 }
                 default:
                   return ref[1];

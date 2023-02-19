@@ -11,8 +11,7 @@ import Article from "../lib/Article";
 
 export default function AddressPage() {
   const { naddr } = useParams();
-  const [kind, pubkey, d] = naddr ? decodeNaddr(naddr) : [];
-  console.log({ kind, pubkey, d });
+  const [, pubkey, d] = naddr ? decodeNaddr(naddr) : [];
   return (
     <>
       <Helmet>

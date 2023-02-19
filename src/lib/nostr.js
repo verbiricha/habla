@@ -42,7 +42,7 @@ function processContent(ev) {
     try {
       const hex = bech32ToHex(match);
       const idx = ev.tags.length;
-      ev.tags.push(["p", hex]);
+      ev.tags.push(["p", hex, idx]);
       return `#[${idx}]`;
     } catch (error) {
       return match;
@@ -52,7 +52,7 @@ function processContent(ev) {
     try {
       const [k, p, d] = decodeNaddr(match);
       const idx = ev.tags.length;
-      ev.tags.push(["d", `${k}:${p}:${d}`]);
+      ev.tags.push(["a", `${k}:${p}:${d}`, idx]);
       return `#[${idx}]`;
     } catch (error) {
       return match;
@@ -62,7 +62,7 @@ function processContent(ev) {
     try {
       const hex = bech32ToHex(match);
       const idx = ev.tags.length;
-      ev.tags.push(["e", hex, "", "mention"]);
+      ev.tags.push(["e", hex, idx]);
       return `#[${idx}]`;
     } catch (error) {
       return match;
@@ -71,14 +71,15 @@ function processContent(ev) {
   const replaceHashtag = (match: string) => {
     const tag = match.slice(1);
     const idx = ev.tags.length;
-    ev.tags.push(["t", tag.toLowerCase()]);
-    return `##[${idx}]`;
+    ev.tags.push(["t", tag.toLowerCase(), idx]);
+    return `#[${idx}]`;
   };
   const replaced = ev.content
     .replace(/\bnpub1[a-z0-9]+\b(?=(?:[^`]*`[^`]*`)*[^`]*$)/g, replaceNpub)
     .replace(/\bnote1[a-z0-9]+\b(?=(?:[^`]*`[^`]*`)*[^`]*$)/g, replaceNoteId)
     .replace(/\bnaddr1[a-z0-9]+\b(?=(?:[^`]*`[^`]*`)*[^`]*$)/g, replaceNaddr)
-    .replace(/(#[^\s!@#$%^&*()=+./,[{]};:'"?><]+)/g, replaceHashtag);
+    // eslint-disable-next-line no-useless-escape
+    .replace(/(#[^\s!@#$%^&*()=+.\/,\[{\]};:'"?><]+)/g, replaceHashtag);
   ev.content = replaced;
 }
 
