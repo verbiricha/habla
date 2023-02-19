@@ -48,6 +48,16 @@ function processContent(ev) {
       return match;
     }
   };
+  const replaceNprofile = (match: string) => {
+    try {
+      const p = decodeNprofile(match);
+      const idx = ev.tags.length;
+      ev.tags.push(["p", p, idx]);
+      return `#[${idx}]`;
+    } catch (error) {
+      return match;
+    }
+  };
   const replaceNaddr = (match: string) => {
     try {
       const [k, p, d] = decodeNaddr(match);
@@ -75,6 +85,10 @@ function processContent(ev) {
     return `#[${idx}]`;
   };
   const replaced = ev.content
+    .replace(
+      /\bnprofile1[a-z0-9]+\b(?=(?:[^`]*`[^`]*`)*[^`]*$)/g,
+      replaceNprofile
+    )
     .replace(/\bnpub1[a-z0-9]+\b(?=(?:[^`]*`[^`]*`)*[^`]*$)/g, replaceNpub)
     .replace(/\bnote1[a-z0-9]+\b(?=(?:[^`]*`[^`]*`)*[^`]*$)/g, replaceNoteId)
     .replace(/\bnaddr1[a-z0-9]+\b(?=(?:[^`]*`[^`]*`)*[^`]*$)/g, replaceNaddr)
@@ -119,6 +133,11 @@ export function decodeNaddr(naddr) {
   const k = Buffer.from(rawK.value, "hex").readUInt32BE();
   const p = rawP.value;
   return [k, p, d];
+}
+
+export function decodeNprofile(nprofile) {
+  const [rawP] = decodeTLV(nprofile);
+  return rawP.value;
 }
 
 export function eventAddress(ev) {
