@@ -83,6 +83,9 @@ function transformText(ps, tags) {
   let fragments = extractMentions(ps, tags);
   fragments = extractNoteIds(ps);
   fragments = extractNpubs(fragments);
+  if (fragments.every((f) => typeof f === "string")) {
+    return <>{fragments}</>;
+  }
   return <p>{fragments}</p>;
 }
 

@@ -1,8 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const defaultRelays = [
-  "wss://relay.snort.social",
   "wss://relay.damus.io",
+  "wss://eden.nostr.land",
+  "wss://atlas.nostr.land",
+  "wss://nos.lol",
   "wss://nostr.wine",
 ];
 
