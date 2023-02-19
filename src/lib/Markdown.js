@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import { bech32ToHex } from "./nostr";
+import { bech32ToHex, hexToBech32, encodeTLV } from "./nostr";
 
 import ArticleLink from "./ArticleLink";
 import Naddr from "./Naddr";
@@ -11,6 +11,41 @@ import Note from "./Note";
 import Mention from "./Mention";
 
 export const MentionRegex = /(#\[\d+\])/gi;
+
+export function replaceMentions(f, tags) {
+  return f
+    .split(MentionRegex)
+    .map((match) => {
+      const matchTag = match.match(/#\[(\d+)\]/);
+      if (matchTag && matchTag.length === 2) {
+        const idx = parseInt(matchTag[1]);
+        const ref = tags?.find((a) => a[2] === idx);
+        if (ref) {
+          switch (ref[0]) {
+            case "p": {
+              return hexToBech32(ref[1], "npub");
+            }
+            case "e": {
+              return hexToBech32(ref[1], "note");
+            }
+            case "t": {
+              return `#${ref[1]}`;
+            }
+            case "a": {
+              const [k, p, d] = ref[1].split(":");
+              return encodeTLV(d, "naddr", [], p, Number(k));
+            }
+            default:
+              return ref[1];
+          }
+        }
+        return null;
+      } else {
+        return match;
+      }
+    })
+    .join("");
+}
 
 function extractMentions(fragments, tags) {
   return fragments

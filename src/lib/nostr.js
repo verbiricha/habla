@@ -2,7 +2,7 @@ import { Buffer } from "buffer";
 import { bech32 } from "bech32";
 import * as secp from "@noble/secp256k1";
 
-function encodeTLV(hex, prefix, relays, author, kind) {
+export function encodeTLV(hex, prefix, relays, author, kind) {
   const enc = new TextEncoder();
 
   const buf = enc.encode(hex);
@@ -143,6 +143,11 @@ export function decodeNprofile(nprofile) {
 export function eventAddress(ev) {
   const d = findTag(ev.tags, "d");
   return `${ev.kind}:${ev.pubkey}:${d}`;
+}
+
+export function hexToBech32(hex, prefix) {
+  const buf = secp.utils.hexToBytes(hex);
+  return bech32.encode(prefix, bech32.toWords(buf));
 }
 
 export function bech32ToHex(s) {

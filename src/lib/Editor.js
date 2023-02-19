@@ -15,6 +15,7 @@ import "react-markdown-editor-lite/lib/index.css";
 
 import { getMetadata, sign } from "./nostr";
 import EventPreview from "./EventPreview";
+import { replaceMentions } from "./Markdown";
 
 export default function MyEditor({ event, children }) {
   const { publish } = useNostr();
@@ -24,7 +25,9 @@ export default function MyEditor({ event, children }) {
   const [summary, setSummary] = useState(metadata?.summary ?? "");
   const [image, setImage] = useState(metadata?.image ?? "");
   const [publishedAt] = useState(metadata?.publishedAt);
-  const [content, setContent] = useState(event?.content ?? "");
+  const [content, setContent] = useState(
+    event?.content ? replaceMentions(event.content, event.tags) : ""
+  );
 
   useEffect(() => {
     const rawDraft = window.sessionStorage.getItem("draft");
