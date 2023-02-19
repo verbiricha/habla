@@ -4,6 +4,7 @@ import { Flex, Heading, HStack, Text } from "@chakra-ui/react";
 import { getMetadata } from "./nostr";
 
 import Hashtag from "./Hashtag";
+import Reactions from "./Reactions";
 
 function formatTime(time) {
   return new Intl.DateTimeFormat("en-US", {
@@ -28,6 +29,7 @@ export default function EventItem({ event }) {
           <Hashtag key={t} tag={t} />
         ))}
       </HStack>
+      <Reactions event={event} />
     </Flex>
   );
 }

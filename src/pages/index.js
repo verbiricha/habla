@@ -1,13 +1,11 @@
-import { useMemo } from "react";
 import { Helmet } from "react-helmet";
 import { useNostrEvents } from "nostr-react-habla";
 
-import { Flex, Heading, VStack } from "@chakra-ui/react";
+import { Flex, Heading } from "@chakra-ui/react";
 
-import { getMetadata } from "../lib/nostr";
-import Hashtag from "../lib/Hashtag";
+import Authors from "../lib/Authors";
+import Tags from "../lib/Tags";
 import Layout from "../lib/Layout";
-import User from "../lib/User";
 import Feed from "../lib/Feed";
 import Relays from "../lib/Relays";
 
@@ -18,14 +16,6 @@ export default function Home() {
       limit: 100,
     },
   });
-  const authors = useMemo(() => {
-    const pubkeys = events.map((e) => e.pubkey);
-    return Array.from(new Set(pubkeys));
-  }, [events]);
-  const tags = useMemo(() => {
-    const tags = events.map((e) => getMetadata(e)?.hashtags).flat();
-    return Array.from(new Set(tags));
-  }, [events]);
 
   return (
     <>
@@ -40,22 +30,8 @@ export default function Home() {
               Relays
             </Heading>
             <Relays mb={6} />
-            <Heading fontSize="2xl" as="h3">
-              Authors
-            </Heading>
-            <Flex flexDirection="column" mb={6}>
-              {authors.map((a) => (
-                <User key={a} mb={2} pubkey={a} />
-              ))}
-            </Flex>
-            <Heading fontSize="2xl" as="h3">
-              Tags
-            </Heading>
-            <VStack alignItems="flex-start" mt={2} spacing={2}>
-              {tags.map((t) => (
-                <Hashtag tag={t} />
-              ))}
-            </VStack>
+            <Authors events={events} />
+            <Tags events={events} />
           </Flex>
         }
       >

@@ -27,7 +27,7 @@ function Hashtags({ hashtags }) {
 export default function Event({
   showUser = true,
   isPreview = true,
-  enableReactions = false,
+  showReactions = false,
   event,
   children,
   ...rest
@@ -35,33 +35,31 @@ export default function Event({
   const metadata = getMetadata(event);
   const href = `/${event.pubkey}/${metadata.d}`;
   return (
-    <Flex flexDirection="column" alignItems="center" px={4} {...rest}>
-      <Box minWidth={["100%", "100%", "786px"]} maxWidth="786px">
+    <>
+      <Box as="article" key={event.id}>
         {event.pubkey && showUser && <User pubkey={event.pubkey} />}
-        <Box as="article" key={event.id}>
-          <Link to={href}>
-            <Heading as="h1">{metadata.title}</Heading>
-          </Link>
-          <Flex alignItems="flex-start">
-            {metadata.publishedAt && (
-              <Text as="time" fontSize="sm" fontStyle="italic">
-                {formatTime(metadata.publishedAt * 1000)}
-              </Text>
-            )}
-          </Flex>
-          {metadata.image && (
-            <Image className="article-image" src={metadata.image} />
+        <Link to={href}>
+          <Heading as="h1">{metadata.title}</Heading>
+        </Link>
+        <Flex alignItems="flex-start">
+          {metadata.publishedAt && (
+            <Text as="time" fontSize="sm" fontStyle="italic">
+              {formatTime(metadata.publishedAt * 1000)}
+            </Text>
           )}
-          {metadata.summary && isPreview && <p>{metadata.summary}</p>}
-          {metadata.summary && !isPreview && (
-            <blockquote className="summary">{metadata.summary}</blockquote>
-          )}
-          {!isPreview && <Markdown content={event.content} tags={event.tags} />}
-          <Hashtags hashtags={metadata?.hashtags ?? []} />
-          {enableReactions && <Reactions event={event} />}
-          {children}
-        </Box>
+        </Flex>
+        {metadata.image && (
+          <Image className="article-image" src={metadata.image} />
+        )}
+        {metadata.summary && isPreview && <p>{metadata.summary}</p>}
+        {metadata.summary && !isPreview && (
+          <blockquote className="summary">{metadata.summary}</blockquote>
+        )}
+        {!isPreview && <Markdown content={event.content} tags={event.tags} />}
+        <Hashtags hashtags={metadata?.hashtags ?? []} />
+        <Reactions showUsers={showReactions} event={event} />
+        {children}
       </Box>
-    </Flex>
+    </>
   );
 }

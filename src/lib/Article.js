@@ -1,5 +1,5 @@
 import { useNostrEvents } from "nostr-react-habla";
-import { useBoolean, Flex, Box, IconButton } from "@chakra-ui/react";
+import { useBoolean, Flex, IconButton } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
 
 import Editor from "./Editor";
@@ -22,22 +22,18 @@ export default function Article({ d, pubkey }) {
   return (
     <>
       {ev && isEditing && (
-        <Flex flexDirection="column" alignItems="center" px={4}>
-          <Box minWidth={["100%", "100%", "786px"]} maxWidth="786px">
-            <Editor event={ev}>
-              <Flex justifyContent="flex-end" mt={4}>
-                <IconButton icon={<EditIcon />} onClick={setIsEditing.toggle} />
-              </Flex>
-            </Editor>
-          </Box>
-        </Flex>
+        <Editor event={ev}>
+          <Flex justifyContent="flex-end" mt={4}>
+            <IconButton icon={<EditIcon />} onClick={setIsEditing.toggle} />
+          </Flex>
+        </Editor>
       )}
       {ev && !isEditing && (
         <Event
           key={ev.id}
           showUser={false}
           isPreview={false}
-          //enableReactions={true}
+          showReactions={true}
           event={ev}
         >
           {isMe && (

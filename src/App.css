@@ -57,6 +57,7 @@ a {
 article {
   overflow-x: scroll;
 }
+
 article h1 {
   font-family: "Playfair Display", serif;
   font-size: 48px;
@@ -100,6 +101,12 @@ article blockquote {
   overflow-wrap: break-word;
   /* text-align: center; */
   padding: 0 0 0 50px;
+}
+
+@media (max-width: 520px) {
+  article blockquote {
+    padding: 0 0 0 12px;
+  }
 }
 
 article .summary {

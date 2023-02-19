@@ -14,7 +14,7 @@ export default function Tag() {
   const { events } = useNostrEvents({
     filter: {
       kinds: [30023],
-      "#t": t,
+      "#t": [t],
       limit: 100,
     },
   });
@@ -42,6 +42,9 @@ export default function Tag() {
         </Flex>
       }
     >
+      <Heading as="h2" mb={6}>
+        Hashtag: #{t}
+      </Heading>
       <Feed events={events} />
     </Layout>
   );

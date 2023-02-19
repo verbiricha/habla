@@ -5,15 +5,16 @@ import { TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
 
 import useLoggedInUser from "./useLoggedInUser";
 import { eventAddress } from "./nostr";
+import User from "./User";
 
-export default function Reactions({ event }) {
+export default function Reactions({ showUsers = false, event }) {
   const { publish } = useNostr();
   const { user } = useLoggedInUser();
   const naddr = eventAddress(event);
   const { events } = useNostrEvents({
     filter: {
       kinds: [7],
-      ids: [naddr], // todo: a tag
+      "#a": [naddr],
     },
   });
   const likes = events.filter((e) => e.content !== "-");
@@ -27,41 +28,62 @@ export default function Reactions({ event }) {
       kind: 7,
       created_at: dateToUnix(),
       tags: [
-        ["e", naddr],
+        ["e", event.id],
         ["a", naddr],
       ],
     };
     const signed = await window.nostr.signEvent(ev);
-    console.log("reaction", signed);
     publish(signed);
   }
 
   return (
-    <Flex>
-      <HStack spacing={4} mt={4}>
-        <Flex alignItems="center" flexDirection="row" minWidth={120}>
-          <IconButton
-            isDisabled={liked}
-            icon={<TriangleUpIcon />}
-            size="sm"
-            onClick={() => react("+")}
-          />
-          <Text as="span" ml={4} fontSize="xl">
-            {likes.length}
-          </Text>
-        </Flex>
-        <Flex alignItems="center" flexDirection="row" minWidth={120}>
-          <IconButton
-            isDisabled={disliked}
-            icon={<TriangleDownIcon />}
-            size="sm"
-            onClick={() => react("-")}
-          />
-          <Text as="span" ml={4} fontSize="xl">
-            {dislikes.length}
-          </Text>
-        </Flex>
-      </HStack>
-    </Flex>
+    <>
+      <Flex>
+        <HStack spacing={4} mt={4}>
+          <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
+            <IconButton
+              isDisabled={liked}
+              icon={<TriangleUpIcon />}
+              size="sm"
+              onClick={() => react("+")}
+            />
+            <Text as="span" ml={4} fontSize="xl">
+              {likes.length}
+            </Text>
+          </Flex>
+          <Flex alignItems="center" flexDirection="row" minWidth={120}>
+            <IconButton
+              isDisabled={disliked}
+              icon={<TriangleDownIcon />}
+              size="sm"
+              onClick={() => react("-")}
+            />
+            <Text as="span" ml={4} fontSize="xl">
+              {dislikes.length}
+            </Text>
+          </Flex>
+        </HStack>
+      </Flex>
+      {showUsers && likes.length > 0 && (
+        <>
+          {likes.map((ev) => (
+            <Flex alignItems="center">
+              <User showNip={false} pubkey={ev.pubkey} />
+              <Text> liked</Text>
+            </Flex>
+          ))}
+        </>
+      )}
+      {showUsers && dislikes.length > 0 && (
+        <>
+          {likes.map((ev) => (
+            <Flex alignItems="center">
+              <User showNip={false} pubkey={ev.pubkey} />
+              <Text> disliked</Text>
+            </Flex>
+          ))}
+        </>
+      )}
+    </>
   );
 }

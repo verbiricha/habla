@@ -9,7 +9,11 @@ export default function Layout({ children, aside }) {
       <Header />
       <Flex flexDirection={["column", "column", "column", "row"]}>
         <Box as="main" flex="1 1 auto">
-          {children}
+          <Flex flexDirection="column" alignItems="center" px={4}>
+            <Box minWidth={["100%", "100%", "786px"]} maxWidth="786px">
+              {children}
+            </Box>
+          </Flex>
         </Box>
         <Flex justifyContent="center">{aside}</Flex>
       </Flex>

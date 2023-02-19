@@ -9,6 +9,7 @@ import useNip05 from "./useNip05";
 export default function User({
   linkToProfile = true,
   showUsername = true,
+  showNip = true,
   showAbout = false,
   pubkey,
   ...rest
@@ -24,12 +25,16 @@ export default function User({
       <Flex alignItems="center">
         <Avatar src={picture} name={name || pubkey} />
         {showUsername && (
-          <Box ml="3">
-            <Text fontWeight="bold">{name || shortPubkey}</Text>
-            {nip05 && nipPubkey === pubkey && (
-              <Text fontSize="sm">{nip05}</Text>
+          <Flex flexDirection="column" ml="3">
+            <Text as="span" fontWeight="bold">
+              {name || shortPubkey}
+            </Text>
+            {showNip && nip05 && nipPubkey === pubkey && (
+              <Text as="span" fontSize="sm">
+                {nip05}
+              </Text>
             )}
-          </Box>
+          </Flex>
         )}
       </Flex>
       {showAbout && (
