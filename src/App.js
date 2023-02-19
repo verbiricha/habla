@@ -1,18 +1,16 @@
-import { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
-import { NostrProvider } from "nostr-react-habla";
 import { extendTheme, ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 
 import { store } from "./store";
 import "./App.css";
+import NostrContext from "./NostrContext";
 import Home from "./pages/index";
 import Tag from "./pages/tag";
 import Address from "./pages/address";
 import Article from "./pages/article";
 import Profile from "./pages/profile";
 import Write from "./pages/write";
-import useRelays from "./lib/useRelays";
 
 const config: ThemeConfig = {
   initialColorMode: "system",
@@ -47,16 +45,6 @@ const router = createBrowserRouter([
     element: <Write />,
   },
 ]);
-
-function NostrContext({ children }) {
-  const { relays } = useRelays();
-
-  useEffect(() => {
-    window.sessionStorage.setItem("relays", JSON.stringify(relays));
-  }, [relays]);
-
-  return <NostrProvider relayUrls={relays}>{children}</NostrProvider>;
-}
 
 function App() {
   return (
