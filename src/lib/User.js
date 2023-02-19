@@ -46,5 +46,11 @@ export default function User({
       )}
     </Flex>
   );
-  return linkToProfile ? <Link to={href}>{component}</Link> : component;
+  return linkToProfile ? (
+    <Link style={{ textDecoration: "none" }} to={href}>
+      {component}
+    </Link>
+  ) : (
+    component
+  );
 }
