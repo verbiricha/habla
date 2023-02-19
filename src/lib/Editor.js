@@ -13,7 +13,7 @@ import {
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 
-import { getMetadata } from "./nostr";
+import { getMetadata, sign } from "./nostr";
 import EventPreview from "./EventPreview";
 
 export default function MyEditor({ event, children }) {
@@ -25,7 +25,6 @@ export default function MyEditor({ event, children }) {
   const [image, setImage] = useState(metadata?.image ?? "");
   const [publishedAt] = useState(metadata?.publishedAt);
   const [content, setContent] = useState(event?.content ?? "");
-  const [hashtags, setHashtags] = useState(metadata?.hashtags ?? []);
 
   useEffect(() => {
     const rawDraft = window.sessionStorage.getItem("draft");
@@ -53,18 +52,20 @@ export default function MyEditor({ event, children }) {
     const tags = [
       ["d", slug],
       ["title", title],
-      ["image", image],
       ["summary", summary],
       ["published_at", publishedAt ? String(publishedAt) : String(createdAt)],
-    ].concat(hashtags.map((t) => ["t", t.trim()]));
+    ];
+    if (image?.length > 0) {
+      tags.push(["image", image]);
+    }
     const ev = {
       content,
       kind: 30023,
       created_at: createdAt,
       tags,
     };
-    const signed = await window.nostr.signEvent(ev);
-    publish(signed);
+    await sign(ev);
+    publish(ev);
   }
 
   function onSave() {
@@ -107,12 +108,6 @@ export default function MyEditor({ event, children }) {
             id="title"
             value={summary}
             onChange={(ev) => setSummary(ev.target.value)}
-            size="md"
-          />
-          <FormLabel>Tags</FormLabel>
-          <Input
-            value={hashtags.join(",")}
-            onChange={(ev) => setHashtags(ev.target.value.split(","))}
             size="md"
           />
           <FormLabel>Content</FormLabel>

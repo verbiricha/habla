@@ -1,7 +1,10 @@
 import { useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+
 import { bech32ToHex } from "./nostr";
+
+import Naddr from "./Naddr";
 import Note from "./Note";
 import Mention from "./Mention";
 import Hashtag from "./Hashtag";
@@ -61,6 +64,23 @@ function extractNpubs(fragments) {
     .flat();
 }
 
+function extractNaddrs(fragments) {
+  return fragments
+    .map((f) => {
+      if (typeof f === "string") {
+        return f.split(/(naddr1[a-z0-9]+)/g).map((i) => {
+          if (i.startsWith("naddr1")) {
+            return <Naddr naddr={i} />;
+          } else {
+            return i;
+          }
+        });
+      }
+      return f;
+    })
+    .flat();
+}
+
 function extractNoteIds(fragments) {
   return fragments
     .map((f) => {
@@ -81,7 +101,8 @@ function extractNoteIds(fragments) {
 
 function transformText(ps, tags) {
   let fragments = extractMentions(ps, tags);
-  fragments = extractNoteIds(ps);
+  fragments = extractNaddrs(fragments);
+  fragments = extractNoteIds(fragments);
   fragments = extractNpubs(fragments);
   return <p>{fragments}</p>;
 }

@@ -13,13 +13,13 @@ export default function Reactions({ showUsers = false, event }) {
   const naddr = eventAddress(event);
   const { events } = useNostrEvents({
     filter: {
-      kinds: [7],
+      kinds: [7, 9735],
       "#a": [naddr],
     },
   });
-  const likes = events.filter((e) => e.content !== "-");
+  const likes = events.filter((e) => e.kind === 7 && e.content !== "-");
   const liked = likes.find((e) => e.pubkey === user);
-  const dislikes = events.filter((e) => e.content === "-");
+  const dislikes = events.filter((e) => e.kind === 7 && e.content === "-");
   const disliked = dislikes.find((e) => e.pubkey === user);
 
   async function react(content) {

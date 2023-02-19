@@ -8,6 +8,7 @@ import { store } from "./store";
 import "./App.css";
 import Home from "./pages/index";
 import Tag from "./pages/tag";
+import Address from "./pages/address";
 import Article from "./pages/article";
 import Profile from "./pages/profile";
 import Write from "./pages/write";
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
   {
     path: "/:p",
     element: <Profile />,
+  },
+  {
+    path: "/a/:naddr",
+    element: <Address />,
   },
   {
     path: "/:p/:d",
