@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { dateToUnix, useNostr } from "nostr-react-habla";
 import {
+  Flex,
   Box,
   Button,
   Stack,
@@ -80,57 +81,59 @@ export default function MyEditor({ event, children }) {
   }
 
   return (
-    <>
-      {children}
-      <Box className="editor">
-        <FormLabel>Title</FormLabel>
-        <Input
-          value={title}
-          onChange={(ev) => setTitle(ev.target.value)}
-          size="md"
-        />
-        <FormLabel>Image</FormLabel>
-        <Input
-          value={image}
-          onChange={(ev) => setImage(ev.target.value)}
-          size="md"
-        />
-        <FormLabel>Slug</FormLabel>
-        <Input
-          value={slug}
-          onChange={(ev) => setSlug(ev.target.value)}
-          size="md"
-        />
-        <FormLabel>Summary</FormLabel>
-        <Textarea
-          id="title"
-          value={summary}
-          onChange={(ev) => setSummary(ev.target.value)}
-          size="md"
-        />
-        <FormLabel>Tags</FormLabel>
-        <Input
-          value={hashtags.join(",")}
-          onChange={(ev) => setHashtags(ev.target.value.split(","))}
-          size="md"
-        />
-        <FormLabel>Content</FormLabel>
-        <Box height={400}>
-          <MdEditor
-            value={content}
-            renderHTML={(text) => (
-              <EventPreview event={{ tags: [], content }} />
-            )}
-            onChange={onChange}
+    <Flex flexDirection="column" alignItems="center" px={4}>
+      <Box minWidth={["100%", "100%", "786px"]} maxWidth="786px">
+        <Box className="editor">
+          <FormLabel>Title</FormLabel>
+          <Input
+            value={title}
+            onChange={(ev) => setTitle(ev.target.value)}
+            size="md"
           />
+          <FormLabel>Image</FormLabel>
+          <Input
+            value={image}
+            onChange={(ev) => setImage(ev.target.value)}
+            size="md"
+          />
+          <FormLabel>Slug</FormLabel>
+          <Input
+            value={slug}
+            onChange={(ev) => setSlug(ev.target.value)}
+            size="md"
+          />
+          <FormLabel>Summary</FormLabel>
+          <Textarea
+            id="title"
+            value={summary}
+            onChange={(ev) => setSummary(ev.target.value)}
+            size="md"
+          />
+          <FormLabel>Tags</FormLabel>
+          <Input
+            value={hashtags.join(",")}
+            onChange={(ev) => setHashtags(ev.target.value.split(","))}
+            size="md"
+          />
+          <FormLabel>Content</FormLabel>
+          <Box height={400}>
+            <MdEditor
+              value={content}
+              renderHTML={(text) => (
+                <EventPreview event={{ tags: [], content }} />
+              )}
+              onChange={onChange}
+            />
+          </Box>
+          <Stack mt={5} direction="row-reverse" spacing={4} align="center">
+            <Button colorScheme="teal" onClick={() => onPublish()}>
+              Publish
+            </Button>
+            <Button onClick={() => onSave()}>Save</Button>
+          </Stack>
+          {children}
         </Box>
-        <Stack mt={5} direction="row-reverse" spacing={4} align="center">
-          <Button colorScheme="teal" onClick={() => onPublish()}>
-            Publish
-          </Button>
-          <Button onClick={() => onSave()}>Save</Button>
-        </Stack>
       </Box>
-    </>
+    </Flex>
   );
 }

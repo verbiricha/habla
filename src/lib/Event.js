@@ -37,7 +37,6 @@ export default function Event({
   return (
     <Flex flexDirection="column" alignItems="center" px={4} {...rest}>
       <Box minWidth={["100%", "100%", "786px"]} maxWidth="786px">
-        {children}
         {event.pubkey && showUser && <User pubkey={event.pubkey} />}
         <Box as="article" key={event.id}>
           <Link to={href}>
@@ -60,6 +59,7 @@ export default function Event({
           {!isPreview && <Markdown content={event.content} tags={event.tags} />}
           <Hashtags hashtags={metadata?.hashtags ?? []} />
           {enableReactions && <Reactions event={event} />}
+          {children}
         </Box>
       </Box>
     </Flex>

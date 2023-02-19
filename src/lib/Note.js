@@ -11,6 +11,7 @@ export default function Note({ id }) {
     },
   });
   const note = events[0];
+  // todo: note1 link
   return (
     <Card>
       <CardHeader>

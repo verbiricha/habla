@@ -20,8 +20,13 @@ export default function Write() {
         <title>Habla</title>
       </Helmet>
       <Layout>
-        <Editor />
-        {user && <Button onClick={handleLogout}>Log out</Button>}
+        <Editor>
+          {user && (
+            <Button mt={4} onClick={handleLogout}>
+              Log out
+            </Button>
+          )}
+        </Editor>
       </Layout>
     </>
   );

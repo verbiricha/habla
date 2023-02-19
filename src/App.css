@@ -54,6 +54,9 @@ a {
   text-decoration: none;
 }
 
+article {
+  overflow-x: scroll;
+}
 article h1 {
   font-family: "Playfair Display", serif;
   font-size: 48px;

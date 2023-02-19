@@ -25,7 +25,7 @@ export default function Article({ d, pubkey }) {
         <Flex flexDirection="column" alignItems="center" px={4}>
           <Box minWidth={["100%", "100%", "786px"]} maxWidth="786px">
             <Editor event={ev}>
-              <Flex justifyContent="flex-end">
+              <Flex justifyContent="flex-end" mt={4}>
                 <IconButton icon={<EditIcon />} onClick={setIsEditing.toggle} />
               </Flex>
             </Editor>
@@ -41,7 +41,7 @@ export default function Article({ d, pubkey }) {
           event={ev}
         >
           {isMe && (
-            <Flex justifyContent="flex-end">
+            <Flex justifyContent="flex-end" mt={4}>
               <IconButton icon={<EditIcon />} onClick={setIsEditing.toggle} />
             </Flex>
           )}
