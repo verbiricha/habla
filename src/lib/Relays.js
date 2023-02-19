@@ -3,6 +3,7 @@ import { useNostr } from "nostr-react-habla";
 
 import {
   Box,
+  Heading,
   Button,
   Avatar,
   AvatarBadge,
@@ -56,6 +57,9 @@ export default function Relays(props) {
 
   return (
     <Box>
+      <Heading mb={4} fontSize="2xl" as="h3">
+        Relays
+      </Heading>
       <Flex flexDirection={"column"} {...props}>
         {relays.map((url) => (
           <Relay isConnected={connected.includes(url)} key={url} url={url} />

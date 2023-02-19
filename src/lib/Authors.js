@@ -16,7 +16,7 @@ export default function Authors({ events }) {
   }, [events]);
   return (
     <>
-      <Heading fontSize="2xl" as="h3">
+      <Heading mb={4} fontSize="2xl" as="h3">
         Authors
       </Heading>
       <Flex flexDirection="column" mb={6}>

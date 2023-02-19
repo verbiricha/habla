@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet";
 import { useNostrEvents } from "nostr-react-habla";
 
-import { Flex, Heading } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 
 import Authors from "../lib/Authors";
 import Tags from "../lib/Tags";
@@ -26,9 +26,6 @@ export default function Home() {
       <Layout
         aside={
           <Flex flexDirection="column" as="aside" width={320} p={4} pr={12}>
-            <Heading fontSize="2xl" as="h3">
-              Relays
-            </Heading>
             <Relays mb={6} />
             <Authors events={events} />
             <Tags events={events} />
