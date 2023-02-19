@@ -84,7 +84,7 @@ function processContent(ev) {
 
 export async function sign(ev) {
   processContent(ev);
-  return window.nostr.signEvent(ev);
+  return await window.nostr.signEvent(ev);
 }
 
 export function decodeTLV(str) {

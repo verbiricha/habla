@@ -47,7 +47,6 @@ export default function MyEditor({ event, children }) {
   }
 
   async function onPublish() {
-    window.sessionStorage.removeItem("draft");
     const createdAt = dateToUnix();
     const tags = [
       ["d", slug],
@@ -64,8 +63,8 @@ export default function MyEditor({ event, children }) {
       created_at: createdAt,
       tags,
     };
-    await sign(ev);
-    publish(ev);
+    const signed = await sign(ev);
+    publish(signed);
   }
 
   function onSave() {
