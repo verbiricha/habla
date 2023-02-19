@@ -134,7 +134,6 @@ article .article-image {
 }
 
 article p a {
-  color: var(--highlight);
   text-decoration: underline;
 }
 
