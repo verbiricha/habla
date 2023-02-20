@@ -16,7 +16,7 @@ import {
   Sub,
 } from "nostr-tools";
 
-import { uniqBy } from "./utils";
+import { uniqBy, getEventId } from "./utils";
 
 type OnConnectFunc = (relay: Relay) => void;
 type OnDisconnectFunc = (relay: Relay) => void;
@@ -176,6 +176,7 @@ export function useNostrEvents({
   } = useNostr();
 
   const [isLoading, setIsLoading] = useState(true);
+  const [seen, setSeen] = useState<Record<string, Set<string>>>({});
   const [events, setEvents] = useState<NostrEvent[]>([]);
   const [unsubscribe, setUnsubscribe] = useState<() => void | void>(() => {
     return;
@@ -218,9 +219,16 @@ export function useNostrEvents({
 
     sub.on("event", (event: NostrEvent) => {
       log(debug, "info", `⬇️ nostr (${relay.url}): Received event:`, event);
+
       onEventCallback?.(event);
       setEvents((_events) => {
         return [event, ..._events];
+      });
+      setSeen((_seen) => {
+        const evId = getEventId(event);
+        const soFar = _seen[evId] ?? new Set([]);
+        soFar.add(relay.url);
+        return { ..._seen, [evId]: soFar };
       });
     });
 
@@ -261,6 +269,7 @@ export function useNostrEvents({
   return {
     isLoading: isLoading || isLoadingProvider,
     events: sortedEvents,
+    seen,
     onConnect,
     connectedRelays,
     unsubscribe,

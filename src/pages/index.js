@@ -10,7 +10,7 @@ import Feed from "../lib/Feed";
 import Relays from "../lib/Relays";
 
 export default function Home() {
-  const { events } = useNostrEvents({
+  const { seen, events } = useNostrEvents({
     filter: {
       kinds: [30023],
       limit: 100,
@@ -32,7 +32,7 @@ export default function Home() {
           </Flex>
         }
       >
-        <Feed events={events} />
+        <Feed seen={seen} events={events} />
       </Layout>
     </>
   );

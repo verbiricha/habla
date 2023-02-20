@@ -7,6 +7,7 @@ import User from "./User";
 import Markdown from "./Markdown";
 import Hashtag from "./Hashtag";
 import Reactions from "./Reactions";
+import { RelayList } from "./Relays";
 
 function formatTime(time) {
   return new Intl.DateTimeFormat("en-US", {
@@ -29,6 +30,7 @@ export default function Event({
   isPreview = true,
   showReactions = false,
   event,
+  relays,
   children,
   ...rest
 }) {
@@ -38,7 +40,15 @@ export default function Event({
   return (
     <>
       <Box as="article" key={event.id}>
-        {event.pubkey && showUser && <User pubkey={event.pubkey} />}
+        <Flex
+          alignItems="center"
+          justifyContent={
+            event.pubkey && showUser ? "space-between" : "flex-end"
+          }
+        >
+          {event.pubkey && showUser && <User pubkey={event.pubkey} />}
+          <RelayList relays={relays} />
+        </Flex>
         <Link to={href}>
           <Heading as="h1">{metadata.title}</Heading>
         </Link>

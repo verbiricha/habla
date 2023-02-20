@@ -1,7 +1,7 @@
 import { useBoolean, Flex, IconButton } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
 
-import { useNostrEvents } from "../nostr";
+import { useNostrEvents, getEventId } from "../nostr";
 import Editor from "./Editor";
 import Event from "./Event";
 import useLoggedInUser from "./useLoggedInUser";
@@ -10,7 +10,7 @@ export default function Article({ d, pubkey }) {
   const { user } = useLoggedInUser();
   const isMe = user === pubkey;
   const [isEditing, setIsEditing] = useBoolean(false);
-  const { events } = useNostrEvents({
+  const { seen, events } = useNostrEvents({
     filter: {
       authors: [pubkey],
       "#d": [d],
@@ -18,6 +18,7 @@ export default function Article({ d, pubkey }) {
     },
   });
   const ev = events[0];
+  const relays = ev && seen[getEventId(ev)];
 
   return (
     <>
@@ -33,6 +34,7 @@ export default function Article({ d, pubkey }) {
           key={ev.id}
           showUser={false}
           isPreview={false}
+          relays={relays}
           showReactions={true}
           event={ev}
         >

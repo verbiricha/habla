@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNostr } from "../nostr";
 
 import {
@@ -17,18 +17,26 @@ import { DeleteIcon } from "@chakra-ui/icons";
 
 import useRelays from "./useRelays";
 
-function Relay({ url, isConnected }) {
-  const { remove } = useRelays();
+function RelayFavicon({ url, children }) {
   const domain = url
     .replace("wss://relay.", "https://")
     .replace("wss://", "https://")
     .replace("ws://", "http://");
   return (
+    <Avatar size="xs" src={`${domain}/favicon.ico`}>
+      {children}
+    </Avatar>
+  );
+}
+
+function Relay({ url, isConnected }) {
+  const { remove } = useRelays();
+  return (
     <>
       <Flex alignItems="center" mb={2}>
-        <Avatar size="xs" src={`${domain}/favicon.ico`}>
+        <RelayFavicon url={url}>
           {isConnected && <AvatarBadge boxSize="1.25em" bg="green.500" />}
-        </Avatar>
+        </RelayFavicon>
         <Text ml={2}>{url}</Text>
         <DeleteIcon
           cursor="pointer"
@@ -39,6 +47,29 @@ function Relay({ url, isConnected }) {
         />
       </Flex>
     </>
+  );
+}
+
+export function RelayList({ relays, ...props }) {
+  const urls = useMemo(() => {
+    if (!relays) {
+      return [];
+    }
+    const sorted = Array.from(relays);
+    sorted.sort();
+    return sorted;
+  }, [relays]);
+  const { connectedRelays } = useNostr();
+  const connected = connectedRelays.map(({ url }) => url);
+  return (
+    <Flex {...props}>
+      {urls.map((url) => (
+        <Flex>
+          <RelayFavicon url={url} />
+          <Text></Text>
+        </Flex>
+      ))}
+    </Flex>
   );
 }
 

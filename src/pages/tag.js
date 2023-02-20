@@ -11,7 +11,7 @@ import Relays from "../lib/Relays";
 
 export default function Tag() {
   const { t } = useParams();
-  const { events } = useNostrEvents({
+  const { seen, events } = useNostrEvents({
     filter: {
       kinds: [30023],
       "#t": [t],
@@ -45,7 +45,7 @@ export default function Tag() {
       <Heading as="h2" mb={6}>
         Hashtag: #{t}
       </Heading>
-      <Feed events={events} />
+      <Feed seen={seen} events={events} />
     </Layout>
   );
 }

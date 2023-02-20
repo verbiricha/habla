@@ -3,6 +3,7 @@ import { Flex, Heading, HStack, Text } from "@chakra-ui/react";
 
 import { getMetadata } from "./nostr";
 
+import { RelayList } from "./Relays";
 import Hashtag from "./Hashtag";
 import Reactions from "./Reactions";
 
@@ -12,14 +13,17 @@ function formatTime(time) {
   }).format(time);
 }
 
-export default function EventItem({ event }) {
+export default function EventItem({ relays, event }) {
   const metadata = getMetadata(event);
   const href = `/${event.pubkey}/${metadata.d}`;
   return (
     <Flex flexDirection="column" key={event.id}>
-      <Link to={href}>
-        <Heading as="h1">{metadata?.title}</Heading>
-      </Link>
+      <Flex justifyContent="space-between">
+        <Link to={href}>
+          <Heading as="h1">{metadata?.title}</Heading>
+        </Link>
+        <RelayList relays={relays} />
+      </Flex>
       {metadata?.publishedAt && (
         <time>{formatTime(metadata.publishedAt * 1000)}</time>
       )}

@@ -1,7 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { visit, SKIP } from "unist-util-visit";
 
 import { bech32ToHex, hexToBech32, encodeTLV } from "./nostr";
 
@@ -155,8 +156,27 @@ export default function Markdown({ tags = [], content }) {
     };
   }, [tags]);
 
+  const replaceLinkHrefs = useCallback(
+    () => (tree: Node) => {
+      visit(tree, (node, index, parent) => {
+        if (
+          parent &&
+          typeof index === "number" &&
+          (node.type === "link" || node.type === "linkReference")
+        ) {
+          node.url = replaceMentions(node.url, tags);
+          return SKIP;
+        }
+      });
+    },
+    [content]
+  );
+
   return (
-    <ReactMarkdown components={components} remarkPlugins={[remarkGfm]}>
+    <ReactMarkdown
+      components={components}
+      remarkPlugins={[replaceLinkHrefs, remarkGfm]}
+    >
       {content}
     </ReactMarkdown>
   );

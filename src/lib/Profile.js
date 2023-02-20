@@ -1,11 +1,11 @@
-import { useNostrEvents, useProfile } from "../nostr";
+import { useNostrEvents, useProfile, getEventId } from "../nostr";
 import { Flex, Text, Avatar, Heading } from "@chakra-ui/react";
 
 import EventItem from "./EventItem";
 
 export default function Profile({ pubkey }) {
   const { data } = useProfile({ pubkey });
-  const { events } = useNostrEvents({
+  const { seen, events } = useNostrEvents({
     filter: {
       authors: [pubkey],
       kinds: [30023],
@@ -29,7 +29,11 @@ export default function Profile({ pubkey }) {
           Posts ({`${events.length}`})
         </Heading>
         {events.map((e) => (
-          <EventItem key={e.id} event={e} />
+          <EventItem
+            relays={seen[getEventId(e)]}
+            key={getEventId(e)}
+            event={e}
+          />
         ))}
       </Flex>
     </>
