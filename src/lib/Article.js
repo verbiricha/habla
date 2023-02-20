@@ -31,7 +31,7 @@ export default function Article({ d, pubkey }) {
       )}
       {ev && !isEditing && (
         <Event
-          key={ev.id}
+          key={getEventId(ev)}
           showUser={false}
           isPreview={false}
           relays={relays}
