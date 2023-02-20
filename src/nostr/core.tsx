@@ -176,7 +176,10 @@ export function useNostrEvents({
   } = useNostr();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [seen, setSeen] = useState<Record<string, Set<string>>>({});
+  const [seen, setSeen] = useState<Record<string, string[]>>({});
+  const [seenByRelay, setSeenByRelay] = useState<Record<string, Set<string>>>(
+    {}
+  );
   const [events, setEvents] = useState<NostrEvent[]>([]);
   const [unsubscribe, setUnsubscribe] = useState<() => void | void>(() => {
     return;
@@ -230,9 +233,18 @@ export function useNostrEvents({
       });
       setSeen((_seen) => {
         const evId = getEventId(event);
-        const soFar = _seen[evId] ?? new Set([]);
-        soFar.add(relay.url);
-        return { ..._seen, [evId]: soFar };
+        const soFar = _seen[evId] ?? [];
+        if (!soFar.includes(evId)) {
+          return { ..._seen, [evId]: [...soFar, relay.url] };
+        } else {
+          return _seen;
+        }
+      });
+      setSeenByRelay((_seen) => {
+        const evId = getEventId(event);
+        const soFar = _seen[relay.url] ?? new Set([]);
+        soFar.add(evId);
+        return { ..._seen, [relay.url]: soFar };
       });
     });
 
@@ -271,6 +283,7 @@ export function useNostrEvents({
     isLoading: isLoading || isLoadingProvider,
     events,
     seen,
+    seenByRelay,
     onConnect,
     connectedRelays,
     unsubscribe,

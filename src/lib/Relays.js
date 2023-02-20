@@ -18,7 +18,11 @@ import { DeleteIcon } from "@chakra-ui/icons";
 
 import useRelays from "./useRelays";
 
-function RelayFavicon({ url, children }) {
+export function trimRelayUrl(url) {
+  return url.replace("wss://", "");
+}
+
+export function RelayFavicon({ url, children }) {
   const domain = url
     .replace("wss://relay.", "https://")
     .replace("wss://", "https://")

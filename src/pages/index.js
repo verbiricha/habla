@@ -1,21 +1,46 @@
+import { useState, useMemo } from "react";
+import { useSelector } from "react-redux";
+
 import { Helmet } from "react-helmet";
 
-import { Flex } from "@chakra-ui/react";
+import { Flex, HStack, Tag, Text } from "@chakra-ui/react";
 
-import { useNostrEvents } from "../nostr";
+import { getEventId, useNostrEvents } from "../nostr";
 import Authors from "../lib/Authors";
 import Tags from "../lib/Tags";
 import Layout from "../lib/Layout";
 import Feed from "../lib/Feed";
-import Relays from "../lib/Relays";
+import Relays, { trimRelayUrl } from "../lib/Relays";
 
 export default function Home() {
-  const { seen, events } = useNostrEvents({
+  const { relays } = useSelector((s) => s.relay);
+  const [selected, setSelected] = useState([]);
+  const { seen, seenByRelay, events } = useNostrEvents({
     filter: {
       kinds: [30023],
       limit: 100,
     },
   });
+  const filteredEvents = useMemo(() => {
+    if (selected.length === 0) return events;
+
+    const ids = selected.reduce((acc, r) => {
+      Array.from(seenByRelay[r]).forEach((i) => {
+        acc.add(i);
+      });
+      return acc;
+    }, new Set());
+
+    return events.filter((ev) => ids.has(getEventId(ev)));
+  }, [events, selected, seenByRelay]);
+
+  function toggleRelay(r) {
+    if (selected.includes(r)) {
+      setSelected(selected.filter((s) => s !== r));
+    } else {
+      setSelected([r, ...selected]);
+    }
+  }
 
   return (
     <>
@@ -32,7 +57,24 @@ export default function Home() {
           </Flex>
         }
       >
-        <Feed seen={seen} events={events} />
+        <HStack spacing={2}>
+          {relays.map((r) => (
+            <Tag
+              colorScheme={selected.includes(r) ? "purple" : "gray"}
+              variant="solid"
+              cursor="pointer"
+              key={r}
+              size="md"
+              onClick={() => toggleRelay(r)}
+            >
+              <Text fontFamily="var(--font-mono)" mr={1}>
+                {seenByRelay[r]?.size}
+              </Text>
+              {trimRelayUrl(r)}
+            </Tag>
+          ))}
+        </HStack>
+        <Feed seen={seen} events={filteredEvents} />
       </Layout>
     </>
   );
