@@ -62,8 +62,6 @@ export function RelayList({ relays, ...props }) {
     sorted.sort();
     return sorted;
   }, [relays]);
-  const { connectedRelays } = useNostr();
-  const connected = connectedRelays.map(({ url }) => url);
   return (
     <Flex {...props}>
       {urls.map((url) => (
