@@ -30,7 +30,7 @@ export default function NostrContext({ children }) {
   }, [relays]);
 
   return (
-    <NostrProvider relayUrls={relays} debug={true}>
+    <NostrProvider relayUrls={relays}>
       <NostrConnManager>{children}</NostrConnManager>
     </NostrProvider>
   );
