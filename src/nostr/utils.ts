@@ -8,6 +8,18 @@ export function getEventId(event: NostrEvent): string {
   return event.id;
 }
 
+export const uniqByFn = <T>(arr: T[], keyFn: any): T[] => {
+  return Object.values(
+    arr.reduce((map, item) => {
+      const key = keyFn(item);
+      return {
+        ...map,
+        [key]: item,
+      };
+    }, {})
+  );
+};
+
 export const uniqBy = <T>(arr: T[], key: keyof T): T[] => {
   return Object.values(
     arr.reduce(

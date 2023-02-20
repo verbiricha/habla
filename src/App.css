@@ -84,7 +84,7 @@ article h3 {
   margin: 0 0 24px 0;
 }
 
-article p, article i, article a {
+article p, article i, article a, article li {
   margin-top: 21px;
   font-family: "Lora";
   font-size: 21px;
@@ -121,10 +121,6 @@ code {
   font-family: var(--font-mono);
 }
 
-mark, .highlighted {
-  background: var(--highlight);
-}
-
 ::selection{background-color: #ffff99;}
 
 article {
@@ -156,7 +152,19 @@ article p a {
   height: 100%;
 }
 
+ul, ol {
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  list-style: disc inside;
+}
+
+li::marker {
+  color: var(--highlight);
+}
+
 article li p {
   margin-top: -28px;
 }
-

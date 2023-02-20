@@ -16,7 +16,7 @@ import {
   Sub,
 } from "nostr-tools";
 
-import { uniqBy, getEventId } from "./utils";
+import { uniqBy, uniqByFn, getEventId } from "./utils";
 
 type OnConnectFunc = (relay: Relay) => void;
 type OnDisconnectFunc = (relay: Relay) => void;
@@ -222,7 +222,11 @@ export function useNostrEvents({
 
       onEventCallback?.(event);
       setEvents((_events) => {
-        return [event, ..._events];
+        const newEvents = [event, ..._events];
+        const uniqEvents =
+          newEvents.length > 0 ? uniqByFn(newEvents, getEventId) : [];
+        uniqEvents.sort((a, b) => b.created_at - a.created_at);
+        return uniqEvents;
       });
       setSeen((_seen) => {
         const evId = getEventId(event);
@@ -263,12 +267,9 @@ export function useNostrEvents({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectedRelays, filterBase64, enabled]);
 
-  const uniqEvents = events.length > 0 ? uniqBy(events, "id") : [];
-  const sortedEvents = uniqEvents.sort((a, b) => b.created_at - a.created_at);
-
   return {
     isLoading: isLoading || isLoadingProvider,
-    events: sortedEvents,
+    events,
     seen,
     onConnect,
     connectedRelays,

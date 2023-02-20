@@ -66,10 +66,10 @@ export default function Event({
         {metadata.summary && !isPreview && (
           <blockquote className="summary">{metadata.summary}</blockquote>
         )}
+        {children}
         {!isPreview && <Markdown content={event.content} tags={event.tags} />}
         <Hashtags hashtags={metadata?.hashtags ?? []} />
         <Reactions showUsers={showReactions} event={event} />
-        {children}
       </Box>
     </>
   );

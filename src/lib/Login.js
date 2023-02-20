@@ -33,9 +33,11 @@ export default function Login() {
   ) : (
     <Flex>
       {themeSelector}
-      <Button size="md" onClick={logIn}>
-        Login
-      </Button>
+      {window.nostr && (
+        <Button size="md" onClick={logIn}>
+          Login
+        </Button>
+      )}
     </Flex>
   );
 }

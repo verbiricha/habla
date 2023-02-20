@@ -4,6 +4,7 @@ import { Flex, HStack, IconButton, Text } from "@chakra-ui/react";
 import { TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
 
 import useLoggedInUser from "./useLoggedInUser";
+import { getEventId } from "../nostr";
 import { eventAddress } from "./nostr";
 import User from "./User";
 
@@ -67,7 +68,7 @@ export default function Reactions({ showUsers = false, event }) {
       {showUsers && likes.length > 0 && (
         <>
           {likes.map((ev) => (
-            <Flex alignItems="center">
+            <Flex key={getEventId(ev)} alignItems="center">
               <User showNip={false} pubkey={ev.pubkey} />
               <Text> liked</Text>
             </Flex>
@@ -76,8 +77,8 @@ export default function Reactions({ showUsers = false, event }) {
       )}
       {showUsers && dislikes.length > 0 && (
         <>
-          {likes.map((ev) => (
-            <Flex alignItems="center">
+          {dislikes.map((ev) => (
+            <Flex key={getEventId(ev)} alignItems="center">
               <User showNip={false} pubkey={ev.pubkey} />
               <Text> disliked</Text>
             </Flex>

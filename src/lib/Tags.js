@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { Heading, VStack } from "@chakra-ui/react";
+import { Flex, Box, Heading, VStack } from "@chakra-ui/react";
 
 import { getMetadata } from "../lib/nostr";
 import Hashtag from "../lib/Hashtag";
@@ -19,14 +19,14 @@ export default function Tags({ events }) {
 
   return (
     <>
-      <Heading fontSize="2xl" as="h3">
+      <Heading mb={6} fontSize="2xl" as="h3">
         Tags
       </Heading>
-      <VStack alignItems="flex-start" mt={2} spacing={2}>
+      <Flex flexFlow="row wrap">
         {tags.map((t) => (
-          <Hashtag tag={t} />
+          <Hashtag mb={2} mr={2} key={t} tag={t} />
         ))}
-      </VStack>
+      </Flex>
     </>
   );
 }

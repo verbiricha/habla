@@ -3,6 +3,7 @@ import { useNostr } from "../nostr";
 
 import {
   Box,
+  Tooltip,
   Heading,
   Button,
   Avatar,
@@ -23,9 +24,11 @@ function RelayFavicon({ url, children }) {
     .replace("wss://", "https://")
     .replace("ws://", "http://");
   return (
-    <Avatar size="xs" src={`${domain}/favicon.ico`}>
-      {children}
-    </Avatar>
+    <Tooltip label={url}>
+      <Avatar size="xs" src={`${domain}/favicon.ico`}>
+        {children}
+      </Avatar>
+    </Tooltip>
   );
 }
 
@@ -64,7 +67,7 @@ export function RelayList({ relays, ...props }) {
   return (
     <Flex {...props}>
       {urls.map((url) => (
-        <Flex>
+        <Flex key={url}>
           <RelayFavicon url={url} />
           <Text></Text>
         </Flex>

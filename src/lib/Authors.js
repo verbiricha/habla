@@ -21,9 +21,7 @@ export default function Authors({ events }) {
       </Heading>
       <Flex flexDirection="column" mb={6}>
         {authors.map((a) => (
-          <>
-            <User key={a} mb={2} pubkey={a} />
-          </>
+          <User key={a} mb={2} pubkey={a} />
         ))}
       </Flex>
     </>
