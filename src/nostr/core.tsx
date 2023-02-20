@@ -234,7 +234,7 @@ export function useNostrEvents({
       setSeen((_seen) => {
         const evId = getEventId(event);
         const soFar = _seen[evId] ?? [];
-        if (!soFar.includes(evId)) {
+        if (!soFar.includes(relay.url)) {
           return { ..._seen, [evId]: [...soFar, relay.url] };
         } else {
           return _seen;
