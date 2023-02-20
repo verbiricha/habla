@@ -1,9 +1,8 @@
 import { useEffect } from "react";
-import { NostrProvider, useNostr } from "nostr-react-habla";
+import { NostrProvider, useNostr } from "./nostr";
 import useRelays from "./lib/useRelays";
 
 function NostrConnManager({ children }) {
-  const { relays } = useRelays();
   const { onDisconnect } = useNostr();
 
   const onDisconnectCallback = (relay) => {
@@ -17,6 +16,7 @@ function NostrConnManager({ children }) {
 
   useEffect(() => {
     onDisconnect(onDisconnectCallback);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return children;

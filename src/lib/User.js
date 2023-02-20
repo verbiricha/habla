@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { useProfile } from "nostr-react-habla";
 
 import { Flex, Box, Avatar, Text } from "@chakra-ui/react";
 
+import { useProfile } from "../nostr";
 import Markdown from "./Markdown";
 import useNip05 from "./useNip05";
 

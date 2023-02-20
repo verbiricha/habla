@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useNostrEvents } from "nostr-react-habla";
+import { useNostrEvents } from "../nostr";
 import { getMetadata, decodeNaddr } from "./nostr";
 
 export default function Naddr({ naddr }) {

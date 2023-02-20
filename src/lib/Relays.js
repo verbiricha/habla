@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNostr } from "nostr-react-habla";
+import { useNostr } from "../nostr";
 
 import {
   Box,

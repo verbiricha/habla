@@ -1,7 +1,7 @@
-import { useNostrEvents } from "nostr-react-habla";
 import { useBoolean, Flex, IconButton } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
 
+import { useNostrEvents } from "../nostr";
 import Editor from "./Editor";
 import Event from "./Event";
 import useLoggedInUser from "./useLoggedInUser";

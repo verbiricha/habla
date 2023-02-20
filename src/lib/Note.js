@@ -1,6 +1,6 @@
-import { useNostrEvents } from "nostr-react-habla";
 import { Card, CardHeader, CardBody } from "@chakra-ui/react";
 
+import { useNostrEvents } from "../nostr";
 import User from "./User";
 
 export default function Note({ id }) {

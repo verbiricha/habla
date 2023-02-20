@@ -8,7 +8,9 @@ export async function getPubkey(nip05) {
         username
       )}`
     ).then((r) => r.json());
-    return names[username.toLowerCase()];
+    if (names) {
+      return names[username.toLowerCase()];
+    }
   } catch (error) {
     console.error(error);
   }

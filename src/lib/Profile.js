@@ -1,4 +1,4 @@
-import { useNostrEvents, useProfile } from "nostr-react-habla";
+import { useNostrEvents, useProfile } from "../nostr";
 import { Flex, Text, Avatar, Heading } from "@chakra-ui/react";
 
 import EventItem from "./EventItem";

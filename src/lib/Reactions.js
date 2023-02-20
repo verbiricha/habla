@@ -1,4 +1,4 @@
-import { dateToUnix, useNostr, useNostrEvents } from "nostr-react-habla";
+import { dateToUnix, useNostr, useNostrEvents } from "../nostr";
 
 import { Flex, HStack, IconButton, Text } from "@chakra-ui/react";
 import { TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";

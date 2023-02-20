@@ -7140,10 +7140,10 @@ jest@^27.4.3:
     import-local "^3.0.2"
     jest-cli "^27.5.1"
 
-jotai@^1.12.1:
-  version "1.13.1"
-  resolved "https://registry.yarnpkg.com/jotai/-/jotai-1.13.1.tgz#20cc46454cbb39096b12fddfa635b873b3668236"
-  integrity sha512-RUmH1S4vLsG3V6fbGlKzGJnLrDcC/HNb5gH2AeA9DzuJknoVxSGvvg8OBB7lke+gDc4oXmdVsaKn/xDUhWZ0vw==
+jotai@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/jotai/-/jotai-2.0.2.tgz#52728e91de61742263e40fda79a367ab4649506c"
+  integrity sha512-0yOked08Swa84LUbBjtj7ZLZrE05n3u50rHeZ+bsT86thUjcy0kFgQz9GmEWhYbQDFoT1G8Ww6edSj/MBJHO4A==
 
 js-sdsl@^4.1.4:
   version "4.3.0"
@@ -8113,15 +8113,7 @@ normalize-url@^6.0.1:
   resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-6.1.0.tgz#40d0885b535deffe3f3147bec877d05fe4c5668a"
   integrity sha512-DlL+XwOy3NxAQ8xuC0okPgK46iuVNAK01YN7RueYBqqFeGsBjV9XmCAzAdgt+667bCl5kPh9EqKKDwnaPG1I7A==
 
-nostr-react-habla@^0.6.5:
-  version "0.6.5"
-  resolved "https://registry.yarnpkg.com/nostr-react-habla/-/nostr-react-habla-0.6.5.tgz#43e2cb260ceb0621f296103d7f3830b7dae642f6"
-  integrity sha512-Ye4+3niUGARyotOO08cnEDrwZAhg9VQYuA16b0JdLbSo1N0ElhoeTwWrFU3yp9MwbEsupwh27jGHj5CVilTDpw==
-  dependencies:
-    jotai "^1.12.1"
-    nostr-tools "^1.1.0"
-
-nostr-tools@^1.1.0:
+nostr-tools@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/nostr-tools/-/nostr-tools-1.5.0.tgz#b8b8d4d9e122c4acbdfe8b580e82f539f0866b42"
   integrity sha512-9zZdS3OF1hC8Tzpx2ycFLFx0AYSXBkLZ5EaXcPWIdZlQgSkpDrHl/TUYk2E8K7OocK+3VNbo4+7K2N38qdCjsg==

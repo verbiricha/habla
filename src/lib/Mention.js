@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useProfile } from "nostr-react-habla";
+import { useProfile } from "../nostr";
 
 export default function Mention({ pubkey }) {
   const { data } = useProfile({ pubkey });

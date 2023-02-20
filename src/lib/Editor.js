@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { dateToUnix, useNostr } from "nostr-react-habla";
+import { dateToUnix, useNostr } from "../nostr";
 import {
   Flex,
   Box,

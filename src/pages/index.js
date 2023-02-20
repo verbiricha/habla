@@ -1,8 +1,8 @@
 import { Helmet } from "react-helmet";
-import { useNostrEvents } from "nostr-react-habla";
 
 import { Flex } from "@chakra-ui/react";
 
+import { useNostrEvents } from "../nostr";
 import Authors from "../lib/Authors";
 import Tags from "../lib/Tags";
 import Layout from "../lib/Layout";
