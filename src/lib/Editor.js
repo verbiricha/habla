@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useToast } from "@chakra-ui/react";
 import { dateToUnix, useNostr } from "../nostr";
 import {
   Flex,
@@ -28,6 +29,7 @@ export default function MyEditor({ event, children }) {
   const [content, setContent] = useState(
     event?.content ? replaceMentions(event.content, event.tags) : ""
   );
+  const toast = useToast();
 
   useEffect(() => {
     const rawDraft = window.sessionStorage.getItem("draft");
@@ -66,8 +68,19 @@ export default function MyEditor({ event, children }) {
       created_at: createdAt,
       tags,
     };
-    const signed = await sign(ev);
-    publish(signed);
+    try {
+      const signed = await sign(ev);
+      publish(signed);
+      toast({
+        title: "Published",
+        status: "success",
+      });
+    } catch (error) {
+      toast({
+        title: "Couldn't publish article, please try again",
+        status: "error",
+      });
+    }
   }
 
   function onSave() {
