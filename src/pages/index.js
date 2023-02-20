@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 
 import { Helmet } from "react-helmet";
 
-import { Flex, HStack, Tag, Text } from "@chakra-ui/react";
+import { Flex, Tag, Text } from "@chakra-ui/react";
 
 import { getEventId, useNostrEvents } from "../nostr";
 import Authors from "../lib/Authors";
@@ -57,7 +57,7 @@ export default function Home() {
           </Flex>
         }
       >
-        <HStack spacing={2}>
+        <Flex flexDirection={["column", "column", "row"]}>
           {relays.map((r) => (
             <Tag
               colorScheme={selected.includes(r) ? "purple" : "gray"}
@@ -65,6 +65,8 @@ export default function Home() {
               cursor="pointer"
               key={r}
               size="md"
+              mr={2}
+              mb={2}
               onClick={() => toggleRelay(r)}
             >
               <Text fontFamily="var(--font-mono)" mr={1}>
@@ -73,7 +75,7 @@ export default function Home() {
               {trimRelayUrl(r)}
             </Tag>
           ))}
-        </HStack>
+        </Flex>
         <Feed seen={seen} events={filteredEvents} />
       </Layout>
     </>
