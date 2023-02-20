@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Flex, Heading, HStack, Text } from "@chakra-ui/react";
 
-import { getMetadata } from "./nostr";
+import { getMetadata, encodeNaddr } from "./nostr";
 
 import { RelayList } from "./Relays";
 import Hashtag from "./Hashtag";
@@ -15,7 +15,7 @@ function formatTime(time) {
 
 export default function EventItem({ relays, event }) {
   const metadata = getMetadata(event);
-  const href = `/${event.pubkey}/${metadata.d}`;
+  const href = `/a/${encodeNaddr(event)}`;
   return (
     <Flex flexDirection="column" key={event.id}>
       <Flex justifyContent="space-between">
