@@ -222,7 +222,6 @@ export function useNostrEvents({
 
     sub.on("event", (event: NostrEvent) => {
       log(debug, "info", `⬇️ nostr (${relay.url}): Received event:`, event);
-
       onEventCallback?.(event);
       setEvents((_events) => {
         const newEvents = [event, ..._events];
