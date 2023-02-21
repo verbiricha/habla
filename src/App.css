@@ -18,7 +18,6 @@
 html,
 body {
   max-width: 100vw;
-  overflow-x: hidden;
   font-size: 16px;
 }
 
@@ -55,7 +54,7 @@ a {
 }
 
 article {
-  overflow-x: scroll;
+  overflow: hidden;
 }
 
 article h1 {
@@ -119,6 +118,17 @@ code {
   border-radius: 2px;
   padding: 3px 5px;
   font-family: var(--font-mono);
+  overflow-x: scroll;
+  overflow-y: hidden;
+  width: fit-content;
+  max-width: calc(100vw - 30px);
+}
+
+pre {
+  overflow-y: hidden;
+  overflow-x: scroll;
+  width: fit-content;
+  max-width: calc(100vw - 30px);
 }
 
 ::selection{background-color: #ffff99;}

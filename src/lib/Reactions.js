@@ -113,7 +113,6 @@ export default function Reactions({ showUsers = false, event }) {
       return acc + amount;
     }, 0);
   }, [zappers]);
-  console.log("zaps", zaps);
   async function react(content) {
     if (!user) {
       return;
