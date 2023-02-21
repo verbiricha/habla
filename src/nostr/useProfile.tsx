@@ -80,6 +80,25 @@ export function useProfile({
     enabled,
   });
 
+  useEffect(() => {
+    try {
+      const cached = window.sessionStorage.getItem(`profile:${pubkey}`);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && parsed.pubkey === pubkey) {
+          setFetchedProfiles((_profiles: Record<string, Metadata>) => {
+            return {
+              ..._profiles,
+              [pubkey]: parsed,
+            };
+          });
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, [pubkey]);
+
   onSubscribe(() => {
     // Reset list
     // (We've already opened a subscription to these pubkeys now)
@@ -90,6 +109,7 @@ export function useProfile({
 
   onEvent((rawMetadata) => {
     try {
+      window.sessionStorage.setItem(`profile:${pubkey}`, rawMetadata.content);
       const metadata: Metadata = JSON.parse(rawMetadata.content);
       const metaPubkey = rawMetadata.pubkey;
 
