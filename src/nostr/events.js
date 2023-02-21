@@ -45,7 +45,7 @@ function processContent(ev) {
   const replaceHashtag = (match: string) => {
     const tag = match.slice(1);
     const idx = ev.tags.length;
-    ev.tags.push(["t", tag.toLowerCase(), idx]);
+    ev.tags.push(["t", tag, idx]);
     return `#[${idx}]`;
   };
   const replaced = ev.content

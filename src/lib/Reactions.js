@@ -35,6 +35,7 @@ import {
 } from "../nostr";
 import { useLnURLService, loadInvoice } from "./LNUrl";
 import useLoggedInUser from "./useLoggedInUser";
+import Markdown from "./Markdown";
 import User from "./User";
 import ZapIcon from "./Zap";
 import useWebln from "./useWebln";
@@ -342,7 +343,7 @@ export default function Reactions({ showUsers = false, event }) {
               alignItems="flex-start"
             >
               <User showNip={false} pubkey={ev.pubkey} />
-              <Text>: {ev.content}</Text>
+              <Markdown content={ev.content} tags={ev.tags} />
             </Flex>
           ))}
         </>
