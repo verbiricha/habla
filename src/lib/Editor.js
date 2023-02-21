@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@chakra-ui/react";
-import { dateToUnix, useNostr } from "../nostr";
+import { getMetadata, sign, dateToUnix, useNostr } from "../nostr";
 import {
   Flex,
   Box,
@@ -14,7 +14,6 @@ import {
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 
-import { getMetadata, sign } from "./nostr";
 import EventPreview from "./EventPreview";
 import { replaceMentions } from "./Markdown";
 

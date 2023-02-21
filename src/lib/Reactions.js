@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { dateToUnix, useNostr, useNostrEvents } from "../nostr";
+import {
+  getEventId,
+  eventAddress,
+  dateToUnix,
+  useNostr,
+  useNostrEvents,
+} from "../nostr";
 
 import {
   useToast,
@@ -13,8 +19,6 @@ import {
 import { TriangleUpIcon, TriangleDownIcon, ChatIcon } from "@chakra-ui/icons";
 
 import useLoggedInUser from "./useLoggedInUser";
-import { getEventId } from "../nostr";
-import { eventAddress } from "./nostr";
 import User from "./User";
 
 export default function Reactions({ showUsers = false, event }) {

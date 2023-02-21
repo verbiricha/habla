@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { Flex } from "@chakra-ui/react";
 
-import { decodeNaddr } from "../lib/nostr";
+import { decodeNaddr } from "../nostr";
 import Relays from "../lib/Relays";
 import Layout from "../lib/Layout";
 import User from "../lib/User";

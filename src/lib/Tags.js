@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
-import { Flex, Box, Heading, VStack } from "@chakra-ui/react";
+import { Flex, Heading } from "@chakra-ui/react";
 
-import { getMetadata } from "../lib/nostr";
+import { getMetadata } from "../nostr";
 import Hashtag from "../lib/Hashtag";
 
 export default function Tags({ events }) {

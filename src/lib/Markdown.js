@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { visit, SKIP } from "unist-util-visit";
 
-import { bech32ToHex, hexToBech32, encodeTLV } from "./nostr";
+import { bech32ToHex, hexToBech32, encodeTLV } from "../nostr";
 
 import ArticleLink from "./ArticleLink";
 import Naddr from "./Naddr";
@@ -169,7 +169,7 @@ export default function Markdown({ tags = [], content }) {
         }
       });
     },
-    [content]
+    [tags]
   );
 
   return (

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Box, Flex, HStack, Heading, Text, Image } from "@chakra-ui/react";
 
-import { getMetadata, encodeNaddr } from "./nostr";
+import { getMetadata, encodeNaddr } from "../nostr";
 
 import User from "./User";
 import Markdown from "./Markdown";

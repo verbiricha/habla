@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
 import { Flex, Heading, HStack, Text } from "@chakra-ui/react";
 
-import { getMetadata, encodeNaddr } from "./nostr";
-
+import { getMetadata, encodeNaddr } from "../nostr";
 import { RelayList } from "./Relays";
 import Hashtag from "./Hashtag";
 import Reactions from "./Reactions";

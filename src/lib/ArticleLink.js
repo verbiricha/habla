@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 
-import { useNostrEvents } from "../nostr";
-import { getMetadata } from "./nostr";
+import { getMetadata, useNostrEvents } from "../nostr";
 
 export default function ArticleLink({ d, pubkey }) {
   const { events } = useNostrEvents({
