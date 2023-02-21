@@ -16,7 +16,6 @@ async function fetchJson<T>(url: string) {
   const rsp = await fetch(url);
   if (rsp.ok) {
     const data: T = await rsp.json();
-    console.log(data);
     return data;
   }
   return null;
@@ -86,7 +85,6 @@ export async function loadInvoice(
     const rsp = await fetch(`${baseUrl}?${queryJoined}`);
     if (rsp.ok) {
       const data = await rsp.json();
-      console.log(data);
       if (data.status === "ERROR") {
         throw new Error(data.reason);
       } else {

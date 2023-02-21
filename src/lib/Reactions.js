@@ -96,10 +96,6 @@ export default function Reactions({ showUsers = false, event }) {
     (e) => e.kind === 7 && e.content === "+" && e.pubkey !== event.pubkey
   );
   const liked = likes.find((e) => e.pubkey === user);
-  const dislikes = events.filter(
-    (e) => e.kind === 7 && e.content === "-" && e.pubkey !== event.pubkey
-  );
-  const disliked = dislikes.find((e) => e.pubkey === user);
   const comments = events.filter(
     (e) => e.kind === 1 && e.pubkey !== event.pubkey
   );
@@ -221,18 +217,6 @@ export default function Reactions({ showUsers = false, event }) {
             />
             <Text as="span" ml={4} fontSize="xl">
               {likes.length}
-            </Text>
-          </Flex>
-          <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
-            <IconButton
-              variant="unstyled"
-              isDisabled={disliked}
-              icon={<TriangleDownIcon />}
-              size="sm"
-              onClick={() => react("-")}
-            />
-            <Text as="span" ml={4} fontSize="xl">
-              {dislikes.length}
             </Text>
           </Flex>
           <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
@@ -360,16 +344,6 @@ export default function Reactions({ showUsers = false, event }) {
             <Flex key={getEventId(ev)} alignItems="center">
               <User showNip={false} pubkey={ev.pubkey} />
               <Text> liked</Text>
-            </Flex>
-          ))}
-        </>
-      )}
-      {showUsers && dislikes.length > 0 && (
-        <>
-          {dislikes.map((ev) => (
-            <Flex key={getEventId(ev)} alignItems="center">
-              <User showNip={false} pubkey={ev.pubkey} />
-              <Text> disliked</Text>
             </Flex>
           ))}
         </>
