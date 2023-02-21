@@ -26,6 +26,7 @@ import {
   getEventId,
   eventAddress,
   dateToUnix,
+  sign,
   useNostr,
   useNostrEvents,
   useProfile,
@@ -74,7 +75,7 @@ export default function Reactions({ showUsers = false, event }) {
   const naddr = eventAddress(event);
   const { events } = useNostrEvents({
     filter: {
-      kinds: [7, 9735],
+      kinds: [1, 7, 9735],
       "#a": [naddr],
     },
   });
@@ -98,7 +99,7 @@ export default function Reactions({ showUsers = false, event }) {
   );
   const disliked = dislikes.find((e) => e.pubkey === user);
   const comments = events.filter(
-    (e) => e.kind === 7 && e.content !== "+" && e.content !== "-"
+    (e) => e.kind === 1 && e.pubkey !== event.pubkey
   );
   const zaps = events.filter((e) => e.kind === 9735);
   const zappers = useMemo(() => {
@@ -129,9 +130,26 @@ export default function Reactions({ showUsers = false, event }) {
     const signed = await signEvent(ev);
     publish(signed);
   }
+  async function sendComment(content) {
+    if (!user) {
+      return;
+    }
+    const ev = {
+      content,
+      kind: 1,
+      created_at: dateToUnix(),
+      tags: [
+        ["e", event.id, "", "root"],
+        ["p", event.pubkey],
+        ["a", naddr],
+      ],
+    };
+    const signed = await sign(ev);
+    publish(signed);
+  }
 
   function onComment() {
-    react(comment.trim());
+    sendComment(comment.trim());
     toast({
       title: "Comment published",
       status: "success",
@@ -318,7 +336,11 @@ export default function Reactions({ showUsers = false, event }) {
       {showUsers && (
         <>
           {comments.map((ev) => (
-            <Flex key={getEventId(ev)} alignItems="center">
+            <Flex
+              flexDirection="column"
+              key={getEventId(ev)}
+              alignItems="flex-start"
+            >
               <User showNip={false} pubkey={ev.pubkey} />
               <Text>: {ev.content}</Text>
             </Flex>
