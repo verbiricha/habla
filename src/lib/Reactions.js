@@ -243,7 +243,7 @@ export default function Reactions({ showUsers = false, event }) {
           </Flex>
         </HStack>
       </Flex>
-      {showZap && user && lnurl && (
+      {showZap && lnurl && (
         <Flex flexDirection="column">
           <Input
             type="number"
@@ -288,7 +288,7 @@ export default function Reactions({ showUsers = false, event }) {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      {showReply && user && (
+      {showReply && (
         <Flex flexDirection="column">
           <Textarea
             value={comment}
