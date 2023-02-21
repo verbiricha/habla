@@ -12,7 +12,7 @@ export default function Tags({ events }) {
       const count = acc[e] || 0;
       return { ...acc, [e]: count + 1 };
     }, {});
-    const sorted = Object.entries(counted);
+    const sorted = [...new Set(Object.entries(counted))];
     sorted.sort((a, b) => b[1] - a[1]);
     return sorted.map((a) => a[0]);
   }, [events]);

@@ -1,5 +1,6 @@
-import { atom, useAtom } from "jotai";
 import { useEffect, useState } from "react";
+import { atom, useAtom } from "jotai";
+import { Event as NostrEvent } from "nostr-tools";
 
 import { useNostrEvents } from "./core";
 import { uniqValues } from "./utils";
@@ -59,6 +60,22 @@ function useProfileQueue({ pubkey }: { pubkey: string }) {
   };
 }
 
+function getCached(pubkey: string) {
+  const cached = window.sessionStorage.getItem(`profile:${pubkey}`);
+  if (cached) {
+    try {
+      return JSON.parse(cached);
+    } catch (error) {
+      console.error(error);
+      window.sessionStorage.removeItem(`profile:${pubkey}`);
+    }
+  }
+}
+
+function setCached(pubkey: string, rawMetadata: NostrEvent) {
+  window.sessionStorage.setItem(`profile:${pubkey}`, rawMetadata.content);
+}
+
 export function useProfile({
   pubkey,
   enabled: _enabled = true,
@@ -81,21 +98,14 @@ export function useProfile({
   });
 
   useEffect(() => {
-    try {
-      const cached = window.sessionStorage.getItem(`profile:${pubkey}`);
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (parsed && parsed.pubkey === pubkey) {
-          setFetchedProfiles((_profiles: Record<string, Metadata>) => {
-            return {
-              ..._profiles,
-              [pubkey]: parsed,
-            };
-          });
-        }
-      }
-    } catch (error) {
-      console.error(error);
+    const cached = getCached(pubkey);
+    if (cached) {
+      setFetchedProfiles((_profiles: Record<string, Metadata>) => {
+        return {
+          ..._profiles,
+          [pubkey]: cached,
+        };
+      });
     }
   }, [pubkey]);
 
@@ -114,6 +124,7 @@ export function useProfile({
       const metaPubkey = rawMetadata.pubkey;
 
       if (metadata) {
+        setCached(metaPubkey, rawMetadata);
         setFetchedProfiles((_profiles: Record<string, Metadata>) => {
           return {
             ..._profiles,
@@ -126,11 +137,11 @@ export function useProfile({
     }
   });
 
-  const metadata = fetchedProfiles[pubkey];
+  const data = fetchedProfiles[pubkey];
 
   return {
     isLoading,
     onDone,
-    data: metadata,
+    data,
   };
 }

@@ -21,7 +21,7 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import { QRCodeCanvas } from "qrcode.react";
-import { TriangleUpIcon, TriangleDownIcon, ChatIcon } from "@chakra-ui/icons";
+import { TriangleUpIcon, ChatIcon } from "@chakra-ui/icons";
 
 import {
   getEventId,
