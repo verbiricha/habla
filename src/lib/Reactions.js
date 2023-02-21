@@ -102,9 +102,11 @@ export default function Reactions({ showUsers = false, event }) {
   );
   const zaps = events.filter((e) => e.kind === 9735);
   const zappers = useMemo(() => {
-    return zaps.map((z) => {
-      return { ...getZapRequest(z), amount: getZapAmount(z) };
-    });
+    return zaps
+      .map((z) => {
+        return { ...getZapRequest(z), amount: getZapAmount(z) };
+      })
+      .filter((z) => z.pubkey !== event.pubkey);
   }, [zaps]);
   const zapsTotal = useMemo(() => {
     return zappers.reduce((acc, { amount }) => {
