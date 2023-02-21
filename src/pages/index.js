@@ -25,9 +25,12 @@ export default function Home() {
     if (selected.length === 0) return events;
 
     const ids = selected.reduce((acc, r) => {
-      Array.from(seenByRelay[r]).forEach((i) => {
-        acc.add(i);
-      });
+      const seenInRelay = seenByRelay[r];
+      if (seenInRelay) {
+        Array.from(seenInRelay).forEach((i) => {
+          acc.add(i);
+        });
+      }
       return acc;
     }, new Set());
 
