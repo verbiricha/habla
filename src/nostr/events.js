@@ -66,6 +66,10 @@ export async function sign(ev) {
   return await window.nostr.signEvent(ev);
 }
 
+export async function signEvent(ev) {
+  return await window.nostr.signEvent(ev);
+}
+
 export function getMetadata(ev) {
   return {
     title: findTag(ev.tags, "title")?.replace("\n", " "),

@@ -1,5 +1,4 @@
 import { atom, useAtom } from "jotai";
-import { nip19 } from "nostr-tools";
 import { useEffect, useState } from "react";
 
 import { useNostrEvents } from "./core";
@@ -108,16 +107,10 @@ export function useProfile({
   });
 
   const metadata = fetchedProfiles[pubkey];
-  const npub = nip19.npubEncode(pubkey);
 
   return {
     isLoading,
     onDone,
-    data: metadata
-      ? {
-          ...metadata,
-          npub,
-        }
-      : undefined,
+    data: metadata,
   };
 }

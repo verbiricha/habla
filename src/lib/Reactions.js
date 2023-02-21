@@ -1,11 +1,6 @@
-import { useState } from "react";
-import {
-  getEventId,
-  eventAddress,
-  dateToUnix,
-  useNostr,
-  useNostrEvents,
-} from "../nostr";
+import { useState, useMemo } from "react";
+import { useSelector } from "react-redux";
+import { decode } from "light-bolt11-decoder";
 
 import {
   useToast,
@@ -13,37 +8,114 @@ import {
   HStack,
   Button,
   IconButton,
+  Input,
   Text,
   Textarea,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from "@chakra-ui/react";
+import { QRCodeCanvas } from "qrcode.react";
 import { TriangleUpIcon, TriangleDownIcon, ChatIcon } from "@chakra-ui/icons";
 
+import {
+  getEventId,
+  eventAddress,
+  dateToUnix,
+  useNostr,
+  useNostrEvents,
+  useProfile,
+  signEvent,
+  findTag,
+} from "../nostr";
+import { useLnURLService, loadInvoice } from "./LNUrl";
 import useLoggedInUser from "./useLoggedInUser";
 import User from "./User";
+import ZapIcon from "./Zap";
+import useWebln from "./useWebln";
+
+function getZapRequest(zap) {
+  let zapRequest = findTag(zap.tags, "description");
+  if (zapRequest) {
+    try {
+      if (zapRequest.startsWith("%")) {
+        zapRequest = decodeURIComponent(zapRequest);
+      }
+      return JSON.parse(zapRequest);
+    } catch (e) {
+      console.warn("Invalid zap", zapRequest);
+    }
+  }
+}
+
+function getZapAmount(zap) {
+  try {
+    const invoice = findTag(zap.tags, "bolt11");
+    if (invoice) {
+      const decoded = decode(invoice);
+      const amount = decoded.sections.find(({ name }) => name === "amount");
+      return Number(amount.value) / 1000;
+    }
+    return 0;
+  } catch (error) {
+    return 0;
+  }
+}
 
 export default function Reactions({ showUsers = false, event }) {
   const { publish } = useNostr();
+  const { relays } = useSelector((s) => s.relay);
   const toast = useToast();
-  const [showReply, setShowReply] = useState(false);
-  const [comment, setComment] = useState("");
   const { user } = useLoggedInUser();
   const naddr = eventAddress(event);
   const { events } = useNostrEvents({
     filter: {
-      kinds: [7],
+      kinds: [7, 9735],
       "#a": [naddr],
     },
   });
-  const likes = events.filter((e) => e.kind === 7 && e.content === "+");
+  const { data } = useProfile({ pubkey: event.pubkey });
+  const lnurl = useLnURLService(data?.lud06 || data?.lud16);
+
+  const [showReply, setShowReply] = useState(false);
+  const [comment, setComment] = useState("");
+  const [showZap, setShowZap] = useState(false);
+  const [invoice, setInvoice] = useState();
+  const [showModal, setShowModal] = useState(false);
+  const webln = useWebln(showZap);
+  const [amount, setAmount] = useState(0);
+
+  const likes = events.filter(
+    (e) => e.kind === 7 && e.content === "+" && e.pubkey !== event.pubkey
+  );
   const liked = likes.find((e) => e.pubkey === user);
-  const dislikes = events.filter((e) => e.kind === 7 && e.content === "-");
+  const dislikes = events.filter(
+    (e) => e.kind === 7 && e.content === "-" && e.pubkey !== event.pubkey
+  );
   const disliked = dislikes.find((e) => e.pubkey === user);
   const comments = events.filter(
     (e) => e.kind === 7 && e.content !== "+" && e.content !== "-"
   );
-  //const zaps = events.filter((e) => e.kind === 9735);
-
+  const zaps = events.filter((e) => e.kind === 9735);
+  const zappers = useMemo(() => {
+    return zaps.map((z) => {
+      return { ...getZapRequest(z), amount: getZapAmount(z) };
+    });
+  }, [zaps]);
+  const zapsTotal = useMemo(() => {
+    return zappers.reduce((acc, { amount }) => {
+      return acc + amount;
+    }, 0);
+  }, [zappers]);
+  console.log("zaps", zaps);
   async function react(content) {
+    if (!user) {
+      return;
+    }
     const ev = {
       content,
       kind: 7,
@@ -53,13 +125,8 @@ export default function Reactions({ showUsers = false, event }) {
         ["a", naddr],
       ],
     };
-    const signed = await window.nostr.signEvent(ev);
+    const signed = await signEvent(ev);
     publish(signed);
-  }
-
-  function onCancel() {
-    setComment("");
-    setShowReply(false);
   }
 
   function onComment() {
@@ -70,6 +137,53 @@ export default function Reactions({ showUsers = false, event }) {
     });
     setComment("");
     setShowReply(false);
+  }
+
+  function onCancel() {
+    setComment("");
+    setShowReply(false);
+  }
+
+  async function zapRequest(content) {
+    const ev = {
+      kind: 9734,
+      content,
+      pubkey: user,
+      created_at: dateToUnix(),
+      tags: [
+        ["e", event.id],
+        ["p", event.pubkey],
+        ["a", naddr],
+        ["relays", ...relays],
+      ],
+    };
+    return window.nostr.signEvent(ev);
+  }
+
+  async function onZap() {
+    const req = await zapRequest(comment.trim());
+    const invoice = await loadInvoice(lnurl, amount, comment.trim(), req);
+    if (webln?.enabled) {
+      try {
+        await webln.sendPayment(invoice.pr);
+        toast({
+          title: "Paid",
+          status: "success",
+        });
+        onZapCancel();
+      } catch (error) {
+        setInvoice(invoice.pr);
+        setShowModal(true);
+      }
+    }
+  }
+
+  function onZapCancel() {
+    setAmount(0);
+    setComment("");
+    setInvoice();
+    setShowZap(false);
+    setShowModal(false);
   }
 
   return (
@@ -100,7 +214,7 @@ export default function Reactions({ showUsers = false, event }) {
               {dislikes.length}
             </Text>
           </Flex>
-          <Flex alignItems="center" flexDirection="row" minWidth={120}>
+          <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
             <IconButton
               variant="unstyled"
               icon={<ChatIcon />}
@@ -111,9 +225,65 @@ export default function Reactions({ showUsers = false, event }) {
               {comments.length}
             </Text>
           </Flex>
+          <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
+            <IconButton
+              variant="unstyled"
+              icon={<ZapIcon />}
+              size="sm"
+              onClick={() => setShowZap(true)}
+            />
+            <Text as="span" ml={4} fontSize="xl">
+              {zapsTotal}
+            </Text>
+          </Flex>
         </HStack>
       </Flex>
-      {showReply && (
+      {showZap && user && lnurl && (
+        <Flex flexDirection="column">
+          <Input
+            type="number"
+            min={lnurl.minSendable / 1000}
+            max={lnurl.maxSendable / 1000}
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            mt={4}
+          />
+          <Textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            my={4}
+          />
+          <Flex alignSelf="flex-end">
+            <Button mr={2} variant="outline" onClick={onZapCancel}>
+              Cancel
+            </Button>
+            <Button isDisabled={amount === 0} onClick={onZap}>
+              Zap
+            </Button>
+          </Flex>
+        </Flex>
+      )}
+      <Modal isOpen={showModal} onClose={onZapCancel}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            Zap {data?.name} {amount} sats
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Flex alignItems="center" justifyContent="center">
+              <QRCodeCanvas value={invoice} size={250} />
+            </Flex>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onZapCancel}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {showReply && user && (
         <Flex flexDirection="column">
           <Textarea
             value={comment}
@@ -133,6 +303,16 @@ export default function Reactions({ showUsers = false, event }) {
             </Button>
           </Flex>
         </Flex>
+      )}
+      {showUsers && zappers.length > 0 && (
+        <>
+          {zappers.map(({ id, pubkey, amount }) => (
+            <Flex key={id} alignItems="center">
+              <User showNip={false} pubkey={pubkey} />
+              <Text> zapped {amount} sats</Text>
+            </Flex>
+          ))}
+        </>
       )}
       {showUsers && (
         <>
