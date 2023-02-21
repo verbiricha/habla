@@ -61,19 +61,19 @@ function useProfileQueue({ pubkey }: { pubkey: string }) {
 }
 
 function getCached(pubkey: string) {
-  const cached = window.sessionStorage.getItem(`profile:${pubkey}`);
+  const cached = window.sessionStorage.getItem(`metadata:${pubkey}`);
   if (cached) {
     try {
       return JSON.parse(cached);
     } catch (error) {
       console.error(error);
-      window.sessionStorage.removeItem(`profile:${pubkey}`);
+      window.sessionStorage.removeItem(`metadata:${pubkey}`);
     }
   }
 }
 
 function setCached(pubkey: string, rawMetadata: NostrEvent) {
-  window.sessionStorage.setItem(`profile:${pubkey}`, rawMetadata.content);
+  window.sessionStorage.setItem(`metadata:${pubkey}`, rawMetadata.content);
 }
 
 export function useProfile({
