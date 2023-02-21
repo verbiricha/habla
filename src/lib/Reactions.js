@@ -113,9 +113,6 @@ export default function Reactions({ showUsers = false, event }) {
     }, 0);
   }, [zappers]);
   async function react(content) {
-    if (!user) {
-      return;
-    }
     const ev = {
       content,
       kind: 7,
@@ -125,13 +122,17 @@ export default function Reactions({ showUsers = false, event }) {
         ["a", naddr],
       ],
     };
-    const signed = await signEvent(ev);
-    publish(signed);
+    try {
+      const signed = await signEvent(ev);
+      publish(signed);
+    } catch (error) {
+      toast({
+        title: "Could not comment, create an account first",
+        status: "error",
+      });
+    }
   }
   async function sendComment(content) {
-    if (!user) {
-      return;
-    }
     const ev = {
       content,
       kind: 1,
@@ -142,16 +143,23 @@ export default function Reactions({ showUsers = false, event }) {
         ["a", naddr],
       ],
     };
-    const signed = await sign(ev);
-    publish(signed);
+    try {
+      const signed = await sign(ev);
+      publish(signed);
+      toast({
+        title: "Comment published",
+        status: "success",
+      });
+    } catch (error) {
+      toast({
+        title: "Could not comment, create an account first",
+        status: "error",
+      });
+    }
   }
 
   function onComment() {
     sendComment(comment.trim());
-    toast({
-      title: "Comment published",
-      status: "success",
-    });
     setComment("");
     setShowReply(false);
   }
@@ -174,7 +182,11 @@ export default function Reactions({ showUsers = false, event }) {
         ["relays", ...relays],
       ],
     };
-    return window.nostr.signEvent(ev);
+    try {
+      return window.nostr.signEvent(ev);
+    } catch (error) {
+      console.error("couldn't sign zap request");
+    }
   }
 
   async function onZap() {
@@ -192,6 +204,9 @@ export default function Reactions({ showUsers = false, event }) {
         setInvoice(invoice.pr);
         setShowModal(true);
       }
+    } else {
+      setInvoice(invoice.pr);
+      setShowModal(true);
     }
   }
 
@@ -277,11 +292,20 @@ export default function Reactions({ showUsers = false, event }) {
           <ModalCloseButton />
           <ModalBody>
             <Flex alignItems="center" justifyContent="center">
-              <QRCodeCanvas value={invoice} size={250} />
+              <Box p={4} bg="white" borderRadius="var(--border-radius)">
+                <QRCodeCanvas value={invoice} size={250} />
+              </Box>
             </Flex>
           </ModalBody>
 
           <ModalFooter>
+            <Button
+              colorScheme="purple"
+              mr={3}
+              onClick={() => window.open(`lightning:${invoice}`)}
+            >
+              Open wallet
+            </Button>
             <Button colorScheme="blue" mr={3} onClick={onZapCancel}>
               Close
             </Button>
