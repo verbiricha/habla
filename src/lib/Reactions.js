@@ -4,6 +4,7 @@ import { decode } from "light-bolt11-decoder";
 
 import {
   useToast,
+  Box,
   Flex,
   HStack,
   Button,
@@ -326,11 +327,14 @@ export default function Reactions({ showUsers = false, event }) {
       )}
       {showUsers && zappers.length > 0 && (
         <>
-          {zappers.map(({ id, pubkey, amount }) => (
-            <Flex key={id} alignItems="center">
-              <User showNip={false} pubkey={pubkey} />
-              <Text> zapped {amount} sats</Text>
-            </Flex>
+          {zappers.map(({ id, content, pubkey, amount }) => (
+            <>
+              <Flex key={id} alignItems="center">
+                <User showNip={false} pubkey={pubkey} />
+                <Text> zapped {amount} sats</Text>
+              </Flex>
+              <Text ml="60px">{content}</Text>
+            </>
           ))}
         </>
       )}
@@ -343,7 +347,9 @@ export default function Reactions({ showUsers = false, event }) {
               alignItems="flex-start"
             >
               <User showNip={false} pubkey={ev.pubkey} />
-              <Markdown content={ev.content} tags={ev.tags} />
+              <Box ml="60px">
+                <Markdown content={ev.content} tags={ev.tags} />
+              </Box>
             </Flex>
           ))}
         </>
