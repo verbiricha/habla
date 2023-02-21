@@ -107,7 +107,7 @@ export default function Reactions({ showUsers = false, event }) {
         return { ...getZapRequest(z), amount: getZapAmount(z) };
       })
       .filter((z) => z.pubkey !== event.pubkey);
-  }, [zaps]);
+  }, [zaps, event]);
   const zapsTotal = useMemo(() => {
     return zappers.reduce((acc, { amount }) => {
       return acc + amount;
