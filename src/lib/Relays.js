@@ -22,14 +22,11 @@ export function trimRelayUrl(url) {
   return url.replace("wss://", "");
 }
 
-export function RelayFavicon({ url, children }) {
-  const domain = url
-    .replace("wss://relay.", "https://")
-    .replace("wss://", "https://")
-    .replace("ws://", "http://");
+export function RelayFavicon({ url, children, ...rest }) {
+  const domain = url.replace("wss://", "https://").replace("ws://", "http://");
   return (
     <Tooltip label={url}>
-      <Avatar size="xs" src={`${domain}/favicon.ico`}>
+      <Avatar size="xs" src={`${domain}/favicon.ico`} {...rest}>
         {children}
       </Avatar>
     </Tooltip>
@@ -57,7 +54,7 @@ function Relay({ url, isConnected }) {
   );
 }
 
-export function RelayList({ relays, ...props }) {
+export function RelayList({ relays, showUrl = false, ...props }) {
   const urls = useMemo(() => {
     if (!relays) {
       return [];
@@ -69,9 +66,13 @@ export function RelayList({ relays, ...props }) {
   return (
     <Flex {...props}>
       {urls.map((url) => (
-        <Flex key={url}>
-          <RelayFavicon url={url} />
-          <Text></Text>
+        <Flex alignItems="center" key={url}>
+          <RelayFavicon url={url} mr={2} />
+          {showUrl && (
+            <Text margin={0} my={1} fontFamily="var(--font-mono)" fontSize="md">
+              {url}
+            </Text>
+          )}
         </Flex>
       ))}
     </Flex>

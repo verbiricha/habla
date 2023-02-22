@@ -1,4 +1,4 @@
-import { bech32ToHex, decodeNprofile, decodeNaddr } from "./encoding";
+import { bech32ToHex, decodeNaddr } from "./encoding";
 import { findTag, findTags } from "./tags";
 
 function processContent(ev) {
@@ -7,16 +7,6 @@ function processContent(ev) {
       const hex = bech32ToHex(match);
       const idx = ev.tags.length;
       ev.tags.push(["p", hex, idx]);
-      return `#[${idx}]`;
-    } catch (error) {
-      return match;
-    }
-  };
-  const replaceNprofile = (match: string) => {
-    try {
-      const p = decodeNprofile(match);
-      const idx = ev.tags.length;
-      ev.tags.push(["p", p, idx]);
       return `#[${idx}]`;
     } catch (error) {
       return match;
@@ -49,10 +39,6 @@ function processContent(ev) {
     return `#[${idx}]`;
   };
   const replaced = ev.content
-    .replace(
-      /\bnprofile1[a-z0-9]+\b(?=(?:[^`]*`[^`]*`)*[^`]*$)/g,
-      replaceNprofile
-    )
     .replace(/\bnpub1[a-z0-9]+\b(?=(?:[^`]*`[^`]*`)*[^`]*$)/g, replaceNpub)
     .replace(/\bnote1[a-z0-9]+\b(?=(?:[^`]*`[^`]*`)*[^`]*$)/g, replaceNoteId)
     .replace(/\bnaddr1[a-z0-9]+\b(?=(?:[^`]*`[^`]*`)*[^`]*$)/g, replaceNaddr)

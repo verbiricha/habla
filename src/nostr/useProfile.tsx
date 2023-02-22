@@ -3,7 +3,8 @@ import { atom, useAtom } from "jotai";
 
 import { useNostrEvents } from "./core";
 import { uniqValues } from "./utils";
-import { getJsonKey, setKey } from "../storage";
+import useCached from "../lib/useCached";
+import { setKey } from "../storage";
 
 export interface Metadata {
   name?: string;
@@ -72,6 +73,8 @@ export function useProfile({
   const enabled = _enabled && !!pubkeysToFetch.length;
 
   const [fetchedProfiles, setFetchedProfiles] = useAtom(fetchedProfilesAtom);
+  const data = fetchedProfiles[pubkey];
+  const profile = useCached(`metadata:${pubkey}`, data);
 
   const { onEvent, onSubscribe, isLoading, onDone } = useNostrEvents({
     filter: {
@@ -80,18 +83,6 @@ export function useProfile({
     },
     enabled,
   });
-
-  useEffect(() => {
-    const cached = getJsonKey(`metadata:${pubkey}`);
-    if (cached) {
-      setFetchedProfiles((_profiles: Record<string, Metadata>) => {
-        return {
-          ..._profiles,
-          [pubkey]: cached,
-        };
-      });
-    }
-  }, [pubkey]);
 
   onSubscribe(() => {
     // Reset list
@@ -120,11 +111,9 @@ export function useProfile({
     }
   });
 
-  const data = fetchedProfiles[pubkey];
-
   return {
     isLoading,
     onDone,
-    data,
+    data: profile,
   };
 }

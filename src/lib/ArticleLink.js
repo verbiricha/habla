@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
-import { getMetadata, useNostrEvents } from "../nostr";
+import { getMetadata, getEventId, useNostrEvents } from "../nostr";
+import useCached from "./useCached";
 
 export default function ArticleLink({ d, pubkey }) {
   const { events } = useNostrEvents({
@@ -10,10 +11,12 @@ export default function ArticleLink({ d, pubkey }) {
       kinds: [30023],
     },
   });
-  const ev = events[0];
+  const ev = useCached(`30023:${pubkey}:${d}`, events[0]);
 
   return ev ? (
-    <Link to={`/${pubkey}/${d}`}>{getMetadata(ev)?.title}</Link>
+    <Link key={getEventId(ev)} to={`/${pubkey}/${d}`}>
+      {getMetadata(ev)?.title}
+    </Link>
   ) : (
     <Link to={`/${pubkey}/${d}`}>
       {pubkey}:{d}

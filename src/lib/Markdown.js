@@ -4,9 +4,16 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { visit, SKIP } from "unist-util-visit";
 
-import { bech32ToHex, hexToBech32, encodeTLV } from "../nostr";
+import {
+  bech32ToHex,
+  hexToBech32,
+  encodeTLV,
+  decodeNprofile,
+  decodeNaddr,
+} from "../nostr";
 
 import ArticleLink from "./ArticleLink";
+import NProfile from "./Nprofile";
 import Naddr from "./Naddr";
 import Note from "./Note";
 import User from "./User";
@@ -61,7 +68,9 @@ function extractMentions(fragments, tags) {
             if (ref) {
               switch (ref[0]) {
                 case "p": {
-                  return <User pubkey={ref[1]} />;
+                  return (
+                    <User linkToProfile={false} key={ref[1]} pubkey={ref[1]} />
+                  );
                 }
                 case "e": {
                   return <Note id={ref[1]} />;
@@ -71,7 +80,7 @@ function extractMentions(fragments, tags) {
                 }
                 case "a": {
                   const [, p, d] = ref[1].split(":");
-                  return <ArticleLink d={d} pubkey={p} />;
+                  return <ArticleLink key={ref[1]} d={d} pubkey={p} />;
                 }
                 default:
                   return ref[1];
@@ -94,8 +103,12 @@ function extractNpubs(fragments) {
       if (typeof f === "string") {
         return f.split(/(npub1[a-z0-9]+)/g).map((i) => {
           if (i.startsWith("npub1")) {
-            const id = bech32ToHex(i);
-            return <Mention pubkey={id} />;
+            try {
+              const id = bech32ToHex(i);
+              return <Mention pubkey={id} />;
+            } catch (error) {
+              return i;
+            }
           } else {
             return i;
           }
@@ -112,7 +125,34 @@ function extractNaddrs(fragments) {
       if (typeof f === "string") {
         return f.split(/(naddr1[a-z0-9]+)/g).map((i) => {
           if (i.startsWith("naddr1")) {
-            return <Naddr naddr={i} />;
+            try {
+              const [kind, pubkey, d] = decodeNaddr(i);
+              return <Naddr kind={kind} pubkey={pubkey} d={d} />;
+            } catch (error) {
+              return i;
+            }
+          } else {
+            return i;
+          }
+        });
+      }
+      return f;
+    })
+    .flat();
+}
+
+function extractNprofiles(fragments) {
+  return fragments
+    .map((f) => {
+      if (typeof f === "string") {
+        return f.split(/(nprofile1[a-z0-9]+)/g).map((i) => {
+          if (i.startsWith("nprofile1")) {
+            try {
+              const { pubkey, relays } = decodeNprofile(i);
+              return <NProfile pubkey={pubkey} relays={relays} />;
+            } catch (error) {
+              return i;
+            }
           } else {
             return i;
           }
@@ -129,8 +169,12 @@ function extractNoteIds(fragments) {
       if (typeof f === "string") {
         return f.split(/(note1[a-z0-9]+)/g).map((i) => {
           if (i.startsWith("note1")) {
-            const id = bech32ToHex(i);
-            return <Note id={id} />;
+            try {
+              const id = bech32ToHex(i);
+              return <Note id={id} />;
+            } catch (error) {
+              return i;
+            }
           } else {
             return i;
           }
@@ -143,6 +187,7 @@ function extractNoteIds(fragments) {
 
 function transformText(ps, tags) {
   let fragments = extractMentions(ps, tags);
+  fragments = extractNprofiles(fragments);
   fragments = extractNaddrs(fragments);
   fragments = extractNoteIds(fragments);
   fragments = extractNpubs(fragments);

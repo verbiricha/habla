@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { getMetadata, decodeNaddr, useNostrEvents } from "../nostr";
 
-export default function Naddr({ naddr }) {
-  const [kind, pubkey, d] = naddr ? decodeNaddr(naddr) : [];
+import { getMetadata, useNostrEvents } from "../nostr";
+import useCached from "./useCached";
+
+export default function Naddr({ kind, pubkey, d }) {
   const { events } = useNostrEvents({
     filter: {
       authors: [pubkey],
@@ -10,7 +11,8 @@ export default function Naddr({ naddr }) {
       kinds: [kind],
     },
   });
-  const ev = events[0];
+  const naddr = `${kind}:${pubkey}:${d}`;
+  const ev = useCached(naddr, events[0], { isEvent: true });
   const metadata = ev && getMetadata(ev);
   return metadata ? (
     <Link to={`/a/${naddr}`}>{metadata?.title || naddr}</Link>

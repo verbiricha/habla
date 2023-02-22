@@ -72,8 +72,12 @@ export function decodeNaddr(naddr) {
 }
 
 export function decodeNprofile(nprofile) {
-  const [rawP] = decodeTLV(nprofile);
-  return rawP.value;
+  const [rawP, ...rs] = decodeTLV(nprofile);
+  const dec = new TextDecoder();
+  return {
+    pubkey: rawP.value,
+    relays: rs.map((r) => dec.decode(Buffer.from(r.value, "hex"))),
+  };
 }
 
 export function eventAddress(ev) {

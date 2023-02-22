@@ -5,6 +5,7 @@ import { useNostrEvents, getEventId } from "../nostr";
 import Editor from "./Editor";
 import Event from "./Event";
 import useLoggedInUser from "./useLoggedInUser";
+import useCached from "./useCached";
 
 export default function Article({ d, pubkey }) {
   const { user } = useLoggedInUser();
@@ -17,7 +18,7 @@ export default function Article({ d, pubkey }) {
       kinds: [30023],
     },
   });
-  const ev = events[0];
+  const ev = useCached(`30023:${pubkey}:${d}`, events[0], { isEvent: true });
   const relays = ev && seen[getEventId(ev)];
 
   return (

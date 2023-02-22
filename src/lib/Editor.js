@@ -125,7 +125,7 @@ export default function MyEditor({ event, children }) {
             <MdEditor
               value={content}
               renderHTML={(text) => (
-                <EventPreview event={{ tags: [], content }} />
+                <EventPreview event={{ tags: [], content: text }} />
               )}
               onChange={onChange}
             />
