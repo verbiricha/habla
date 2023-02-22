@@ -19,6 +19,7 @@ export default function User({
   const href = `/${pubkey}`;
   const shortPubkey = `${pubkey.slice(0, 6)}:${pubkey.slice(-6)}`;
   const nipPubkey = useNip05(nip05);
+  const [username, domain] = nip05?.split("@") ?? [];
 
   const component = (
     <Flex flexDirection="column" {...rest}>
@@ -31,7 +32,7 @@ export default function User({
             </Text>
             {showNip && nip05 && nipPubkey === pubkey && (
               <Text as="span" fontSize="sm">
-                {nip05}
+                {username === "_" ? domain : nip05}
               </Text>
             )}
           </Flex>
