@@ -131,8 +131,6 @@ pre {
   max-width: calc(100vw - 30px);
 }
 
-::selection{background-color: #ffff99;}
-
 article {
   white-space: pre-wrap;
   word-break: break-word;
