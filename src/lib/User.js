@@ -24,7 +24,7 @@ export default function User({
   const component = (
     <Flex flexDirection="column" {...rest}>
       <Flex alignItems="center">
-        <Avatar src={picture} name={name || pubkey} />
+        <Avatar size="md" src={picture} name={name || pubkey} />
         {showUsername && (
           <Flex flexDirection="column" ml="3">
             <Text as="span" fontWeight="bold">

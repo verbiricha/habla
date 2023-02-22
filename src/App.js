@@ -1,9 +1,11 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
 import { extendTheme, ChakraProvider, ColorModeScript } from "@chakra-ui/react";
+import "@fontsource/inter/400.css";
+import "@fontsource/ibm-plex-mono/400.css";
 
-import { store } from "./store";
 import "./App.css";
+import { store } from "./store";
 import NostrContext from "./NostrContext";
 import Home from "./pages/index";
 import Tag from "./pages/tag";
@@ -12,12 +14,16 @@ import Article from "./pages/article";
 import Profile from "./pages/profile";
 import Write from "./pages/write";
 
-const config: ThemeConfig = {
-  initialColorMode: "system",
-  useSystemColorMode: true,
+const styles = {
+  global: {
+    body: {
+      color: "font",
+      background: "background",
+    },
+  },
 };
 
-const theme = extendTheme({ config });
+const theme = extendTheme({ styles });
 
 const router = createBrowserRouter([
   {
@@ -51,7 +57,6 @@ function App() {
     <Provider store={store}>
       <NostrContext>
         <ChakraProvider theme={theme}>
-          <ColorModeScript initialColorMode={theme.config.initialColorMode} />
           <RouterProvider router={router} />
         </ChakraProvider>
       </NostrContext>

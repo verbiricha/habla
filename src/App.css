@@ -1,10 +1,17 @@
-@import url('https://fonts.googleapis.com/css?family=Lato:400,700|Lora|Playfair+Display:700i,900');
-
 :root {
-  --highlight: #7139f1;
-  --max-width: 786px;
+  --background: #141414;
+  --font: #FFFFFF;
+  --secondary-font:  #585858;
+  --tertiary-font:  #B7B7B7;
+  --placeholder: #434343;
+  --surface: #181818;
+  --purple: #A966FF;
+  --success: #00FF75;
+  --warning: #FFD600;
   --border-radius: 12px;
-  --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
+  --font: "Inter", sans-serif;
+  --font-headings: "Inter", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
     "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
     "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
 }
@@ -32,147 +39,5 @@ blockquote,
 }
 
 a {
-  text-decoration: underline;
-}
-
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 0;
-}
-
-header h1 {
-  margin: 0;
-  font-family: "Lato", sans-serif;
-  font-size: 48px;
-  text-align: left;
-}
-
-a {
   text-decoration: none;
-}
-
-article {
-  overflow: hidden;
-}
-
-article h1 {
-  font-family: "Playfair Display", serif;
-  font-size: 48px;
-  text-align: left;
-  margin-bottom: 8px;
-}
-
-.custom-html-style h1 {
-  margin: 0 !important;
-}
-
-article h2 {
-  font-family: "Lato", sans-serif;
-  font-size: 32px;
-  font-weight: 700;
-  padding: 0;
-  text-align: left;
-  line-height: 34.5px;
-  letter-spacing: -0.45px;
-}
-
-article h3 {
-  font-family: "Lato", sans-serif;
-  margin: 0 0 24px 0;
-}
-
-article p, article i, article a, article li {
-  margin-top: 21px;
-  font-family: "Lora";
-  font-size: 21px;
-  letter-spacing: -0.03px;
-  line-height: 1.58;
-}
-
-article blockquote {
-  font-family: "Playfair Display", serif;
-  font-size: 30px;
-  font-style: italic;
-  letter-spacing: -0.36px;
-  line-height: 44.4px;
-  overflow-wrap: break-word;
-  /* text-align: center; */
-  padding: 0 0 0 50px;
-}
-
-@media (max-width: 520px) {
-  article blockquote {
-    padding: 0 0 0 12px;
-  }
-}
-
-article .summary {
-  margin: 55px 0 55px 0;
-}
-
-code {
-  font-size: 18px;
-  background: rgba(0,0,0,.05);
-  border-radius: 2px;
-  padding: 3px 5px;
-  font-family: var(--font-mono);
-  overflow-x: scroll;
-  overflow-y: hidden;
-  width: fit-content;
-  max-width: calc(100vw - 30px);
-}
-
-pre {
-  overflow-y: hidden;
-  overflow-x: scroll;
-  width: fit-content;
-  max-width: calc(100vw - 30px);
-}
-
-article {
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-article img {
-  width: 100%;
-  max-height: 420px;
-  border-radius: var(--border-radius);
-  object-fit: contain;
-}
-
-article .article-image {
-  object-fit: cover;
-}
-
-article p a {
-  text-decoration: underline;
-}
-
-.editor {
-  width: 100%;
-  min-height: 60vh;
-}
-
-.editor .rc-md-editor {
-  height: 100%;
-}
-
-ul, ol {
-  padding: 0;
-  margin: 0;
-}
-
-li {
-  list-style: disc inside;
-}
-
-li::marker {
-  color: var(--highlight);
-}
-
-article li p {
-  margin-top: -28px;
 }

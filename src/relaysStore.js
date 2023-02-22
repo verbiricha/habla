@@ -13,6 +13,8 @@ let cachedRelays = null;
 cachedRelays = getJsonKey("relays");
 
 const initialState = {
+  user: null,
+  selectedRelays: cachedRelays ? cachedRelays : defaultRelays,
   relays: cachedRelays ? cachedRelays : defaultRelays,
 };
 
@@ -29,9 +31,16 @@ export const relaySlice = createSlice({
     removeRelay: (state, action) => {
       state.relays = state.relays.filter((r) => r !== action.payload);
     },
+    setSelected: (state, action) => {
+      state.selectedRelays = action.payload;
+    },
+    logIn(state, action) {
+      state.login = action.payload;
+    },
   },
 });
 
-export const { setRelays, addRelay, removeRelay } = relaySlice.actions;
+export const { setRelays, addRelay, removeRelay, setSelected } =
+  relaySlice.actions;
 
 export default relaySlice.reducer;
