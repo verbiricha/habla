@@ -9,6 +9,7 @@ export default function Nprofile({ pubkey, relays }) {
         relays={relays}
         showUrl={true}
         flexDirection="column"
+        mt={4}
         ml={"52px"}
       />
     </>
