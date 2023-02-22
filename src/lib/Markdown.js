@@ -68,9 +68,7 @@ function extractMentions(fragments, tags) {
             if (ref) {
               switch (ref[0]) {
                 case "p": {
-                  return (
-                    <User linkToProfile={false} key={ref[1]} pubkey={ref[1]} />
-                  );
+                  return <User key={ref[1]} pubkey={ref[1]} />;
                 }
                 case "e": {
                   return <Note id={ref[1]} />;
