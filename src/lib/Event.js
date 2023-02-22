@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { Box, Flex, HStack, Heading, Text, Image } from "@chakra-ui/react";
 
-import { getMetadata, encodeNaddr } from "../nostr";
+import { getEventId, getMetadata, encodeNaddr } from "../nostr";
 
+import useCached from "./useCached";
 import User from "./User";
 import Markdown from "./Markdown";
 import Hashtag from "./Hashtag";
@@ -34,6 +35,7 @@ export default function Event({
   children,
   ...rest
 }) {
+  useCached(`event:${getEventId(event)}`, event, { isEvent: true });
   const metadata = getMetadata(event);
   const naddr = encodeNaddr(event);
   const href = `/a/${naddr}`;

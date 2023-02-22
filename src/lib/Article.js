@@ -18,7 +18,9 @@ export default function Article({ d, pubkey }) {
       kinds: [30023],
     },
   });
-  const ev = useCached(`30023:${pubkey}:${d}`, events[0], { isEvent: true });
+  const ev = useCached(`event:30023:${pubkey}:${d}`, events[0], {
+    isEvent: true,
+  });
   const relays = ev && seen[getEventId(ev)];
 
   return (
