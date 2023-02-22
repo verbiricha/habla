@@ -2,6 +2,7 @@ import { Card, CardHeader, CardBody } from "@chakra-ui/react";
 
 import { useNostrEvents } from "../nostr";
 import User from "./User";
+import Markdown from "./Markdown";
 
 export default function Note({ id }) {
   const { events } = useNostrEvents({
@@ -17,7 +18,9 @@ export default function Note({ id }) {
       <CardHeader>
         {note && <User linkToProfile={false} pubkey={note.pubkey} />}
       </CardHeader>
-      <CardBody>{note && note.content}</CardBody>
+      <CardBody>
+        {note && <Markdown content={note.content} tags={note.tags} />}
+      </CardBody>
     </Card>
   );
 }

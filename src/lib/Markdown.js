@@ -196,6 +196,7 @@ export default function Markdown({ tags = [], content }) {
   const components = useMemo(() => {
     return {
       p: ({ children }) => children && transformText(children, tags),
+      a: ({ href }) => <Link to={href}>{href}</Link>,
     };
   }, [tags]);
 
