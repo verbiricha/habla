@@ -23,7 +23,10 @@ export function trimRelayUrl(url) {
 }
 
 export function RelayFavicon({ url, children, ...rest }) {
-  const domain = url.replace("wss://", "https://").replace("ws://", "http://");
+  const domain = url
+    .replace("wss://relay.", "https://")
+    .replace("wss://", "https://")
+    .replace("ws://", "http://");
   return (
     <Tooltip label={url}>
       <Avatar
