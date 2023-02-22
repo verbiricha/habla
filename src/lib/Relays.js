@@ -14,7 +14,7 @@ import {
   InputGroup,
   InputRightElement,
 } from "@chakra-ui/react";
-import { DeleteIcon } from "@chakra-ui/icons";
+import { PhoneIcon, DeleteIcon } from "@chakra-ui/icons";
 
 import useRelays from "./useRelays";
 
@@ -26,7 +26,12 @@ export function RelayFavicon({ url, children, ...rest }) {
   const domain = url.replace("wss://", "https://").replace("ws://", "http://");
   return (
     <Tooltip label={url}>
-      <Avatar size="xs" src={`${domain}/favicon.ico`} {...rest}>
+      <Avatar
+        size="xs"
+        src={`${domain}/favicon.ico`}
+        icon={<PhoneIcon />}
+        {...rest}
+      >
         {children}
       </Avatar>
     </Tooltip>
