@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { atom, useAtom } from "jotai";
-import { Event as NostrEvent } from "nostr-tools";
 
 import { useNostrEvents } from "./core";
 import { uniqValues } from "./utils";
+import { getJsonKey, setKey } from "../storage";
 
 export interface Metadata {
   name?: string;
@@ -60,22 +60,6 @@ function useProfileQueue({ pubkey }: { pubkey: string }) {
   };
 }
 
-function getCached(pubkey: string) {
-  const cached = window.sessionStorage.getItem(`metadata:${pubkey}`);
-  if (cached) {
-    try {
-      return JSON.parse(cached);
-    } catch (error) {
-      console.error(error);
-      window.sessionStorage.removeItem(`metadata:${pubkey}`);
-    }
-  }
-}
-
-function setCached(pubkey: string, rawMetadata: NostrEvent) {
-  window.sessionStorage.setItem(`metadata:${pubkey}`, rawMetadata.content);
-}
-
 export function useProfile({
   pubkey,
   enabled: _enabled = true,
@@ -98,7 +82,7 @@ export function useProfile({
   });
 
   useEffect(() => {
-    const cached = getCached(pubkey);
+    const cached = getJsonKey(`metadata:${pubkey}`);
     if (cached) {
       setFetchedProfiles((_profiles: Record<string, Metadata>) => {
         return {
@@ -119,12 +103,11 @@ export function useProfile({
 
   onEvent((rawMetadata) => {
     try {
-      window.sessionStorage.setItem(`profile:${pubkey}`, rawMetadata.content);
       const metadata: Metadata = JSON.parse(rawMetadata.content);
       const metaPubkey = rawMetadata.pubkey;
 
       if (metadata) {
-        setCached(metaPubkey, rawMetadata);
+        setKey(`metadata:${metaPubkey}`, rawMetadata.content);
         setFetchedProfiles((_profiles: Record<string, Metadata>) => {
           return {
             ..._profiles,

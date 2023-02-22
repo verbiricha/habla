@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { getJsonKey } from "./storage";
 
 const defaultRelays = [
   "wss://relay.snort.social",
@@ -9,14 +10,7 @@ const defaultRelays = [
 ];
 
 let cachedRelays = null;
-try {
-  const cached = window.sessionStorage.getItem("relays");
-  if (cached?.length > 0) {
-    cachedRelays = JSON.parse(cached);
-  }
-} catch (error) {
-  console.error(error);
-}
+cachedRelays = getJsonKey("relays");
 
 const initialState = {
   relays: cachedRelays ? cachedRelays : defaultRelays,

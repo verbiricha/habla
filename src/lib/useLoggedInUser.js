@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 
 import useRelays from "./useRelays";
+import { getKey, setKey, removeKey } from "../storage";
 
 export default function useLoggedInUser() {
   const { set } = useRelays();
   const [user, setUser] = useState(() => {
-    return window.sessionStorage.getItem("login");
+    return getKey("login");
   });
 
   async function logIn() {
@@ -24,13 +25,13 @@ export default function useLoggedInUser() {
   }
 
   function logOut() {
-    window.sessionStorage.removeItem("login");
+    removeKey("login");
     setUser();
   }
 
   useEffect(() => {
     if (user) {
-      window.sessionStorage.setItem("login", user);
+      setKey("login", user);
     }
   }, [user]);
 

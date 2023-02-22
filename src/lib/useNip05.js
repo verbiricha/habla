@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { getKey, setKey } from "../storage";
 
 export async function getPubkey(nip05) {
   const [username, domain] = nip05.split("@");
@@ -23,14 +24,14 @@ export default function useNip05(s) {
     } else if (!s.includes("@")) {
       return s;
     } else {
-      const cached = window.sessionStorage.getItem(s);
+      const cached = getKey(s);
       if (cached) {
         return cached;
       }
       getPubkey(s).then((pk) => {
         if (pk) {
           setPubkey(pk);
-          window.sessionStorage.setItem(s, pk);
+          setKey(s, pk);
         }
       });
     }

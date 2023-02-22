@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@chakra-ui/react";
-import { getMetadata, sign, dateToUnix, useNostr } from "../nostr";
 import {
   Flex,
   Box,
@@ -10,10 +9,11 @@ import {
   Input,
   Textarea,
 } from "@chakra-ui/react";
-
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 
+import { setJsonKey, getJsonKey } from "../storage";
+import { getMetadata, sign, dateToUnix, useNostr } from "../nostr";
 import EventPreview from "./EventPreview";
 import { replaceMentions } from "./Markdown";
 
@@ -31,10 +31,9 @@ export default function MyEditor({ event, children }) {
   const toast = useToast();
 
   useEffect(() => {
-    const rawDraft = window.sessionStorage.getItem("draft");
-    if (rawDraft?.length > 0) {
+    const draft = getJsonKey("draft");
+    if (draft) {
       try {
-        const draft = JSON.parse(rawDraft);
         setTitle(draft.title);
         setSlug(draft.slug);
         setImage(draft.image);
@@ -83,16 +82,13 @@ export default function MyEditor({ event, children }) {
   }
 
   function onSave() {
-    window.sessionStorage.setItem(
-      "draft",
-      JSON.stringify({
-        title,
-        slug,
-        summary,
-        image,
-        content,
-      })
-    );
+    setJsonKey("draft", {
+      title,
+      slug,
+      summary,
+      image,
+      content,
+    });
   }
 
   return (

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { NostrProvider, useNostr } from "./nostr";
 import useRelays from "./lib/useRelays";
+import { setJsonKey } from "./storage";
 
 function NostrConnManager({ children }) {
   const { onDisconnect } = useNostr();
@@ -26,7 +27,7 @@ export default function NostrContext({ children }) {
   const { relays } = useRelays();
 
   useEffect(() => {
-    window.sessionStorage.setItem("relays", JSON.stringify(relays));
+    setJsonKey("relays", relays);
   }, [relays]);
 
   return (
