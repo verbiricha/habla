@@ -15,10 +15,6 @@ export default function useLoggedInUser() {
       try {
         const pk = await window.nostr.getPublicKey();
         dispatch(setUser(pk));
-        if (window.nostr.getRelays) {
-          const rs = await window.nostr.getRelays();
-          set(Object.keys(rs));
-        }
       } catch (error) {
         console.error(error);
       }
