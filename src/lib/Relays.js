@@ -26,7 +26,8 @@ export function RelayFavicon({ url, children, ...rest }) {
   const domain = url
     .replace("wss://relay.", "https://")
     .replace("wss://", "https://")
-    .replace("ws://", "http://");
+    .replace("ws://", "http://")
+    .replace(/\/$/, "");
   return (
     <Tooltip label={url}>
       <Avatar

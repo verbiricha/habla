@@ -52,7 +52,9 @@ export default function Event({
           <RelayList relays={relays} />
         </Flex>
         <Link to={href}>
-          <Heading as="h1">{metadata.title}</Heading>
+          <Heading fontSize="52px" fontFamily="var(--article-heading)" as="h1">
+            {metadata.title}
+          </Heading>
         </Link>
         <Flex alignItems="flex-start">
           {metadata.publishedAt && (

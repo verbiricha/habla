@@ -1,6 +1,7 @@
 import { useBoolean, Flex, IconButton } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
 
+import "./Article.css";
 import { useNostrEvents, getEventId } from "../nostr";
 import Editor from "./Editor";
 import Event from "./Event";
