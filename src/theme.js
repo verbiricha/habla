@@ -12,11 +12,6 @@ import "./App.css";
 
 import { extendTheme } from "@chakra-ui/react";
 
-const config = {
-  initialColorMode: "dark",
-  useSystemColorMode: true,
-};
-
 const styles = {
   global: {
     body: {
@@ -26,4 +21,4 @@ const styles = {
   },
 };
 
-export default extendTheme({ config, styles });
+export default extendTheme({ styles });
