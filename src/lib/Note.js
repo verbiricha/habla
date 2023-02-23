@@ -22,7 +22,7 @@ export default function Note({ id }) {
       <CardHeader>
         {note && <User linkToProfile={false} pubkey={note.pubkey} />}
       </CardHeader>
-      <CardBody>
+      <CardBody mt="-40px" ml="60px">
         {note && <Markdown content={note.content} tags={note.tags} />}
       </CardBody>
     </Card>
