@@ -16,9 +16,9 @@ const user = getKey("p");
 const relays = getJsonKey(`r:${user}`) ?? defaultRelays;
 const follows = getJsonKey(`f:${user}`) ?? [];
 const contacts = getJsonKey(`c:${user}`) ?? [];
-const selectedRelays = relays
-  .map((r) => (r.options.read ? [r.url] : []))
-  .flat();
+const selectedRelays =
+  getJsonKey(`s:${user}`) ??
+  relays.map((r) => (r.options.read ? [r.url] : [])).flat();
 
 const initialState = {
   user,

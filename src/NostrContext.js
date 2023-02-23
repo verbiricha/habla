@@ -7,7 +7,7 @@ import { setJsonKey } from "./storage";
 function NostrConnManager({ children }) {
   const dispatch = useDispatch();
   const { onDisconnect } = useNostr();
-  const { user } = useSelector((s) => s.relay);
+  const { user, selectedRelays } = useSelector((s) => s.relay);
   const { events } = useNostrEvents({
     filter: {
       kinds: [3],
@@ -30,17 +30,24 @@ function NostrConnManager({ children }) {
       const relays = Object.entries(parsed).map(([url, options]) => {
         return { url, options };
       });
-      setJsonKey(`relays:${user}`, relays);
+      setJsonKey(`r:${user}`, relays);
       dispatch(setRelays(relays));
       const follows = last.tags.filter((t) => t[0] === "p").map((t) => t[1]);
       dispatch(setFollows(follows));
-      setJsonKey(`follows:${user}`, follows);
+      setJsonKey(`f:${user}`, follows);
+
       dispatch(setContacts(last.tags));
-      setJsonKey(`contacts:${user}`, last.tags);
+      setJsonKey(`c:${user}`, last.tags);
     } catch (error) {
       console.error(error);
     }
   }, [events, user, dispatch]);
+
+  useEffect(() => {
+    if (user) {
+      setJsonKey(`s:${user}`, selectedRelays);
+    }
+  }, [user, selectedRelays]);
 
   const onDisconnectCallback = (relay) => {
     setTimeout(() => {
