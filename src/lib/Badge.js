@@ -41,7 +41,7 @@ export default function Badge({ ev }) {
           </Flex>
         </Flex>
       </CardHeader>
-      <CardBody mt="-40px" ml="60px">
+      <CardBody mt="-20px" ml="60px">
         {description}
       </CardBody>
     </Card>
