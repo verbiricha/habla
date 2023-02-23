@@ -55,7 +55,6 @@ function useProfileQueue({ pubkey }: { pubkey: string }) {
       return arr;
     });
   }, [pubkey, setQueuedPubkeys, alreadyRequested, requestedPubkeys]);
-
   return {
     pubkeysToFetch: isReadyToFetch ? queuedPubkeys : [],
   };
@@ -68,7 +67,6 @@ export function useProfile({
   pubkey: string;
   enabled?: boolean;
 }) {
-  const [, setRequestedPubkeys] = useAtom(requestedPubkeysAtom);
   const { pubkeysToFetch } = useProfileQueue({ pubkey });
   const enabled = _enabled && !!pubkeysToFetch.length;
 
@@ -76,20 +74,12 @@ export function useProfile({
   const data = fetchedProfiles[pubkey];
   const profile = useCached(`metadata:${pubkey}`, data);
 
-  const { onEvent, onSubscribe, isLoading, onDone } = useNostrEvents({
+  const { onEvent, isLoading, onDone } = useNostrEvents({
     filter: {
       kinds: [0],
       authors: pubkeysToFetch,
     },
     enabled,
-  });
-
-  onSubscribe(() => {
-    // Reset list
-    // (We've already opened a subscription to these pubkeys now)
-    setRequestedPubkeys((_pubkeys) => {
-      return [..._pubkeys, ...pubkeysToFetch].filter(uniqValues);
-    });
   });
 
   onEvent((rawMetadata) => {
