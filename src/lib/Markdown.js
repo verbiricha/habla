@@ -77,8 +77,8 @@ function extractMentions(fragments, tags) {
                   return <Link to={`/t/${ref[1]}`}>{ref[1]}</Link>;
                 }
                 case "a": {
-                  const [, p, d] = ref[1].split(":");
-                  return <ArticleLink key={ref[1]} d={d} pubkey={p} />;
+                  const [k, p, d] = ref[1].split(":");
+                  return <Naddr kind={Number(k)} d={d} pubkey={p} />;
                 }
                 default:
                   return ref[1];

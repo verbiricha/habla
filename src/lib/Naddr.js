@@ -14,6 +14,11 @@ export default function Naddr({ kind, pubkey, d }) {
   });
   const naddr = `${kind}:${pubkey}:${d}`;
   const ev = useCached(naddr, events[0], { isEvent: true });
+
+  if (ev?.kind === 30009) {
+    return <Badge ev={ev} />;
+  }
+
   if (ev?.kind === 30023) {
     const metadata = ev && getMetadata(ev);
     return metadata ? (
@@ -21,10 +26,6 @@ export default function Naddr({ kind, pubkey, d }) {
     ) : (
       <Link to={`/a/${naddr}`}>{naddr}</Link>
     );
-  }
-
-  if (ev?.kind === 30009) {
-    return <Badge ev={ev} />;
   }
 
   return <Link to={`/a/${naddr}`}>{naddr}</Link>;
