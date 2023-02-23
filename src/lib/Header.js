@@ -137,7 +137,7 @@ export default function Header() {
   return (
     <Flex alignItems="center" justifyContent="space-between" as="header" p={4}>
       <Link to="/">
-        <Heading as="h1" display={["none", "block", "block", "none"]}>
+        <Heading as="h1" display={["block", "block", "block", "none"]}>
           H
         </Heading>
         <Heading as="h1" display={["none", "none", "none", "block"]}>
