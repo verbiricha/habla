@@ -71,9 +71,7 @@ export default function NostrContext({ children }) {
 
   return (
     <NostrProvider
-      relayUrls={relays
-        .map(({ url, options }) => (options.read ? [url] : []))
-        .flat()}
+      relayUrls={relays.map(({ url, options }) => url).flat()}
     >
       <NostrConnManager>{children}</NostrConnManager>
     </NostrProvider>
