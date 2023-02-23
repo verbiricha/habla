@@ -21,17 +21,18 @@ export default function useNip05(s) {
   const [pubkey, setPubkey] = useState(() => {
     if (!s) {
       return;
-    } else if (!s.includes("@")) {
+    } else if (!s.includes("@") && s.match(/[0-9A-Fa-f]{64}/g)) {
       return s;
     } else {
-      const cached = getKey(s);
+      const key = !s.includes("@") ? `_@${s}` : s;
+      const cached = getKey(key);
       if (cached) {
         return cached;
       }
-      getPubkey(s).then((pk) => {
+      getPubkey(key).then((pk) => {
         if (pk) {
           setPubkey(pk);
-          setKey(s, pk);
+          setKey(key, pk);
         }
       });
     }

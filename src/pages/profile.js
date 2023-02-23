@@ -2,9 +2,11 @@ import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
 import Layout from "../lib/Layout";
 import UserProfile from "../lib/Profile";
+import useNip05 from "../lib/useNip05";
 
 export default function Profile() {
   const { p } = useParams();
+  const pubkey = useNip05(p);
 
   return (
     <>
@@ -13,7 +15,7 @@ export default function Profile() {
         <title>Habla</title>
       </Helmet>
       <Layout>
-        <UserProfile pubkey={p} />
+        <UserProfile pubkey={pubkey} />
       </Layout>
     </>
   );
