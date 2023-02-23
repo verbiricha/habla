@@ -37,7 +37,7 @@ export default function Badge({ ev }) {
             <Text color="secondary.300" fontSize="xs">
               issued by
             </Text>
-            <User size="xs" linkToProfile={false} pubkey={ev.pubkey} />
+            <User size="xs" pubkey={ev.pubkey} />
           </Flex>
         </Flex>
       </CardHeader>
