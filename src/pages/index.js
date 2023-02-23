@@ -52,7 +52,7 @@ export default function Home() {
       </Helmet>
       <Layout
         aside={
-          <Flex flexDirection="column" as="aside" width={320} p={4} pr={12}>
+          <Flex flexDirection="column" as="aside" width={320} p={4} pr={4}>
             <Relays />
             <Authors events={filteredEvents} />
             <Tags events={filteredEvents} />
@@ -68,7 +68,7 @@ export default function Home() {
             Notes on {selectedRelays[0]}
             {selectedRelays.length > 1 && " & "}
             {selectedRelays.length > 1 && (
-              <Text as="span" color="var(--purple)">
+              <Text as="span" color="purple.500">
                 {selectedRelays.length - 1} others
               </Text>
             )}
@@ -76,8 +76,8 @@ export default function Home() {
         </Flex>
         <Flex justifyContent="flex-end" width="100%">
           <Button
-            color={followsOnly ? "var(--secondary-font)" : "var(--font)"}
-            fontWeight={400}
+            color={followsOnly ? "secondary.500" : "var(--font)"}
+            fontWeight={followsOnly ? 400 : 500}
             fontSize="14px"
             fontFamily="var(--font-mono)"
             lineHeight="16px"
@@ -88,8 +88,8 @@ export default function Home() {
             All
           </Button>
           <Button
-            color={!followsOnly ? "var(--secondary-font)" : "var(--font)"}
-            fontWeight={400}
+            color={!followsOnly ? "secondary.500" : "var(--font)"}
+            fontWeight={followsOnly ? 500 : 400}
             fontSize="14px"
             fontFamily="var(--font-mono)"
             lineHeight="16px"

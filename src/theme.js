@@ -14,16 +14,38 @@ import { extendTheme } from "@chakra-ui/react";
 
 const config = {
   initialColorMode: "dark",
-  useSystemColorMode: false,
+  useSystemColorMode: true,
 };
 
-const styles = {
-  global: {
-    body: {
-      color: "font",
-      background: "background",
-    },
+const colors = {
+  purple: {
+    500: "#A966FF",
+  },
+  primary: {
+    400: "#141414",
+  },
+  secondary: {
+    500: "#585858",
+    300: "#B7B7B7",
+  },
+  green: {
+    500: "#00FF75",
+  },
+  red: {
+    500: "#F72119",
+  },
+  warning: {
+    500: "#FFDD60",
   },
 };
 
-export default extendTheme({ config, styles });
+const styles = {
+  global: (props) => ({
+    body: {
+      color: "foreground",
+      bg: "background",
+    },
+  }),
+};
+
+export default extendTheme({ config, styles, colors });

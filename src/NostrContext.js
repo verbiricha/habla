@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { NostrProvider, useNostr, useNostrEvents } from "./nostr";
-import { setRelays, setFollows } from "./relaysStore";
+import { setRelays, setFollows, setContacts } from "./relaysStore";
 import { setJsonKey } from "./storage";
 
 function NostrConnManager({ children }) {
@@ -35,6 +35,8 @@ function NostrConnManager({ children }) {
       const follows = last.tags.filter((t) => t[0] === "p").map((t) => t[1]);
       dispatch(setFollows(follows));
       setJsonKey(`follows:${user}`, follows);
+      dispatch(setContacts(last.tags));
+      setJsonKey(`contacts:${user}`, last.tags);
     } catch (error) {
       console.error(error);
     }
@@ -62,7 +64,9 @@ export default function NostrContext({ children }) {
 
   return (
     <NostrProvider
-      relayUrls={relays.map((r) => (r.options.read ? [r.url] : [])).flat()}
+      relayUrls={relays
+        .map(({ url, options }) => (options.read ? [url] : []))
+        .flat()}
     >
       <NostrConnManager>{children}</NostrConnManager>
     </NostrProvider>

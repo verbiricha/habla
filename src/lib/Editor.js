@@ -131,7 +131,7 @@ export default function MyEditor({ event, children }) {
             />
           </Box>
           <Stack mt={5} direction="row-reverse" spacing={4} align="center">
-            <Button colorScheme="teal" onClick={() => onPublish()}>
+            <Button colorScheme="purple" onClick={() => onPublish()}>
               Publish
             </Button>
             <Button onClick={() => onSave()}>Save</Button>

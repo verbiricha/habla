@@ -10,6 +10,8 @@ export default function Hashtag({ tag, ...rest }) {
     <Tag
       key={tag}
       cursor="pointer"
+      color="white"
+      background="purple.500"
       size="lg"
       borderRadius="full"
       fontSize="sm"

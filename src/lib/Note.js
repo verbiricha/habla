@@ -3,18 +3,22 @@ import { Card, CardHeader, CardBody } from "@chakra-ui/react";
 import { useNostrEvents } from "../nostr";
 import User from "./User";
 import Markdown from "./Markdown";
+import useColors from "./useColors";
+import useCached from "./useCached";
 
 export default function Note({ id }) {
+  const { surface } = useColors();
+  const cached = useCached(`note:${id}`);
   const { events } = useNostrEvents({
     filter: {
       ids: [id],
       kinds: [1],
     },
+    enabled: !cached,
   });
-  const note = events[0];
-  // todo: note1 link
+  const note = cached || events[0];
   return (
-    <Card background="var(--background)">
+    <Card background={surface}>
       <CardHeader>
         {note && <User linkToProfile={false} pubkey={note.pubkey} />}
       </CardHeader>

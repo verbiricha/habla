@@ -18,23 +18,25 @@ import ArrowDownIcon from "../icons/ArrowDown";
 import Login from "./Login";
 import { RelayFavicon } from "./Relays";
 import useRelays from "./useRelays";
+import useColors from "./useColors";
 
 function RelayList() {
   const { toggle } = useRelays();
   const { selectedRelays, relays } = useSelector((s) => s.relay);
+  const { fg, bg } = useColors();
   return (
     <Menu>
       <MenuButton
         as={IconButton}
         aria-label="Options"
+        color="secondary.500"
         icon={<ArrowDownIcon />}
         variant="unstyled"
-        color="var(--secondary-font)"
       />
-      <MenuList background="var(--background)">
+      <MenuList background={bg}>
         {relays.map(({ url }) => {
           return (
-            <MenuItem as="div" background="var(--background)" key={url}>
+            <MenuItem as="div" background={bg} key={url}>
               <Flex
                 alignItems="center"
                 justifyContent="space-between"
@@ -51,16 +53,11 @@ function RelayList() {
                   <Button
                     variant="unstyled"
                     fontFamily="var(--font-mono)"
-                    color={
-                      selectedRelays.includes(url)
-                        ? "var(--secondary-font)"
-                        : "var(--font)"
-                    }
+                    color={selectedRelays.includes(url) ? "secondary.500" : fg}
                     fontSize="sm"
-                    fontWeight={400}
                     onClick={() => toggle(url)}
                   >
-                    {selectedRelays.includes(url) ? "- read" : "+ read"}
+                    {selectedRelays.includes(url) ? "- hide" : "+ show"}
                   </Button>
                 </Box>
               </Flex>
@@ -74,11 +71,12 @@ function RelayList() {
 
 function SelectedRelay({ url, ...rest }) {
   const { deselect } = useRelays();
+  const { surface } = useColors();
   return (
     <Flex
       alignItems="center"
       padding="8px 9px"
-      background="var(--surface)"
+      backgroundColor={surface}
       borderRadius="var(--border-radius)"
       {...rest}
     >
@@ -99,13 +97,15 @@ function SelectedRelay({ url, ...rest }) {
 
 function RelaySelector(props) {
   const { selectedRelays, relays } = useSelector((s) => s.relay);
+  const { surface } = useColors();
   return (
     <>
       <Flex
         padding="6px 0px 6px 12px"
         alignItems="center"
         flex="1 1 auto"
-        border="1px solid var(--surface)"
+        border="1px solid"
+        borderColor={surface}
         {...props}
       >
         {selectedRelays.slice(0, 2).map((r) => (
@@ -119,7 +119,7 @@ function RelaySelector(props) {
       <Text
         ml="60px"
         mr="10px"
-        color="var(--secondary-font)"
+        color="secondary.500"
         fontFamily="var(--font-mono)"
         display={["none", "none", "none", "block"]}
       >

@@ -231,7 +231,7 @@ export default function Reactions({ showUsers = false, event }) {
           <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
             <IconButton
               variant="unstyled"
-              color={liked ? "var(--purple)" : "var(--font)"}
+              color={liked ? "purple.500" : "var(--font)"}
               icon={<TriangleUpIcon />}
               size="sm"
               onClick={like}
@@ -243,7 +243,7 @@ export default function Reactions({ showUsers = false, event }) {
           <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
             <IconButton
               variant="unstyled"
-              color={commented ? "var(--purple)" : "var(--font)"}
+              color={commented ? "purple.500" : "var(--font)"}
               icon={<ChatIcon />}
               size="sm"
               onClick={() => setShowReply(true)}
@@ -254,7 +254,7 @@ export default function Reactions({ showUsers = false, event }) {
           </Flex>
           <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
             <IconButton
-              color={zapped ? "var(--purple)" : "var(--font)"}
+              color={zapped ? "purple.500" : "var(--font)"}
               variant="unstyled"
               icon={<ZapIcon />}
               size="sm"

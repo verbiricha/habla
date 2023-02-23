@@ -12,9 +12,10 @@ const defaultRelays = [
   { url: "wss://nostr.wine/", options: { read: true, write: true } },
 ];
 
-const user = getKey("login");
-const relays = getJsonKey(`relays:${user}`) ?? defaultRelays;
-const follows = getJsonKey(`follows:${user}`) ?? [];
+const user = getKey("p");
+const relays = getJsonKey(`r:${user}`) ?? defaultRelays;
+const follows = getJsonKey(`f:${user}`) ?? [];
+const contacts = getJsonKey(`c:${user}`) ?? [];
 const selectedRelays = relays
   .map((r) => (r.options.read ? [r.url] : []))
   .flat();
@@ -23,6 +24,7 @@ const initialState = {
   user,
   relays,
   follows,
+  contacts,
   selectedRelays,
 };
 
@@ -45,6 +47,9 @@ export const relaySlice = createSlice({
     setFollows: (state, action) => {
       state.follows = action.payload;
     },
+    setContacts: (state, action) => {
+      state.contacts = action.payload;
+    },
     setUser(state, action) {
       state.user = action.payload;
     },
@@ -58,6 +63,7 @@ export const {
   setSelected,
   setUser,
   setFollows,
+  setContacts,
 } = relaySlice.actions;
 
 export default relaySlice.reducer;

@@ -26,13 +26,13 @@ export default function useLoggedInUser() {
   }
 
   function logOut() {
-    removeKey("login");
+    removeKey("p");
     dispatch(setUser());
   }
 
   useEffect(() => {
     if (user) {
-      setKey("login", user);
+      setKey("p", user);
     }
   }, [user]);
 

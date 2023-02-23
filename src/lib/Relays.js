@@ -50,7 +50,9 @@ function Relay({ url, isConnected }) {
         <RelayFavicon url={url}>
           {isConnected && <AvatarBadge boxSize="1.25em" bg="green.500" />}
         </RelayFavicon>
-        <Text ml={2}>{url}</Text>
+        <Text fontFamily="var(--font-mono)" fontSize="12px" ml={2}>
+          {url}
+        </Text>
         <DeleteIcon
           cursor="pointer"
           onClick={() => remove(url)}
@@ -110,7 +112,7 @@ export default function Relays(props) {
           <Relay isConnected={connected.includes(url)} key={url} url={url} />
         ))}
       </Flex>
-      <InputGroup size="md" mb={6}>
+      <InputGroup size="md" mb={6} mt={3}>
         <Input
           pr="4.5rem"
           value={relay}
