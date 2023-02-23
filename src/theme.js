@@ -7,6 +7,7 @@ import "@fontsource/lato/400.css";
 import "@fontsource/lato/700.css";
 import "@fontsource/playfair-display/700.css";
 import "@fontsource/playfair-display/900.css";
+import { mode } from "@chakra-ui/theme-tools";
 
 import "./App.css";
 
@@ -42,8 +43,8 @@ const colors = {
 const styles = {
   global: (props) => ({
     body: {
-      color: "foreground",
-      bg: "background",
+      background: mode('#FDFDFF', '#141414')(props),
+      color: mode('#141414', '#FDFDFF')(props),
     },
   }),
 };

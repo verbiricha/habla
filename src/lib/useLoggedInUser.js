@@ -1,13 +1,11 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import useRelays from "./useRelays";
 import { setUser } from "../relaysStore";
 import { setKey, removeKey } from "../storage";
 
 export default function useLoggedInUser() {
   const dispatch = useDispatch();
-  const { set } = useRelays();
   const { user } = useSelector((s) => s.relay);
 
   async function logIn() {
