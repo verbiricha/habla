@@ -1,6 +1,6 @@
 import { RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ColorModeScript, ChakraProvider } from "@chakra-ui/react";
 
 import { store } from "./store";
 import NostrContext from "./NostrContext";
