@@ -91,7 +91,6 @@ export function RelayList({ relays, showUrl = false, ...props }) {
 export default function Relays(props) {
   const { connectedRelays } = useNostr();
   const connected = connectedRelays.map(({ url }) => url);
-
   const { relays } = useRelays();
   const [relay, setRelay] = useState("");
   const isValidRelay = relay.startsWith("ws://") || relay.startsWith("wss://");

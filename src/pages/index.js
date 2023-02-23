@@ -9,6 +9,7 @@ import Authors from "../lib/Authors";
 import Tags from "../lib/Tags";
 import Layout from "../lib/Layout";
 import Feed from "../lib/Feed";
+import Relays from "../lib/Relays";
 
 export default function Home() {
   const [followsOnly, setFollowsOnly] = useState(false);
@@ -52,6 +53,7 @@ export default function Home() {
       <Layout
         aside={
           <Flex flexDirection="column" as="aside" width={320} p={4} pr={12}>
+            <Relays />
             <Authors events={filteredEvents} />
             <Tags events={filteredEvents} />
           </Flex>
