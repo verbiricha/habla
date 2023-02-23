@@ -49,7 +49,7 @@ function RelayList() {
                     {url}
                   </Text>
                 </Flex>
-                <Box pl="120px">
+                <Box pl="20px">
                   <Button
                     variant="unstyled"
                     fontFamily="var(--font-mono)"
@@ -111,7 +111,11 @@ function RelaySelector(props) {
         {selectedRelays.slice(0, 2).map((r) => (
           <SelectedRelay key={r} url={r} mr={2} />
         ))}
-        {selectedRelays.length > 2 && <Text>+{selectedRelays.length - 2}</Text>}
+        {selectedRelays.length > 2 && (
+          <Text display={["none", "none", "block"]}>
+            +{selectedRelays.length - 2}
+          </Text>
+        )}
         <Box ml="auto">
           <RelayList />
         </Box>
@@ -133,7 +137,7 @@ export default function Header() {
   return (
     <Flex alignItems="center" justifyContent="space-between" as="header" p={4}>
       <Link to="/">
-        <Heading as="h1" display={["block", "block", "block", "none"]}>
+        <Heading as="h1" display={["none", "block", "block", "none"]}>
           H
         </Heading>
         <Heading as="h1" display={["none", "none", "none", "block"]}>
