@@ -1,19 +1,20 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 import useRelays from "./useRelays";
-import { getKey, setKey, removeKey } from "../storage";
+import { setUser } from "../relaysStore";
+import { setKey, removeKey } from "../storage";
 
 export default function useLoggedInUser() {
+  const dispatch = useDispatch();
   const { set } = useRelays();
-  const [user, setUser] = useState(() => {
-    return getKey("login");
-  });
+  const { user } = useSelector((s) => s.relay);
 
   async function logIn() {
     if (window.nostr) {
       try {
         const pk = await window.nostr.getPublicKey();
-        setUser(pk);
+        dispatch(setUser(pk));
         if (window.nostr.getRelays) {
           const rs = await window.nostr.getRelays();
           set(Object.keys(rs));
@@ -26,7 +27,7 @@ export default function useLoggedInUser() {
 
   function logOut() {
     removeKey("login");
-    setUser();
+    dispatch(setUser());
   }
 
   useEffect(() => {

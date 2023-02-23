@@ -35,7 +35,6 @@ import {
   findTag,
 } from "../nostr";
 import { useLnURLService, loadInvoice } from "./LNUrl";
-import useLoggedInUser from "./useLoggedInUser";
 import Markdown from "./Markdown";
 import User from "./User";
 import ZapIcon from "./Zap";
@@ -71,9 +70,8 @@ function getZapAmount(zap) {
 
 export default function Reactions({ showUsers = false, event }) {
   const { publish } = useNostr();
-  const { relays } = useSelector((s) => s.relay);
+  const { user, relays } = useSelector((s) => s.relay);
   const toast = useToast();
-  const { user } = useLoggedInUser();
   const naddr = eventAddress(event);
   const { events } = useNostrEvents({
     filter: {
@@ -99,6 +97,7 @@ export default function Reactions({ showUsers = false, event }) {
   const comments = events.filter(
     (e) => e.kind === 1 && e.pubkey !== event.pubkey
   );
+  const commented = comments.find((e) => e.pubkey === user);
   const zaps = events.filter((e) => e.kind === 9735);
   const zappers = useMemo(() => {
     return zaps
@@ -107,6 +106,7 @@ export default function Reactions({ showUsers = false, event }) {
       })
       .filter((z) => z.pubkey !== event.pubkey);
   }, [zaps, event]);
+  const zapped = zappers.find((z) => z.pubkey === user);
   const zapsTotal = useMemo(() => {
     return zappers.reduce((acc, { amount }) => {
       return acc + amount;
@@ -218,6 +218,12 @@ export default function Reactions({ showUsers = false, event }) {
     setShowModal(false);
   }
 
+  function like() {
+    if (!liked) {
+      react("+");
+    }
+  }
+
   return (
     <>
       <Flex>
@@ -225,10 +231,10 @@ export default function Reactions({ showUsers = false, event }) {
           <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
             <IconButton
               variant="unstyled"
-              isDisabled={liked}
+              color={liked ? "var(--purple)" : "var(--font)"}
               icon={<TriangleUpIcon />}
               size="sm"
-              onClick={() => react("+")}
+              onClick={like}
             />
             <Text as="span" ml={4} fontSize="xl">
               {likes.length}
@@ -237,6 +243,7 @@ export default function Reactions({ showUsers = false, event }) {
           <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
             <IconButton
               variant="unstyled"
+              color={commented ? "var(--purple)" : "var(--font)"}
               icon={<ChatIcon />}
               size="sm"
               onClick={() => setShowReply(true)}
@@ -247,6 +254,7 @@ export default function Reactions({ showUsers = false, event }) {
           </Flex>
           <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
             <IconButton
+              color={zapped ? "var(--purple)" : "var(--font)"}
               variant="unstyled"
               icon={<ZapIcon />}
               size="sm"

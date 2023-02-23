@@ -14,7 +14,7 @@ export default function Note({ id }) {
   const note = events[0];
   // todo: note1 link
   return (
-    <Card>
+    <Card background="var(--background)">
       <CardHeader>
         {note && <User linkToProfile={false} pubkey={note.pubkey} />}
       </CardHeader>

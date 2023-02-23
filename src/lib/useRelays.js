@@ -30,5 +30,13 @@ export default function useRelays() {
     }
   }
 
-  return { relays, selectedRelays, add, remove, select, deselect, toggle };
+  return {
+    relays: relays.map(({ url }) => url),
+    selectedRelays,
+    add,
+    remove,
+    select,
+    deselect,
+    toggle,
+  };
 }

@@ -5,7 +5,7 @@ article {
 }
 
 article h1 {
-  font-family: var(--font-mono);
+  font-family: var(--article-heading);
   font-size: 48px;
   text-align: left;
   margin-bottom: 8px;
@@ -16,7 +16,7 @@ article h1 {
 }
 
 article h2 {
-  font-family: var(--font);
+  font-family: var(--article-font);
   font-size: 32px;
   font-weight: 700;
   padding: 0;
@@ -39,7 +39,7 @@ article p, article i, article a, article li {
 }
 
 article blockquote {
-  font-family: var(--font-mono);
+  font-family: var(--article-heading);
   font-size: 30px;
   overflow-wrap: break-word;
   /* text-align: center; */
@@ -100,7 +100,7 @@ article li {
 }
 
 article li::marker {
-  color: var(--highlight);
+  color: var(--purple);
 }
 
 article li p {

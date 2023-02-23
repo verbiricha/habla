@@ -10,6 +10,8 @@
   --warning: #FFD600;
   --border-radius: 12px;
   --font: "Inter", sans-serif;
+  --article-font: "Lato", sans-serif;
+  --article-heading: "Playfair Display", serif;
   --font-headings: "Inter", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
     "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
@@ -40,4 +42,13 @@ blockquote,
 
 a {
   text-decoration: none;
+}
+
+.editor {
+  width: 100%;
+  min-height: 60vh;
+}
+
+.editor .rc-md-editor {
+  height: 100%;
 }
