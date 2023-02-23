@@ -26,8 +26,12 @@ export default function Badge({ ev }) {
         <Flex alignItems="center">
           <Avatar mr={4} src={image} name={name} />
           <Flex flexDirection="column">
-            <Text as="h1">{d}</Text>
-            <Text fontSize="2rem">{name}</Text>
+            <Text fontSize="3rem" lineHeight="2rem">
+              {d}
+            </Text>
+            <Text fontSize="2rem" lineHeight="1.2rem">
+              {name}
+            </Text>
           </Flex>
           <Flex ml="auto" alignSelf="flex-start" flexDirection="column">
             <Text color="secondary.300" fontSize="xs">
@@ -37,7 +41,7 @@ export default function Badge({ ev }) {
           </Flex>
         </Flex>
       </CardHeader>
-      <CardBody>{description}</CardBody>
+      <CardBody ml="60px">{description}</CardBody>
     </Card>
   );
 }
