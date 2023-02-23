@@ -58,7 +58,12 @@ export default function Event({
         </Link>
         <Flex alignItems="flex-start">
           {metadata.publishedAt && (
-            <Text as="time" fontSize="sm" fontStyle="italic">
+            <Text
+              as="time"
+              fontSize="sm"
+              fontStyle="italic"
+              color="secondary.500"
+            >
               {formatTime(metadata.publishedAt * 1000)}
             </Text>
           )}
