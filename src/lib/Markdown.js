@@ -75,10 +75,15 @@ function extractMentions(fragments, tags) {
                   return <Link to={`/t/${ref[1]}`}>{ref[1]}</Link>;
                 }
                 case "a": {
-                  const [k, p, d] = ref[1].split(":");
-                  return (
-                    <Naddr naddr={ref[1]} kind={Number(k)} d={d} pubkey={p} />
-                  );
+                  try {
+                    const [k, p, d] = ref[1].split(":");
+                    const naddr = encodeTLV(d, "naddr", [], p, Number(k));
+                    return (
+                      <Naddr naddr={naddr} kind={Number(k)} d={d} pubkey={p} />
+                    );
+                  } catch (error) {
+                    return ref[1];
+                  }
                 }
                 default:
                   return ref[1];
