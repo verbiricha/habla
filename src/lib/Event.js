@@ -42,14 +42,9 @@ export default function Event({
   return (
     <>
       <Box as="article" key={event.id}>
-        <Flex
-          alignItems="center"
-          justifyContent={
-            event.pubkey && showUser ? "space-between" : "flex-end"
-          }
-        >
+        <Flex justifyContent="space-around">
           {event.pubkey && showUser && <User pubkey={event.pubkey} />}
-          <RelayList relays={relays} />
+          <RelayList ml="auto" relays={relays} />
         </Flex>
         <Link to={href}>
           <Heading fontSize="52px" fontFamily="var(--article-heading)" as="h1">

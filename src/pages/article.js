@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
 
@@ -12,6 +13,9 @@ import useNip05 from "../lib/useNip05";
 export default function ArticlePage() {
   const { d, p } = useParams();
   const pubkey = useNip05(p);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <>
       <Helmet>

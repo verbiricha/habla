@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useNostr } from "../nostr";
+import { useNostr, normalizeURL } from "../nostr";
 
 import {
   Box,
@@ -18,10 +18,6 @@ import { PhoneIcon, DeleteIcon } from "@chakra-ui/icons";
 
 import useRelays from "./useRelays";
 
-export function trimRelayUrl(url) {
-  return url.replace("wss://", "");
-}
-
 export function RelayFavicon({ url, children, ...rest }) {
   const domain = url
     .replace("wss://relay.", "https://")
@@ -29,7 +25,7 @@ export function RelayFavicon({ url, children, ...rest }) {
     .replace("ws://", "http://")
     .replace(/\/$/, "");
   return (
-    <Tooltip label={url}>
+    <Tooltip label={normalizeURL(url)}>
       <Avatar
         size="xs"
         src={`${domain}/favicon.ico`}
@@ -51,7 +47,7 @@ function Relay({ url, isConnected }) {
           {isConnected && <AvatarBadge boxSize="1.25em" bg="green.500" />}
         </RelayFavicon>
         <Text fontFamily="var(--font-mono)" fontSize="12px" ml={2}>
-          {url}
+          {normalizeURL(url)}
         </Text>
         <DeleteIcon
           cursor="pointer"
@@ -81,7 +77,7 @@ export function RelayList({ relays, showUrl = false, ...props }) {
           <RelayFavicon url={url} mr={2} />
           {showUrl && (
             <Text margin={0} my={1} fontFamily="var(--font-mono)" fontSize="md">
-              {url}
+              {normalizeURL(url)}
             </Text>
           )}
         </Flex>
@@ -91,14 +87,14 @@ export function RelayList({ relays, showUrl = false, ...props }) {
 }
 
 export default function Relays(props) {
-  const { connectedRelays } = useNostr();
-  const connected = connectedRelays.map(({ url }) => url);
+  const { pool, connectedRelays } = useNostr();
   const { relays } = useRelays();
   const [relay, setRelay] = useState("");
   const isValidRelay = relay.startsWith("ws://") || relay.startsWith("wss://");
   const { add } = useRelays();
   const handleClick = () => {
     add(relay);
+    pool.ensureRelay(relay);
     setRelay("");
   };
 
@@ -109,7 +105,13 @@ export default function Relays(props) {
       </Heading>
       <Flex flexDirection={"column"} {...props}>
         {relays.map((url) => (
-          <Relay isConnected={connected.includes(url)} key={url} url={url} />
+          <>
+            <Relay
+              isConnected={connectedRelays.includes(normalizeURL(url))}
+              key={url}
+              url={url}
+            />
+          </>
         ))}
       </Flex>
       <InputGroup size="md" mb={6} mt={3}>

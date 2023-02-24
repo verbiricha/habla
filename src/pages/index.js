@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 
 import { Flex, Button, Heading, Text } from "@chakra-ui/react";
 
-import { getEventId, useNostrEvents } from "../nostr";
+import { useNostrEvents, normalizeURL } from "../nostr";
 import Authors from "../lib/Authors";
 import Tags from "../lib/Tags";
 import Layout from "../lib/Layout";
@@ -14,23 +14,29 @@ import Relays from "../lib/Relays";
 export default function Home() {
   const [followsOnly, setFollowsOnly] = useState(false);
   const { follows, selectedRelays } = useSelector((s) => s.relay);
-  const { seen, seenByRelay, events } = useNostrEvents({
-    filter: followsOnly
-      ? {
-          kinds: [30023],
-          limit: 256,
-          authors: [follows],
-        }
-      : {
-          kinds: [30023],
-          limit: 256,
-        },
+  const followsFeed = useNostrEvents({
+    filter: {
+      kinds: [30023],
+      limit: 100,
+      authors: follows,
+    },
+    enabled: followsOnly,
   });
+  const allFeed = useNostrEvents({
+    filter: {
+      kinds: [30023],
+      limit: 100,
+    },
+    enabled: !followsOnly,
+  });
+  const { events, seen, seenByRelay } = followsOnly ? followsFeed : allFeed;
+
   const filteredEvents = useMemo(() => {
     if (selectedRelays.length === 0) return events;
 
     const ids = selectedRelays.reduce((acc, r) => {
-      const seenInRelay = seenByRelay[r];
+      const normalized = normalizeURL(r);
+      const seenInRelay = seen[normalized];
       if (seenInRelay) {
         Array.from(seenInRelay).forEach((i) => {
           acc.add(i);
@@ -40,9 +46,9 @@ export default function Home() {
     }, new Set());
 
     return events
-      .filter((ev) => ids.has(getEventId(ev)))
+      .filter((ev) => ids.has(ev.id))
       .filter((ev) => (followsOnly ? follows.includes(ev.pubkey) : true));
-  }, [events, selectedRelays, seenByRelay, follows, followsOnly]);
+  }, [events, seen, selectedRelays, follows, followsOnly]);
 
   return (
     <>
@@ -99,7 +105,7 @@ export default function Home() {
             Follows
           </Button>
         </Flex>
-        <Feed seen={seen} events={filteredEvents} />
+        <Feed events={filteredEvents} seenByRelay={seenByRelay} />
       </Layout>
     </>
   );

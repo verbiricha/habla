@@ -29,7 +29,7 @@ export default function User({
       <Flex alignItems="center">
         <Avatar size={size} src={picture} name={name || pubkey} />
         {showUsername && (
-          <Flex flexDirection="column" ml="3">
+          <Flex flexDirection="column" ml="3" overflow="hidden">
             <Text as="span" fontWeight="bold">
               {name || shortPubkey}
             </Text>

@@ -39,7 +39,7 @@ export const relaySlice = createSlice({
       state.relays = [...state.relays, action.payload];
     },
     removeRelay: (state, action) => {
-      state.relays = state.relays.filter((r) => r !== action.payload);
+      state.relays = state.relays.filter((r) => r.url !== action.payload);
     },
     setSelected: (state, action) => {
       state.selectedRelays = action.payload;

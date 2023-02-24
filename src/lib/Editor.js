@@ -31,7 +31,7 @@ export default function MyEditor({ event, children }) {
   const toast = useToast();
 
   useEffect(() => {
-    const draft = getJsonKey("draft");
+    const draft = getJsonKey(`draft:${title}`);
     if (draft) {
       try {
         setTitle(draft.title);
@@ -82,7 +82,7 @@ export default function MyEditor({ event, children }) {
   }
 
   function onSave() {
-    setJsonKey("draft", {
+    setJsonKey(`draft:${slug}`, {
       title,
       slug,
       summary,

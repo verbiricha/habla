@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
 
@@ -12,6 +13,9 @@ import Article from "../lib/Article";
 export default function AddressPage() {
   const { naddr } = useParams();
   const [, pubkey, d] = naddr ? decodeNaddr(naddr) : [];
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <>
       <Helmet>

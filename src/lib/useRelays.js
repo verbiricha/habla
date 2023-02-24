@@ -1,14 +1,15 @@
 import { useSelector, useDispatch } from "react-redux";
 
-import { dateToUnix, signEvent, useNostr } from "../nostr";
+import { dateToUnix, signEvent, useNostr, normalizeURL } from "../nostr";
 import { addRelay, removeRelay, setSelected } from "../relaysStore";
 
 export default function useRelays() {
   const dispatch = useDispatch();
-  const { publish } = useNostr();
+  const { publish, pool } = useNostr();
   const { relays, contacts, selectedRelays } = useSelector((s) => s.relay);
 
   async function add(relay) {
+    pool.ensureRelay(relay);
     const newRelay = {
       url: relay,
       options: { read: true, write: true },
@@ -20,7 +21,7 @@ export default function useRelays() {
         acc[url] = options;
         return acc;
       },
-      { [relay]: { read: true, write: true } }
+      { [normalizeURL(relay)]: { read: true, write: true } }
     );
     const ev = {
       kind: 3,
@@ -39,6 +40,7 @@ export default function useRelays() {
   async function remove(relay) {
     dispatch(removeRelay(relay));
     dispatch(setSelected(selectedRelays.filter((r) => r !== relay)));
+    pool.close([relay]);
     // save relay to your profile
     const rs = relays.reduce((acc, { url, options }) => {
       if (url === relay) {

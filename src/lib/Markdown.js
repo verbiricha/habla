@@ -15,7 +15,6 @@ import {
 import NProfile from "./Nprofile";
 import Naddr from "./Naddr";
 import Note from "./Note";
-import User from "./User";
 import Mention from "./Mention";
 
 export const MentionRegex = /(#\[\d+\])/gi;
@@ -67,7 +66,7 @@ function extractMentions(fragments, tags) {
             if (ref) {
               switch (ref[0]) {
                 case "p": {
-                  return <User key={ref[1]} pubkey={ref[1]} />;
+                  return <Mention key={ref[1]} pubkey={ref[1]} />;
                 }
                 case "e": {
                   return <Note id={ref[1]} />;

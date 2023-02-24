@@ -12,7 +12,7 @@ export default function Article({ d, pubkey }) {
   const { user } = useLoggedInUser();
   const isMe = user === pubkey;
   const [isEditing, setIsEditing] = useBoolean(false);
-  const { seen, events } = useNostrEvents({
+  const { seenByRelay, events } = useNostrEvents({
     filter: {
       authors: [pubkey],
       "#d": [d],
@@ -22,7 +22,7 @@ export default function Article({ d, pubkey }) {
   const ev = useCached(`event:30023:${pubkey}:${d}`, events[0], {
     isEvent: true,
   });
-  const relays = ev && seen[getEventId(ev)];
+  const relays = ev && seenByRelay[ev.id];
 
   return (
     <>
@@ -35,8 +35,7 @@ export default function Article({ d, pubkey }) {
       )}
       {ev && !isEditing && (
         <Event
-          key={getEventId(ev)}
-          showUser={false}
+          key={ev.id}
           isPreview={false}
           relays={relays}
           showReactions={true}
