@@ -5,6 +5,7 @@ import { Flex, Box, Avatar, Text } from "@chakra-ui/react";
 import { useProfile } from "../nostr";
 import Markdown from "./Markdown";
 import useNip05 from "./useNip05";
+import useColors from "./useColors";
 
 export default function User({
   linkToProfile = true,
@@ -15,6 +16,7 @@ export default function User({
   pubkey,
   ...rest
 }) {
+  const { fg } = useColors();
   const { data } = useProfile({ pubkey });
   const { name, picture, nip05, about } = data || {};
   const href = `/${pubkey}`;
@@ -49,7 +51,7 @@ export default function User({
     </Flex>
   );
   return linkToProfile ? (
-    <Link style={{ textDecoration: "none" }} to={href}>
+    <Link style={{ textDecoration: "none", color: fg }} to={href}>
       {component}
     </Link>
   ) : (

@@ -12,7 +12,6 @@ import {
   decodeNaddr,
 } from "../nostr";
 
-import ArticleLink from "./ArticleLink";
 import NProfile from "./Nprofile";
 import Naddr from "./Naddr";
 import Note from "./Note";

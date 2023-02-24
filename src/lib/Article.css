@@ -100,10 +100,14 @@ article li {
 }
 
 article li::marker {
-  color: var(--purple);
+  color: #A966FF;
 }
 
 article li p {
   margin-top: -30px;
   margin-left: 16px;
+}
+
+article p > a  {
+  color: #A966FF;
 }
