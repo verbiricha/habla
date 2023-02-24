@@ -2,6 +2,7 @@ import { useNostrEvents, useProfile, getEventId } from "../nostr";
 import { Flex, Text, Avatar, Heading } from "@chakra-ui/react";
 
 import EventItem from "./EventItem";
+import Nip05 from "./nip05";
 
 export default function Profile({ pubkey }) {
   const { data } = useProfile({ pubkey });
@@ -18,7 +19,7 @@ export default function Profile({ pubkey }) {
           <Avatar src={data?.picture} name={data?.name} size="2xl" />
           <Flex ml={8} flexDirection="column">
             <Heading as="h1">{data?.name}</Heading>
-            <Text fontSize="xl">{data?.nip05}</Text>
+            <Nip05 fontSize="xl" pubkey={pubkey} nip05={data?.nip05} />
             <Text>{data?.about}</Text>
           </Flex>
         </Flex>
