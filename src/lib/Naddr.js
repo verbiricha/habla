@@ -4,7 +4,7 @@ import { getMetadata, useNostrEvents } from "../nostr";
 import Badge from "./Badge";
 import useCached from "./useCached";
 
-export default function Naddr({ kind, pubkey, d }) {
+export default function Naddr({ naddr, kind, pubkey, d }) {
   const { events } = useNostrEvents({
     filter: {
       authors: [pubkey],
@@ -12,8 +12,8 @@ export default function Naddr({ kind, pubkey, d }) {
       kinds: [kind],
     },
   });
-  const naddr = `${kind}:${pubkey}:${d}`;
-  const ev = useCached(naddr, events[0], { isEvent: true });
+  const addr = `${kind}:${pubkey}:${d}`;
+  const ev = useCached(addr, events[0], { isEvent: true });
 
   if (ev?.kind === 30009) {
     return <Badge ev={ev} />;

@@ -76,7 +76,9 @@ function extractMentions(fragments, tags) {
                 }
                 case "a": {
                   const [k, p, d] = ref[1].split(":");
-                  return <Naddr kind={Number(k)} d={d} pubkey={p} />;
+                  return (
+                    <Naddr naddr={ref[1]} kind={Number(k)} d={d} pubkey={p} />
+                  );
                 }
                 default:
                   return ref[1];
@@ -123,7 +125,7 @@ function extractNaddrs(fragments) {
           if (i.startsWith("naddr1")) {
             try {
               const [kind, pubkey, d] = decodeNaddr(i);
-              return <Naddr kind={kind} pubkey={pubkey} d={d} />;
+              return <Naddr naddr={i} kind={kind} pubkey={pubkey} d={d} />;
             } catch (error) {
               return i;
             }
