@@ -15,7 +15,7 @@ export default function Tag() {
     filter: {
       kinds: [30023],
       "#t": [t],
-      limit: 100,
+      limit: 256,
     },
   });
   const authors = useMemo(() => {

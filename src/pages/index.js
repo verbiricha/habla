@@ -18,12 +18,12 @@ export default function Home() {
     filter: followsOnly
       ? {
           kinds: [30023],
-          limit: 100,
+          limit: 256,
           authors: [follows],
         }
       : {
           kinds: [30023],
-          limit: 100,
+          limit: 256,
         },
   });
   const filteredEvents = useMemo(() => {
