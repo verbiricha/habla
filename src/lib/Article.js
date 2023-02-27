@@ -36,7 +36,7 @@ export default function Article({ d, pubkey, relays }) {
         <Event
           key={ev.id}
           isPreview={false}
-          relays={relays || seenByRelay[ev.id]}
+          relays={relays || seenByRelay[ev?.id]}
           showReactions={true}
           event={ev}
         >

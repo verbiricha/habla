@@ -42,7 +42,7 @@ export default function Event({
 }) {
   useCached(`event:${getEventId(event)}`, event, { isEvent: true });
   const metadata = getMetadata(event);
-  const naddr = encodeNaddr(event, randomSlice(Array.from(relays), 2));
+  const naddr = encodeNaddr(event); //, randomSlice(Array.from(relays), 3));
   const href = `/a/${naddr}`;
   return (
     <>
