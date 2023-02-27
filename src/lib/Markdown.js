@@ -129,8 +129,16 @@ function extractNaddrs(fragments) {
         return f.split(/(naddr1[a-z0-9]+)/g).map((i) => {
           if (i.startsWith("naddr1")) {
             try {
-              const [kind, pubkey, d] = decodeNaddr(i);
-              return <Naddr naddr={i} kind={kind} pubkey={pubkey} d={d} />;
+              const { kind, pubkey, d, relays } = decodeNaddr(i);
+              return (
+                <Naddr
+                  naddr={i}
+                  kind={kind}
+                  pubkey={pubkey}
+                  d={d}
+                  relays={relays}
+                />
+              );
             } catch (error) {
               return i;
             }
@@ -213,8 +221,13 @@ export default function Markdown({ tags = [], content }) {
           typeof index === "number" &&
           (node.type === "link" || node.type === "linkReference")
         ) {
-          node.url = replaceMentions(node.url, tags);
-          return SKIP;
+          try {
+            node.url = replaceMentions(node.url, tags);
+          } catch (error) {
+            console.error(error);
+          } finally {
+            return SKIP;
+          }
         }
       });
     },

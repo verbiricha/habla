@@ -4,7 +4,7 @@ import User from "./User";
 export default function Nprofile({ pubkey, relays }) {
   return (
     <>
-      <User pubkey={pubkey} />
+      <User pubkey={pubkey} relays={relays} />
       <RelayList
         relays={relays}
         showUrl={true}

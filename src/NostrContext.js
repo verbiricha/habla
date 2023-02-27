@@ -77,7 +77,7 @@ export default function NostrContext({ children }) {
   const relayUrls = relays.map(({ url, options }) => url);
 
   return (
-    <NostrProvider relayUrls={relayUrls}>
+    <NostrProvider debug={false} relayUrls={relayUrls}>
       <NostrConnManager>{children}</NostrConnManager>
     </NostrProvider>
   );

@@ -8,7 +8,7 @@ import Event from "./Event";
 import useLoggedInUser from "./useLoggedInUser";
 import useCached from "./useCached";
 
-export default function Article({ d, pubkey }) {
+export default function Article({ d, pubkey, relays }) {
   const { user } = useLoggedInUser();
   const isMe = user === pubkey;
   const [isEditing, setIsEditing] = useBoolean(false);
@@ -22,7 +22,6 @@ export default function Article({ d, pubkey }) {
   const ev = useCached(`event:30023:${pubkey}:${d}`, events[0], {
     isEvent: true,
   });
-  const relays = ev && seenByRelay[ev.id];
 
   return (
     <>
@@ -37,7 +36,7 @@ export default function Article({ d, pubkey }) {
         <Event
           key={ev.id}
           isPreview={false}
-          relays={relays}
+          relays={relays || seenByRelay[ev.id]}
           showReactions={true}
           event={ev}
         >

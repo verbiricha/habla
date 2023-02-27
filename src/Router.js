@@ -4,6 +4,7 @@ import Tag from "./pages/tag";
 import Address from "./pages/address";
 import Article from "./pages/article";
 import Profile from "./pages/profile";
+import NProfile from "./pages/nprofile";
 import Write from "./pages/write";
 
 export default createBrowserRouter([
@@ -18,6 +19,10 @@ export default createBrowserRouter([
   {
     path: "/a/:naddr",
     element: <Address />,
+  },
+  {
+    path: "/u/:nprofile",
+    element: <NProfile />,
   },
   {
     path: "/:p/:d",

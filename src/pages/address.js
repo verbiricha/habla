@@ -12,7 +12,7 @@ import Article from "../lib/Article";
 
 export default function AddressPage() {
   const { naddr } = useParams();
-  const [, pubkey, d] = naddr ? decodeNaddr(naddr) : [];
+  const { relays, pubkey, d } = naddr ? decodeNaddr(naddr) : [];
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [naddr]);
@@ -30,7 +30,7 @@ export default function AddressPage() {
           </Flex>
         }
       >
-        <Article key={naddr} d={d} pubkey={pubkey} />
+        <Article key={naddr} d={d} pubkey={pubkey} relays={relays} />
       </Layout>
     </>
   );

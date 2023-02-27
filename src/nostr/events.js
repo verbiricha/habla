@@ -14,9 +14,9 @@ function processContent(ev) {
   };
   const replaceNaddr = (match: string) => {
     try {
-      const [k, p, d] = decodeNaddr(match);
+      const { k, pubkey, d } = decodeNaddr(match);
       const idx = ev.tags.length;
-      ev.tags.push(["a", `${k}:${p}:${d}`, idx]);
+      ev.tags.push(["a", `${k}:${pubkey}:${d}`, idx]);
       return `#[${idx}]`;
     } catch (error) {
       return match;

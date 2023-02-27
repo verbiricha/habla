@@ -63,9 +63,11 @@ function useProfileQueue({ pubkey }: { pubkey: string }) {
 
 export function useProfile({
   pubkey,
+  relays,
   enabled: _enabled = true,
 }: {
   pubkey: string;
+  relays?: string[];
   enabled?: boolean;
 }) {
   const [, setRequestedPubkeys] = useAtom(requestedPubkeysAtom);
@@ -81,6 +83,7 @@ export function useProfile({
       kinds: [0],
       authors: pubkeysToFetch,
     },
+    relays,
     enabled,
   });
 

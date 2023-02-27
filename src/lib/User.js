@@ -13,14 +13,15 @@ export default function User({
   showNip = true,
   showAbout = false,
   size = "md",
+  relays,
   pubkey,
   ...rest
 }) {
   const { fg } = useColors();
-  const { data } = useProfile({ pubkey });
+  const { data } = useProfile({ pubkey, relays });
   const { name, picture, nip05, about } = data || {};
   const href = `/${pubkey}`;
-  const shortPubkey = `${pubkey.slice(0, 6)}:${pubkey.slice(-6)}`;
+  const shortPubkey = pubkey && `${pubkey.slice(0, 6)}:${pubkey.slice(-6)}`;
 
   const component = (
     <Flex flexDirection="column" {...rest}>

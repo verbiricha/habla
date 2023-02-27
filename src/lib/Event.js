@@ -26,6 +26,11 @@ function Hashtags({ hashtags }) {
   );
 }
 
+function randomSlice(arr: any[], num: number) {
+  const shuffled = [...arr].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, num);
+}
+
 export default function Event({
   showUser = true,
   isPreview = true,
@@ -37,7 +42,7 @@ export default function Event({
 }) {
   useCached(`event:${getEventId(event)}`, event, { isEvent: true });
   const metadata = getMetadata(event);
-  const naddr = encodeNaddr(event);
+  const naddr = encodeNaddr(event, randomSlice(Array.from(relays), 2));
   const href = `/a/${naddr}`;
   return (
     <>

@@ -138,9 +138,11 @@ export function useNostr() {
 
 export function useNostrEvents({
   filter,
+  relays,
   enabled = true,
 }: {
   filter: Filter;
+  relays?: string[];
   enabled?: boolean;
 }) {
   const {
@@ -180,9 +182,9 @@ export function useNostrEvents({
     return sub.unsub();
   };
 
-  const subscribe = useCallback((filter: Filter) => {
+  const subscribe = useCallback((filter: Filter, relays = relayUrls) => {
     log(debug, "info", `👂 nostr Subscribing to filter:`, filter);
-    const sub = pool.sub(relayUrls, [filter]);
+    const sub = pool.sub(relays, [filter]);
 
     setIsLoading(true);
 
@@ -217,7 +219,7 @@ export function useNostrEvents({
   useEffect(() => {
     if (!enabled) return;
 
-    const sub = subscribe(filter);
+    const sub = subscribe(filter, relays);
     onSubscribeCallback?.(sub);
 
     return () => {

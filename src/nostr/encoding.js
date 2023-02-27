@@ -58,17 +58,28 @@ export function decodeTLV(str) {
   return entries;
 }
 
-export function encodeNaddr(ev) {
+export function encodeNaddr(ev, relays = []) {
   const d = ev.tags.find((t) => t[0] === "d")?.at(1);
-  return encodeTLV(d, "naddr", [], ev.pubkey, ev.kind);
+  return encodeTLV(d, "naddr", relays, ev.pubkey, ev.kind);
+}
+
+function hexToString(value: string) {
+  return Buffer.from(value, "hex").toString();
 }
 
 export function decodeNaddr(naddr) {
-  const [rawD, rawP, rawK] = decodeTLV(naddr);
-  const d = Buffer.from(rawD.value, "hex").toString();
+  const decoded = decodeTLV(naddr);
+  const rawD = decoded.find(({ type }) => type === 0);
+  const d = hexToString(rawD.value);
+  const relays = decoded
+    .filter(({ type }) => type === 1)
+    .map(({ value }) => hexToString(value));
+  const rawK = decoded.find(({ type }) => type === 3);
   const k = Buffer.from(rawK.value, "hex").readUInt32BE();
-  const p = rawP.value;
-  return [k, p, d];
+  const rawP = decoded.find(({ type }) => type === 2);
+  const pubkey = rawP.value;
+  const address = { d, k, pubkey, relays };
+  return address;
 }
 
 export function decodeNprofile(nprofile) {
