@@ -32,7 +32,7 @@ interface NostrContextType {
   connectedRelays: string[];
   onConnect: (_onConnectCallback?: OnConnectFunc) => void;
   onDisconnect: (_onDisconnectCallback?: OnDisconnectFunc) => void;
-  publish: (event: NostrEvent) => void;
+  publish: (event: NostrEvent, relays: string[]) => void;
   pool: any;
   seenByRelay: any;
 }
@@ -102,9 +102,13 @@ export function NostrProvider({
     }
   }, []);
 
-  const publish = (event: NostrEvent) => {
-    log(debug, "info", `Publishing event $(${JSON.stringify(event)})`);
-    return pool.publish(relayUrls, event);
+  const publish = (event: NostrEvent, relays = relayUrls) => {
+    log(
+      debug,
+      "info",
+      `Publishing event $(${JSON.stringify(event)}) to ${relays}`
+    );
+    return pool.publish(relays, event);
   };
 
   const value: NostrContextType = {

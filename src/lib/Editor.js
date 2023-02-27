@@ -8,7 +8,11 @@ import {
   FormLabel,
   Input,
   Textarea,
+  Checkbox,
+  CheckboxGroup,
+  Spinner,
 } from "@chakra-ui/react";
+import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 
@@ -16,10 +20,19 @@ import { setJsonKey, getJsonKey } from "../storage";
 import { getMetadata, sign, dateToUnix, useNostr } from "../nostr";
 import EventPreview from "./EventPreview";
 import { replaceMentions } from "./Markdown";
+import useRelays from "./useRelays";
 
 export default function MyEditor({ event, children }) {
-  const { publish } = useNostr();
+  const { pool } = useNostr();
+  const { relays } = useRelays();
   const metadata = event && getMetadata(event);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [publishOn, setPublishOn] = useState(
+    relays.reduce((acc, r) => {
+      return { ...acc, [r]: true };
+    }, {})
+  );
+  const [publishedOn, setPublishedOn] = useState({});
   const [title, setTitle] = useState(metadata?.title ?? "");
   const [slug, setSlug] = useState(metadata?.d ?? "");
   const [summary, setSummary] = useState(metadata?.summary ?? "");
@@ -72,12 +85,30 @@ export default function MyEditor({ event, children }) {
     };
     try {
       const signed = await sign(ev);
-      publish(signed);
-      toast({
-        title: "Published",
-        status: "success",
+      setIsPublishing(true);
+      const relays = Object.entries(publishOn)
+        .filter(([r, publish]) => publish)
+        .map((r) => r.at(0));
+      for (const r of relays) {
+        await pool.ensureRelay(r);
+      }
+      const pub = pool.publish(relays, signed);
+      pub.on("ok", (r) => {
+        toast({
+          title: `Published to ${r}`,
+          status: "success",
+        });
+        setPublishedOn((po) => {
+          return { ...po, [r]: "ok" };
+        });
+      });
+      pub.on("failed", (r) => {
+        setPublishedOn((po) => {
+          return { ...po, [r]: "failed" };
+        });
       });
     } catch (error) {
+      console.error(error);
       toast({
         title: "Couldn't publish article, please try again",
         status: "error",
@@ -140,8 +171,34 @@ export default function MyEditor({ event, children }) {
             </Button>
             <Button onClick={() => onSave()}>Save</Button>
           </Stack>
-          {children}
         </Box>
+        <CheckboxGroup colorScheme="green" defaultValue={["naruto", "kakashi"]}>
+          <Stack spacing={2} direction={"column"}>
+            {relays.map((r) => (
+              <Checkbox
+                key={r}
+                onChange={(e) =>
+                  setPublishOn({ ...publishOn, [r]: e.target.checked })
+                }
+                isChecked={publishOn[r]}
+              >
+                {r}{" "}
+                {isPublishing &&
+                  publishOn[r] &&
+                  !["ok", "failed"].includes(publishedOn[r]) && (
+                    <Spinner size="sm" />
+                  )}
+                {publishedOn[r] === "ok" && (
+                  <CheckIcon color="green.500" size="sm" />
+                )}
+                {publishedOn[r] === "failed" && (
+                  <CloseIcon color="red.500" size="sm" />
+                )}
+              </Checkbox>
+            ))}
+          </Stack>
+        </CheckboxGroup>
+        {children}
       </Box>
     </Flex>
   );

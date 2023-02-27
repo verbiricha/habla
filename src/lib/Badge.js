@@ -26,10 +26,10 @@ export default function Badge({ ev }) {
         <Flex alignItems="center">
           <Avatar mr={4} src={image} name={name} />
           <Flex flexDirection="column">
-            <Text fontSize="3rem" lineHeight="2rem">
+            <Text as="span" fontSize={["1.5rem", "3rem"]}>
               {d}
             </Text>
-            <Text fontSize="2rem" lineHeight="1.2rem">
+            <Text as="span" fontSize={["1rem", "2rem"]}>
               {name}
             </Text>
           </Flex>

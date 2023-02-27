@@ -20,8 +20,8 @@ export default function User({
   const { fg } = useColors();
   const { data } = useProfile({ pubkey, relays });
   const { name, picture, nip05, about } = data || {};
-  //const href = relays?.length > 0 ? `/u/${encodeNprofile(pubkey, relays)}` : `/${pubkey}`;
-  const href = `/${pubkey}`;
+  const href =
+    relays?.length > 0 ? `/u/${encodeNprofile(pubkey, relays)}` : `/${pubkey}`;
   const shortPubkey = pubkey && `${pubkey.slice(0, 6)}:${pubkey.slice(-6)}`;
 
   const component = (
