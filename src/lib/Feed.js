@@ -7,7 +7,11 @@ export default function Feed({ events, seenByRelay }) {
   return (
     <Stack spacing={12}>
       {events.map((ev) => (
-        <Event key={getEventId(ev)} relays={seenByRelay[ev.id]} event={ev} />
+        <Event
+          key={ev.id}
+          relays={seenByRelay && seenByRelay[ev.id]}
+          event={ev}
+        />
       ))}
     </Stack>
   );
