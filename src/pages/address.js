@@ -15,7 +15,7 @@ export default function AddressPage() {
   const [, pubkey, d] = naddr ? decodeNaddr(naddr) : [];
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+  }, [naddr]);
   return (
     <>
       <Helmet>
@@ -30,7 +30,7 @@ export default function AddressPage() {
           </Flex>
         }
       >
-        <Article d={d} pubkey={pubkey} />
+        <Article key={naddr} d={d} pubkey={pubkey} />
       </Layout>
     </>
   );

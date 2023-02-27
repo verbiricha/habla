@@ -15,7 +15,7 @@ export default function ArticlePage() {
   const pubkey = useNip05(p);
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+  }, [d, p]);
   return (
     <>
       <Helmet>

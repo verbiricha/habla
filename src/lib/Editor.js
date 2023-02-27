@@ -25,9 +25,13 @@ export default function MyEditor({ event, children }) {
   const [summary, setSummary] = useState(metadata?.summary ?? "");
   const [image, setImage] = useState(metadata?.image ?? "");
   const [publishedAt] = useState(metadata?.publishedAt);
-  const [content, setContent] = useState(
-    event?.content ? replaceMentions(event.content, event.tags) : ""
-  );
+  const [content, setContent] = useState(() => {
+    try {
+      return event?.content ? replaceMentions(event.content, event.tags) : "";
+    } catch (error) {
+      return event?.content;
+    }
+  });
   const toast = useToast();
 
   useEffect(() => {
@@ -43,7 +47,7 @@ export default function MyEditor({ event, children }) {
         console.error(error);
       }
     }
-  }, []);
+  }, [title]);
 
   function onChange({ text }) {
     setContent(text);
