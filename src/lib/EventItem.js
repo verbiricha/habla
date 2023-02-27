@@ -14,7 +14,7 @@ function formatTime(time) {
 
 export default function EventItem({ relays, event }) {
   const metadata = getMetadata(event);
-  const href = `/a/${encodeNaddr(event)}`;
+  const href = `/a/${encodeNaddr(event, relays)}`;
   return (
     <Flex flexDirection="column" key={event.id}>
       <Flex justifyContent="space-between">

@@ -40,7 +40,7 @@ export default function Profile({ pubkey, relays }) {
         </Heading>
         {events.map((e) => (
           <EventItem
-            relays={seen[getEventId(e)]}
+            relays={relays || seen[getEventId(e)]}
             key={getEventId(e)}
             event={e}
           />
