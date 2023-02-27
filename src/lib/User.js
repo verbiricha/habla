@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import { Flex, Box, Avatar, Text } from "@chakra-ui/react";
 
-import { useProfile } from "../nostr";
+import { useProfile, encodeNprofile } from "../nostr";
 import Markdown from "./Markdown";
 import Nip05 from "./nip05";
 import useColors from "./useColors";
@@ -20,6 +20,7 @@ export default function User({
   const { fg } = useColors();
   const { data } = useProfile({ pubkey, relays });
   const { name, picture, nip05, about } = data || {};
+  //const href = relays?.length > 0 ? `/u/${encodeNprofile(pubkey, relays)}` : `/${pubkey}`;
   const href = `/${pubkey}`;
   const shortPubkey = pubkey && `${pubkey.slice(0, 6)}:${pubkey.slice(-6)}`;
 

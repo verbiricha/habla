@@ -48,7 +48,9 @@ export default function Event({
     <>
       <Box as="article" key={event.id}>
         <Flex justifyContent="space-around">
-          {event.pubkey && showUser && <User pubkey={event.pubkey} />}
+          {event.pubkey && showUser && (
+            <User pubkey={event.pubkey} relays={relays} />
+          )}
           <RelayList ml="auto" relays={relays} />
         </Flex>
         <Link to={href}>

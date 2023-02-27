@@ -6,7 +6,12 @@ import { findTag } from "./tags";
 export function encodeTLV(hex, prefix, relays, author, kind) {
   const enc = new TextEncoder();
 
-  const buf = enc.encode(hex);
+  let buf;
+  if (prefix === "naddr") {
+    buf = enc.encode(hex);
+  } else {
+    buf = secp.utils.hexToBytes(hex);
+  }
   const tl0 = [0, buf.length, ...buf];
 
   const enc2 = new TextEncoder();
@@ -83,12 +88,18 @@ export function decodeNaddr(naddr) {
 }
 
 export function decodeNprofile(nprofile) {
-  const [rawP, ...rs] = decodeTLV(nprofile);
+  const decoded = decodeTLV(nprofile);
   const dec = new TextDecoder();
   return {
-    pubkey: rawP.value,
-    relays: rs.map((r) => dec.decode(Buffer.from(r.value, "hex"))),
+    pubkey: decoded.find((r) => r.type === 0)?.value,
+    relays: decoded
+      .filter((r) => r.type === 1)
+      .map((r) => dec.decode(Buffer.from(r.value, "hex"))),
   };
+}
+
+export function encodeNprofile(p, relays = []) {
+  return encodeTLV(p, "nprofile", relays);
 }
 
 export function eventAddress(ev) {

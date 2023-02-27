@@ -61,15 +61,14 @@ function Relay({ url, isConnected }) {
   );
 }
 
+function sorted(s: Set<any>) {
+  const sorted = Array.from(s);
+  sorted.sort();
+  return sorted;
+}
+
 export function RelayList({ relays, showUrl = false, ...props }) {
-  const urls = useMemo(() => {
-    if (!relays) {
-      return [];
-    }
-    const sorted = Array.from(relays);
-    sorted.sort();
-    return sorted;
-  }, [relays]);
+  const urls = relays ? sorted(relays) : [];
   return (
     <Flex {...props}>
       {urls.map((url) => (
