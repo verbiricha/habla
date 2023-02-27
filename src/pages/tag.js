@@ -27,9 +27,6 @@ export default function Tag() {
     <Layout
       aside={
         <Flex flexDirection="column" as="aside" width={320} p={4} pr={12}>
-          <Heading fontSize="2xl" as="h3">
-            Relays
-          </Heading>
           <Relays mb={6} />
           <Heading fontSize="2xl" as="h3">
             Authors
