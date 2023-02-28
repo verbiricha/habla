@@ -114,7 +114,7 @@ function Comment({ ev, chains }) {
       <Box ml="60px">
         <Markdown content={ev.content} tags={ev.tags} />
       </Box>
-      <Flex ml="10px">
+      <Flex flexDirection="column" ml="10px">
         {replies?.map((r) => (
           <Comment ev={r} chains={chains} />
         ))}
