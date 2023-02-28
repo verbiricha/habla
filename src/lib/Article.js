@@ -38,6 +38,7 @@ export default function Article({ d, pubkey, relays }) {
           isPreview={false}
           relays={relays || seenByRelay[ev?.id]}
           showReactions={true}
+          showComments={true}
           event={ev}
         >
           {isMe && (

@@ -30,6 +30,7 @@ export default function Event({
   showUser = true,
   isPreview = true,
   showReactions = false,
+  showComments = false,
   event,
   relays,
   children,
@@ -75,7 +76,11 @@ export default function Event({
         {children}
         {!isPreview && <Markdown content={event.content} tags={event.tags} />}
         <Hashtags hashtags={metadata?.hashtags ?? []} />
-        <Reactions showUsers={showReactions} event={event} />
+        <Reactions
+          showUsers={showReactions}
+          showComments={showComments}
+          event={event}
+        />
       </Box>
     </>
   );

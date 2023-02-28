@@ -27,7 +27,6 @@ import {
   getEventId,
   eventAddress,
   dateToUnix,
-  sign,
   useNostr,
   useNostrEvents,
   useProfile,
@@ -35,7 +34,7 @@ import {
   findTag,
 } from "../nostr";
 import { useLnURLService, loadInvoice } from "./LNUrl";
-import Markdown from "./Markdown";
+import Thread, { Reply } from "./Thread";
 import User from "./User";
 import ZapIcon from "./Zap";
 import useWebln from "./useWebln";
@@ -68,14 +67,18 @@ function getZapAmount(zap) {
   }
 }
 
-export default function Reactions({ showUsers = false, event }) {
+export default function Reactions({
+  showComments = false,
+  showUsers = false,
+  event,
+}) {
   const { publish } = useNostr();
   const { user, relays } = useSelector((s) => s.relay);
   const toast = useToast();
   const naddr = eventAddress(event);
   const { events } = useNostrEvents({
     filter: {
-      kinds: [1, 7, 9735],
+      kinds: [7, 9735],
       "#a": [naddr],
     },
   });
@@ -94,10 +97,6 @@ export default function Reactions({ showUsers = false, event }) {
     (e) => e.kind === 7 && e.content === "+" && e.pubkey !== event.pubkey
   );
   const liked = likes.find((e) => e.pubkey === user);
-  const comments = events.filter(
-    (e) => e.kind === 1 && e.pubkey !== event.pubkey
-  );
-  const commented = comments.find((e) => e.pubkey === user);
   const zaps = events.filter((e) => e.kind === 9735);
   const zappers = useMemo(() => {
     return zaps
@@ -131,42 +130,6 @@ export default function Reactions({ showUsers = false, event }) {
         status: "error",
       });
     }
-  }
-  async function sendComment(content) {
-    const ev = {
-      content,
-      kind: 1,
-      created_at: dateToUnix(),
-      tags: [
-        ["e", event.id, "", "root"],
-        ["p", event.pubkey],
-        ["a", naddr],
-      ],
-    };
-    try {
-      const signed = await sign(ev);
-      publish(signed);
-      toast({
-        title: "Comment published",
-        status: "success",
-      });
-    } catch (error) {
-      toast({
-        title: "Could not comment, create an account first",
-        status: "error",
-      });
-    }
-  }
-
-  function onComment() {
-    sendComment(comment.trim());
-    setComment("");
-    setShowReply(false);
-  }
-
-  function onCancel() {
-    setComment("");
-    setShowReply(false);
   }
 
   async function zapRequest(content) {
@@ -242,18 +205,6 @@ export default function Reactions({ showUsers = false, event }) {
           </Flex>
           <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
             <IconButton
-              variant="unstyled"
-              color={commented ? "purple.500" : "var(--font)"}
-              icon={<ChatIcon />}
-              size="sm"
-              onClick={() => setShowReply(true)}
-            />
-            <Text as="span" ml={4} fontSize="xl">
-              {comments.length}
-            </Text>
-          </Flex>
-          <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
-            <IconButton
               color={zapped ? "purple.500" : "var(--font)"}
               variant="unstyled"
               icon={<ZapIcon />}
@@ -264,6 +215,16 @@ export default function Reactions({ showUsers = false, event }) {
               {zapsTotal}
             </Text>
           </Flex>
+          {showComments && (
+            <Flex alignItems="center" flexDirection="row">
+              <IconButton
+                variant="unstyled"
+                icon={<ChatIcon />}
+                size="sm"
+                onClick={() => setShowReply(true)}
+              />
+            </Flex>
+          )}
         </HStack>
       </Flex>
       {showZap && lnurl && (
@@ -320,27 +281,7 @@ export default function Reactions({ showUsers = false, event }) {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      {showReply && (
-        <Flex flexDirection="column">
-          <Textarea
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            autoFocus={true}
-            my={4}
-          />
-          <Flex alignSelf="flex-end">
-            <Button mr={2} variant="outline" onClick={onCancel}>
-              Cancel
-            </Button>
-            <Button
-              isDisabled={comment.trim().length === 0}
-              onClick={onComment}
-            >
-              Publish
-            </Button>
-          </Flex>
-        </Flex>
-      )}
+      <Reply event={event} showReply={showReply} setShowReply={setShowReply} />
       {showUsers && zappers.length > 0 && (
         <>
           {zappers.map(({ id, content, pubkey, amount }) => (
@@ -354,22 +295,7 @@ export default function Reactions({ showUsers = false, event }) {
           ))}
         </>
       )}
-      {showUsers && (
-        <>
-          {comments.map((ev) => (
-            <Flex
-              flexDirection="column"
-              key={getEventId(ev)}
-              alignItems="flex-start"
-            >
-              <User showNip={false} pubkey={ev.pubkey} />
-              <Box ml="60px">
-                <Markdown content={ev.content} tags={ev.tags} />
-              </Box>
-            </Flex>
-          ))}
-        </>
-      )}
+      {showComments && <Thread event={event} />}
       {showUsers && likes.length > 0 && (
         <>
           {likes.map((ev) => (
