@@ -53,26 +53,26 @@ export default function Event({
           <Heading fontSize="52px" fontFamily="var(--article-heading)" as="h1">
             {metadata.title}
           </Heading>
-        </Link>
-        <Flex alignItems="flex-start">
-          {metadata.publishedAt && (
-            <Text
-              as="time"
-              fontSize="sm"
-              fontStyle="italic"
-              color="secondary.500"
-            >
-              {formatTime(metadata.publishedAt * 1000)}
-            </Text>
+          <Flex alignItems="flex-start">
+            {metadata.publishedAt && (
+              <Text
+                as="time"
+                fontSize="sm"
+                fontStyle="italic"
+                color="secondary.500"
+              >
+                {formatTime(metadata.publishedAt * 1000)}
+              </Text>
+            )}
+          </Flex>
+          {metadata.image && (
+            <Image className="article-image" src={metadata.image} />
           )}
-        </Flex>
-        {metadata.image && (
-          <Image className="article-image" src={metadata.image} />
-        )}
-        {metadata.summary && isPreview && <p>{metadata.summary}</p>}
-        {metadata.summary && !isPreview && (
-          <blockquote className="summary">{metadata.summary}</blockquote>
-        )}
+          {metadata.summary && isPreview && <p>{metadata.summary}</p>}
+          {metadata.summary && !isPreview && (
+            <blockquote className="summary">{metadata.summary}</blockquote>
+          )}
+        </Link>
         {children}
         {!isPreview && <Markdown content={event.content} tags={event.tags} />}
         <Hashtags hashtags={metadata?.hashtags ?? []} />
