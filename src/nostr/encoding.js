@@ -7,7 +7,7 @@ export function encodeTLV(hex, prefix, relays, author, kind) {
   const enc = new TextEncoder();
 
   let buf;
-  if (prefix === "naddr") {
+  if (prefix === "naddr" || prefix === "nrelay") {
     buf = enc.encode(hex);
   } else {
     buf = secp.utils.hexToBytes(hex);
@@ -87,6 +87,12 @@ export function decodeNaddr(naddr) {
   return address;
 }
 
+export function decodeNrelay(nrelay) {
+  const decoded = decodeTLV(nrelay);
+  const rawRelay = decoded.find(({ type }) => type === 0);
+  return hexToString(rawRelay.value);
+}
+
 export function decodeNprofile(nprofile) {
   const decoded = decodeTLV(nprofile);
   const dec = new TextDecoder();
@@ -100,6 +106,21 @@ export function decodeNprofile(nprofile) {
 
 export function encodeNprofile(p, relays = []) {
   return encodeTLV(p, "nprofile", relays);
+}
+
+export function decodeNevent(nevent) {
+  const decoded = decodeTLV(nevent);
+  const dec = new TextDecoder();
+  return {
+    id: decoded.find((r) => r.type === 0)?.value,
+    relays: decoded
+      .filter((r) => r.type === 1)
+      .map((r) => dec.decode(Buffer.from(r.value, "hex"))),
+  };
+}
+
+export function encodeNevent(id, relays = []) {
+  return encodeTLV(id, "nevent", relays);
 }
 
 export function eventAddress(ev) {

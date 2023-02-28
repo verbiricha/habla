@@ -6,7 +6,7 @@ import Markdown from "./Markdown";
 import useColors from "./useColors";
 import useCached from "./useCached";
 
-export default function Note({ id }) {
+export default function Note({ id, relays }) {
   const { surface } = useColors();
   const cached = useCached(`note:${id}`);
   const { events } = useNostrEvents({
@@ -14,6 +14,7 @@ export default function Note({ id }) {
       ids: [id],
       kinds: [1],
     },
+    relays,
     enabled: !cached,
   });
   const note = cached || events[0];

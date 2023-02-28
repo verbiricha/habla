@@ -10,8 +10,12 @@ import {
   encodeTLV,
   decodeNprofile,
   decodeNaddr,
+  decodeNevent,
+  decodeNrelay,
 } from "../nostr";
 
+import NEvent from "./NEvent";
+import NRelay from "./NRelay";
 import NProfile from "./Nprofile";
 import Naddr from "./Naddr";
 import Note from "./Note";
@@ -174,6 +178,50 @@ function extractNprofiles(fragments) {
     .flat();
 }
 
+function extractNevents(fragments) {
+  return fragments
+    .map((f) => {
+      if (typeof f === "string") {
+        return f.split(/(nevent1[a-z0-9]+)/g).map((i) => {
+          if (i.startsWith("nevent1")) {
+            try {
+              const { id, relays } = decodeNevent(i);
+              return <NEvent id={id} relays={relays} />;
+            } catch (error) {
+              return i;
+            }
+          } else {
+            return i;
+          }
+        });
+      }
+      return f;
+    })
+    .flat();
+}
+
+function extractNrelays(fragments) {
+  return fragments
+    .map((f) => {
+      if (typeof f === "string") {
+        return f.split(/(nrelay1[a-z0-9]+)/g).map((i) => {
+          if (i.startsWith("nrelay1")) {
+            try {
+              const relay = decodeNrelay(i);
+              return <NRelay relay={relay} />;
+            } catch (error) {
+              return i;
+            }
+          } else {
+            return i;
+          }
+        });
+      }
+      return f;
+    })
+    .flat();
+}
+
 function extractNoteIds(fragments) {
   return fragments
     .map((f) => {
@@ -199,6 +247,8 @@ function extractNoteIds(fragments) {
 function transformText(ps, tags) {
   let fragments = extractMentions(ps, tags);
   fragments = extractNprofiles(fragments);
+  fragments = extractNevents(fragments);
+  fragments = extractNrelays(fragments);
   fragments = extractNaddrs(fragments);
   fragments = extractNoteIds(fragments);
   fragments = extractNpubs(fragments);
