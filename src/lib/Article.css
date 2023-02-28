@@ -57,22 +57,29 @@ article .summary {
 }
 
 article code {
-  font-size: 18px;
-  background: rgba(0,0,0,.05);
-  border-radius: 2px;
-  padding: 3px 5px;
   font-family: var(--font-mono);
-  overflow-x: scroll;
   overflow-y: hidden;
-  width: fit-content;
-  max-width: calc(100vw - 30px);
+  overflow-x: scroll;
 }
 
 article pre {
+  padding: 4px 8px;
+  font-size: 14px;
+  background: rgba(0,0,0,.1);
+  width: calc(100vw - 30px);
+  overflow-x: scroll;
+  -ms-overflow-style: none; /* for Internet Explorer, Edge */
+  scrollbar-width: none; /* for Firefox */
+}
+
+article pre::-webkit-scrollbar {
+  display: none;
+}
+
+article pre code {
   overflow-y: hidden;
   overflow-x: scroll;
-  width: fit-content;
-  max-width: calc(100vw - 30px);
+  width: calc(100vw - 30px);
 }
 
 article img {
