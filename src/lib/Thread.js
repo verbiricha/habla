@@ -1,6 +1,14 @@
 import { useMemo, useState, useEffect } from "react";
 
-import { useToast, Flex, Box, Textarea, Button } from "@chakra-ui/react";
+import {
+  useToast,
+  Flex,
+  Box,
+  Textarea,
+  Button,
+  IconButton,
+} from "@chakra-ui/react";
+import { ChatIcon } from "@chakra-ui/icons";
 
 import {
   dateToUnix,
@@ -44,7 +52,7 @@ function extractThread(ev) {
   return ret;
 }
 
-export function Reply({ event, showReply, setShowReply }) {
+export function Reply({ root, event, showReply, setShowReply }) {
   const toast = useToast();
   const naddr = eventAddress(event);
   const { publish } = useNostr();
@@ -55,12 +63,15 @@ export function Reply({ event, showReply, setShowReply }) {
       content,
       kind: 1,
       created_at: dateToUnix(),
-      tags: [
-        ["e", event.id, "", "root"],
-        ["p", event.pubkey],
-        ["a", naddr],
-      ],
+      tags: [["e", root, "", "root"]],
     };
+    if (root !== event.id) {
+      ev.tags.push(["e", event.id, "", "reply"]);
+    }
+    ev.tags.push(["p", event.pubkey]);
+    if (event.kind === 30023) {
+      ev.tags.push(["a", naddr]);
+    }
     try {
       const signed = await sign(ev);
       publish(signed);
@@ -106,17 +117,33 @@ export function Reply({ event, showReply, setShowReply }) {
   ) : null;
 }
 
-function Comment({ ev, chains }) {
+function Comment({ root, ev, chains }) {
+  const [showReply, setShowReply] = useState(false);
   const replies = chains.get(ev.id);
   return (
     <Flex flexDirection="column" key={getEventId(ev)} alignItems="flex-start">
       <User showNip={false} pubkey={ev.pubkey} />
-      <Box ml="60px">
+      <Box ml="60px" width="calc(100% - 60px)">
         <Markdown content={ev.content} tags={ev.tags} />
+        <IconButton
+          variant="unstyled"
+          icon={<ChatIcon />}
+          color="secondary.500"
+          size="sm"
+          onClick={() => setShowReply((s) => !s)}
+        />
+        <Reply
+          root={root}
+          event={ev}
+          showReply={showReply}
+          setShowReply={setShowReply}
+        />
       </Box>
       <Flex flexDirection="column" ml="10px">
         {replies?.map((r) => (
-          <Comment ev={r} chains={chains} />
+          <>
+            <Comment root={root} ev={r} chains={chains} />
+          </>
         ))}
       </Flex>
     </Flex>
@@ -198,7 +225,7 @@ export default function Thread({ event }) {
   return (
     <>
       {root.events.map((ev) => (
-        <Comment key={ev.id} ev={ev} chains={chains} />
+        <Comment root={ev.id} key={ev.id} ev={ev} chains={chains} />
       ))}
     </>
   );

@@ -221,7 +221,7 @@ export default function Reactions({
                 variant="unstyled"
                 icon={<ChatIcon />}
                 size="sm"
-                onClick={() => setShowReply(true)}
+                onClick={() => setShowReply((s) => !s)}
               />
             </Flex>
           )}
@@ -281,7 +281,12 @@ export default function Reactions({
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Reply event={event} showReply={showReply} setShowReply={setShowReply} />
+      <Reply
+        root={event.id}
+        event={event}
+        showReply={showReply}
+        setShowReply={setShowReply}
+      />
       {showUsers && zappers.length > 0 && (
         <>
           {zappers.map(({ id, content, pubkey, amount }) => (
