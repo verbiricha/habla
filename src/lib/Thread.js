@@ -182,6 +182,9 @@ export default function Thread({ event }) {
     notes.sort((a, b) => b.created_at - a.created_at);
     notes.forEach((n) => {
       const thread = extractThread(n);
+      if (!thread) {
+        return;
+      }
       const reply = thread.replyTo || thread.root;
       if (!result.has(reply)) {
         result.set(reply, [n]);
