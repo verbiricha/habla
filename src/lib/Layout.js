@@ -10,7 +10,7 @@ export default function Layout({ children, aside }) {
       <Flex flexDirection={["column", "column", "column", "row"]}>
         <Box as="main" flex="1 1 auto">
           <Flex flexDirection="column" alignItems="center" px={4}>
-            <Box minWidth={["100%", "100%", "786px"]} maxWidth="786px">
+            <Box minWidth={["100%", "100%", "768px"]} maxWidth="768px">
               {children}
             </Box>
           </Flex>

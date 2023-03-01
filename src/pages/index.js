@@ -13,11 +13,11 @@ import Relays from "../lib/Relays";
 
 export default function Home() {
   const [followsOnly, setFollowsOnly] = useState(false);
-  const { follows, selectedRelays } = useSelector((s) => s.relay);
+  const { follows, selectedRelay } = useSelector((s) => s.relay);
   const followsFeed = useNostrEvents({
     filter: {
       kinds: [30023],
-      limit: 100,
+      limit: 10,
       authors: follows,
     },
     enabled: followsOnly,
@@ -25,30 +25,30 @@ export default function Home() {
   const allFeed = useNostrEvents({
     filter: {
       kinds: [30023],
-      limit: 100,
+      limit: 10,
     },
     enabled: !followsOnly,
   });
   const { events, seen, seenByRelay } = followsOnly ? followsFeed : allFeed;
 
   const filteredEvents = useMemo(() => {
-    if (selectedRelays.length === 0) return events;
+    if (!selectedRelay) {
+      return events;
+    }
 
-    const ids = selectedRelays.reduce((acc, r) => {
-      const normalized = normalizeURL(r);
-      const seenInRelay = seen[normalized];
-      if (seenInRelay) {
-        Array.from(seenInRelay).forEach((i) => {
-          acc.add(i);
-        });
-      }
-      return acc;
-    }, new Set());
+    let ids = new Set([]);
+    const normalized = normalizeURL(selectedRelay);
+    const seenInRelay = seen[normalized];
+    if (seenInRelay) {
+      Array.from(seenInRelay).forEach((i) => {
+        ids.add(i);
+      });
+    }
 
     return events
       .filter((ev) => ids.has(ev.id))
       .filter((ev) => (followsOnly ? follows.includes(ev.pubkey) : true));
-  }, [events, seen, selectedRelays, follows, followsOnly]);
+  }, [events, seen, selectedRelay, follows, followsOnly]);
 
   return (
     <>
@@ -71,13 +71,10 @@ export default function Home() {
             fontFamily="var(--font-mono)"
             fontWeight={500}
           >
-            Notes on {selectedRelays[0]}
-            {selectedRelays.length > 1 && " & "}
-            {selectedRelays.length > 1 && (
-              <Text as="span" color="purple.500">
-                {selectedRelays.length - 1} others
-              </Text>
-            )}
+            Notes on{" "}
+            <Text as="span" color="purple.500">
+              {selectedRelay}
+            </Text>
           </Heading>
         </Flex>
         <Flex justifyContent="flex-end" width="100%">

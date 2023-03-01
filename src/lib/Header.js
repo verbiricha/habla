@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
-  Box,
   Flex,
-  Button,
   Heading,
   Text,
   IconButton,
@@ -13,7 +11,6 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 
-import CloseIcon from "../icons/Close";
 import ArrowDownIcon from "../icons/ArrowDown";
 import Login from "./Login";
 import { RelayFavicon } from "./Relays";
@@ -21,9 +18,9 @@ import useRelays from "./useRelays";
 import useColors from "./useColors";
 
 function RelayList() {
-  const { toggle } = useRelays();
-  const { selectedRelays, relays } = useSelector((s) => s.relay);
-  const { fg, bg } = useColors();
+  const { select } = useRelays();
+  const { bg } = useColors();
+  const { relays } = useSelector((s) => s.relay);
   return (
     <Menu>
       <MenuButton
@@ -36,7 +33,12 @@ function RelayList() {
       <MenuList background={bg}>
         {relays.map(({ url }) => {
           return (
-            <MenuItem as="div" background={bg} key={url}>
+            <MenuItem
+              as="div"
+              background={bg}
+              key={url}
+              onClick={() => select(url)}
+            >
               <Flex
                 alignItems="center"
                 justifyContent="space-between"
@@ -49,17 +51,6 @@ function RelayList() {
                     {url}
                   </Text>
                 </Flex>
-                <Box pl="20px">
-                  <Button
-                    variant="unstyled"
-                    fontFamily="var(--font-mono)"
-                    color={selectedRelays.includes(url) ? "secondary.500" : fg}
-                    fontSize="sm"
-                    onClick={() => toggle(url)}
-                  >
-                    {selectedRelays.includes(url) ? "- hide" : "+ show"}
-                  </Button>
-                </Box>
               </Flex>
             </MenuItem>
           );
@@ -70,7 +61,6 @@ function RelayList() {
 }
 
 function SelectedRelay({ url, ...rest }) {
-  const { deselect } = useRelays();
   const { surface } = useColors();
   return (
     <Flex
@@ -83,53 +73,34 @@ function SelectedRelay({ url, ...rest }) {
       <RelayFavicon url={url} mr={2} />
       <Text
         fontFamily="var(--font-mono)"
-        display={["none", "none", "none", "inline"]}
+        display={["none", "none", "inline"]}
         fontSize="sm"
       >
         {url}
       </Text>
-      <Box cursor="pointer" ml={4} onClick={() => deselect(url)}>
-        <CloseIcon />
-      </Box>
     </Flex>
   );
 }
 
 function RelaySelector(props) {
-  const { selectedRelays, relays } = useSelector((s) => s.relay);
+  const { selectedRelay, relays } = useSelector((s) => s.relay);
   const { surface } = useColors();
   return (
-    <>
-      <Flex
-        padding="6px 0px 6px 12px"
-        alignItems="center"
-        flex="1 1 auto"
-        border="1px solid"
-        borderColor={surface}
-        {...props}
-      >
-        {selectedRelays.slice(0, 2).map((r) => (
-          <SelectedRelay key={r} url={r} mr={2} />
-        ))}
-        {selectedRelays.length > 2 && (
-          <Text display={["none", "none", "block"]}>
-            +{selectedRelays.length - 2}
-          </Text>
-        )}
-        <Box ml="auto">
-          <RelayList />
-        </Box>
+    <Flex alignItems="center" flex="1 1 auto">
+      <Flex borderColor={surface} {...props} ml="18px">
+        <SelectedRelay key={selectedRelay} url={selectedRelay} mr={2} />
+        <RelayList />
       </Flex>
       <Text
-        ml="60px"
+        ml="auto"
         mr="10px"
         color="secondary.500"
         fontFamily="var(--font-mono)"
-        display={["none", "none", "none", "block"]}
+        display={["none", "none", "block"]}
       >
-        {selectedRelays.length}/{relays.length} relays
+        {relays.length} relays
       </Text>
-    </>
+    </Flex>
   );
 }
 
@@ -137,10 +108,10 @@ export default function Header() {
   return (
     <Flex alignItems="center" justifyContent="space-between" as="header" p={4}>
       <Link to="/">
-        <Heading as="h1" display={["block", "block", "block", "none"]}>
+        <Heading as="h1" display={["block", "block", "none"]}>
           H
         </Heading>
-        <Heading as="h1" display={["none", "none", "none", "block"]}>
+        <Heading as="h1" display={["none", "none", "block"]}>
           Habla
         </Heading>
       </Link>

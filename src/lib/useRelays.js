@@ -1,12 +1,12 @@
 import { useSelector, useDispatch } from "react-redux";
 
 import { dateToUnix, signEvent, useNostr, normalizeURL } from "../nostr";
-import { addRelay, removeRelay, setSelected } from "../relaysStore";
+import { addRelay, removeRelay, setRelay } from "../relaysStore";
 
 export default function useRelays() {
   const dispatch = useDispatch();
   const { publish, pool } = useNostr();
-  const { relays, contacts, selectedRelays } = useSelector((s) => s.relay);
+  const { selectedRelay, relays, contacts } = useSelector((s) => s.relay);
 
   async function add(relay) {
     pool.ensureRelay(relay);
@@ -38,8 +38,10 @@ export default function useRelays() {
   }
 
   async function remove(relay) {
+    if (relay === selectedRelay) {
+      return;
+    }
     dispatch(removeRelay(relay));
-    dispatch(setSelected(selectedRelays.filter((r) => r !== relay)));
     pool.close([relay]);
     // save relay to your profile
     const rs = relays.reduce((acc, { url, options }) => {
@@ -64,28 +66,14 @@ export default function useRelays() {
   }
 
   async function select(relay) {
-    dispatch(setSelected(selectedRelays.concat([relay])));
-  }
-
-  function deselect(relay) {
-    dispatch(setSelected(selectedRelays.filter((r) => r !== relay)));
-  }
-
-  function toggle(relay) {
-    if (selectedRelays.includes(relay)) {
-      deselect(relay);
-    } else {
-      select(relay);
-    }
+    dispatch(setRelay(relay));
   }
 
   return {
     relays: relays.map(({ url }) => url),
-    selectedRelays,
     add,
     remove,
     select,
-    deselect,
-    toggle,
+    selectedRelay,
   };
 }

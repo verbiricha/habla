@@ -39,7 +39,7 @@ export function RelayFavicon({ url, children, ...rest }) {
 }
 
 function Relay({ url, isConnected }) {
-  const { remove } = useRelays();
+  const { selectedRelay, remove } = useRelays();
   return (
     <>
       <Flex alignItems="center" mb={2} key={url}>
@@ -49,13 +49,15 @@ function Relay({ url, isConnected }) {
         <Text fontFamily="var(--font-mono)" fontSize="12px" ml={2}>
           {normalizeURL(url)}
         </Text>
-        <DeleteIcon
-          cursor="pointer"
-          onClick={() => remove(url)}
-          ml="auto"
-          color="red.500"
-          size="sm"
-        />
+        {url !== selectedRelay && (
+          <DeleteIcon
+            cursor="pointer"
+            onClick={() => remove(url)}
+            ml="auto"
+            color="red.500"
+            size="sm"
+          />
+        )}
       </Flex>
     </>
   );

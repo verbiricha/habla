@@ -2,12 +2,12 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { NostrProvider, useNostr, useNostrEvents } from "./nostr";
 import { setRelays, setFollows, setContacts } from "./relaysStore";
-import { setJsonKey } from "./storage";
+import { setKey, setJsonKey } from "./storage";
 
 function NostrConnManager({ children }) {
   const dispatch = useDispatch();
   const { onDisconnect } = useNostr();
-  const { relays, user, selectedRelays } = useSelector((s) => s.relay);
+  const { relays, user, selectedRelay } = useSelector((s) => s.relay);
   const { events } = useNostrEvents({
     filter: {
       kinds: [3],
@@ -45,9 +45,9 @@ function NostrConnManager({ children }) {
 
   useEffect(() => {
     if (user) {
-      setJsonKey(`s:${user}`, selectedRelays);
+      setKey(`sel:${user}`, selectedRelay);
     }
-  }, [user, selectedRelays]);
+  }, [user, selectedRelay]);
 
   useEffect(() => {
     if (user) {

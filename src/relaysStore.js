@@ -16,16 +16,15 @@ const user = getKey("p");
 const relays = getJsonKey(`r:${user}`) ?? defaultRelays;
 const follows = getJsonKey(`f:${user}`) ?? [];
 const contacts = getJsonKey(`c:${user}`) ?? [];
-const selectedRelays =
-  getJsonKey(`s:${user}`) ??
-  relays.map((r) => (r.options.read ? [r.url] : [])).flat();
+const selectedRelay =
+  getKey(`sel:${user}`) ?? relays.find((r) => r.options.read)?.url;
 
 const initialState = {
   user,
   relays,
   follows,
   contacts,
-  selectedRelays,
+  selectedRelay,
 };
 
 export const relaySlice = createSlice({
@@ -41,8 +40,8 @@ export const relaySlice = createSlice({
     removeRelay: (state, action) => {
       state.relays = state.relays.filter((r) => r.url !== action.payload);
     },
-    setSelected: (state, action) => {
-      state.selectedRelays = action.payload;
+    setRelay: (state, action) => {
+      state.selectedRelay = action.payload;
     },
     setFollows: (state, action) => {
       state.follows = action.payload;
@@ -60,7 +59,7 @@ export const {
   setRelays,
   addRelay,
   removeRelay,
-  setSelected,
+  setRelay,
   setUser,
   setFollows,
   setContacts,
