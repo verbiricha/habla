@@ -1,7 +1,7 @@
 import { bech32ToHex, decodeNaddr } from "./encoding";
 import { findTag, findTags } from "./tags";
 
-function processContent(ev) {
+function processContent(ev, replaceTags) {
   const replaceNpub = (match: string) => {
     try {
       const hex = bech32ToHex(match);
@@ -41,14 +41,17 @@ function processContent(ev) {
   const replaced = ev.content
     .replace(/\bnpub1[a-z0-9]+\b(?=(?:[^`]*`[^`]*`)*[^`]*$)/g, replaceNpub)
     .replace(/\bnote1[a-z0-9]+\b(?=(?:[^`]*`[^`]*`)*[^`]*$)/g, replaceNoteId)
-    .replace(/\bnaddr1[a-z0-9]+\b(?=(?:[^`]*`[^`]*`)*[^`]*$)/g, replaceNaddr)
-    // eslint-disable-next-line no-useless-escape
-    .replace(/(#[^\s!@#$%^&*()=+.\/,\[{\]};:'"?><]+)/g, replaceHashtag);
-  ev.content = replaced;
+    .replace(/\bnaddr1[a-z0-9]+\b(?=(?:[^`]*`[^`]*`)*[^`]*$)/g, replaceNaddr);
+  ev.content = replaceTags
+    ? replaced.replace(
+        /(#[^\s!@#$%^&*()=+.\/,\[{\]};:'"?><]+)/g,
+        replaceHashtag
+      )
+    : replaced;
 }
 
-export async function sign(ev) {
-  processContent(ev);
+export async function sign(ev, replaceTags = true) {
+  processContent(ev, replaceTags);
   return await window.nostr.signEvent(ev);
 }
 

@@ -38,6 +38,9 @@ export default function MyEditor({ event, children }) {
   const [summary, setSummary] = useState(metadata?.summary ?? "");
   const [image, setImage] = useState(metadata?.image ?? "");
   const [publishedAt] = useState(metadata?.publishedAt);
+  const [hashtags, setHashtags] = useState(
+    metadata?.hashtags?.join(", ") ?? ""
+  );
   const [content, setContent] = useState(() => {
     try {
       return event?.content ? replaceMentions(event.content, event.tags) : "";
@@ -56,6 +59,7 @@ export default function MyEditor({ event, children }) {
         setImage(draft.image);
         setSummary(draft.summary);
         setContent(draft.content);
+        setHashtags(draft.hashtags);
       } catch (error) {
         console.error(error);
       }
@@ -68,11 +72,17 @@ export default function MyEditor({ event, children }) {
 
   async function onPublish() {
     const createdAt = dateToUnix();
+    const htags = hashtags
+      .split(",")
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0)
+      .map((t) => ["t", t]);
     const tags = [
       ["d", slug],
       ["title", title],
       ["summary", summary],
       ["published_at", publishedAt ? String(publishedAt) : String(createdAt)],
+      ...htags,
     ];
     if (image?.length > 0) {
       tags.push(["image", image]);
@@ -84,7 +94,7 @@ export default function MyEditor({ event, children }) {
       tags,
     };
     try {
-      const signed = await sign(ev);
+      const signed = await sign(ev, false);
       setIsPublishing(true);
       const relays = Object.entries(publishOn)
         .filter(([r, publish]) => publish)
@@ -123,6 +133,7 @@ export default function MyEditor({ event, children }) {
       summary,
       image,
       content,
+      hashtags,
     });
   }
 
@@ -153,6 +164,13 @@ export default function MyEditor({ event, children }) {
             id="title"
             value={summary}
             onChange={(ev) => setSummary(ev.target.value)}
+            size="md"
+          />
+          <FormLabel>Tags</FormLabel>
+          <Input
+            value={hashtags}
+            placeholder="List of tags separated by comma: nostr, markdown"
+            onChange={(ev) => setHashtags(ev.target.value)}
             size="md"
           />
           <FormLabel>Content</FormLabel>
