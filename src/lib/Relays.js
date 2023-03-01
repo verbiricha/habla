@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { useNostr, normalizeURL } from "../nostr";
 
 import {
@@ -94,9 +93,9 @@ export function RelayList({ relays, showUrl = false, ...props }) {
 function Nip({ n }) {
   const href = `https://nips.be/${n}`;
   return (
-    <Link to={href}>
+    <a target="_blank" rel="noopener noreferrer" href={href}>
       <Text>{n}</Text>
-    </Link>
+    </a>
   );
 }
 
