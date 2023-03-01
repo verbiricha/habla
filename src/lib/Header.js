@@ -35,6 +35,7 @@ function RelayList() {
           return (
             <MenuItem
               as="div"
+              cursor="pointer"
               background={bg}
               key={url}
               onClick={() => select(url)}

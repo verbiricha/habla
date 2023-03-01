@@ -17,7 +17,7 @@ export default function Home() {
   const followsFeed = useNostrEvents({
     filter: {
       kinds: [30023],
-      limit: 10,
+      limit: 20,
       authors: follows,
     },
     enabled: followsOnly,
@@ -25,7 +25,7 @@ export default function Home() {
   const allFeed = useNostrEvents({
     filter: {
       kinds: [30023],
-      limit: 10,
+      limit: 20,
     },
     enabled: !followsOnly,
   });
