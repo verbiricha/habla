@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useNostr, normalizeURL } from "../nostr";
 
 import {
@@ -16,7 +17,10 @@ import {
 } from "@chakra-ui/react";
 import { PhoneIcon, DeleteIcon } from "@chakra-ui/icons";
 
+import User from "./User";
 import useRelays from "./useRelays";
+import useColors from "./useColors";
+import useRelayInfo from "./useRelayMetadata";
 
 export function RelayFavicon({ url, children, ...rest }) {
   const domain = url
@@ -87,9 +91,107 @@ export function RelayList({ relays, showUrl = false, ...props }) {
   );
 }
 
+function Nip({ n }) {
+  const href = `https://nips.be/${n}`;
+  return (
+    <Link to={href}>
+      <Text>{n}</Text>
+    </Link>
+  );
+}
+
+export function RelayCard({ url, ...rest }) {
+  const { surface } = useColors();
+  const info = useRelayInfo(url);
+  return (
+    <Flex
+      flexDirection="column"
+      padding="12px 21px"
+      alignItems="center"
+      justifyContent="center"
+      border="1px solid"
+      borderColor={surface}
+      borderRadius="var(--border-radius)"
+      fontSize="14px"
+      {...rest}
+    >
+      {info?.pubkey && (
+        <User
+          key={info?.pubkey}
+          size="xl"
+          showUsername={false}
+          pubkey={info.pubkey}
+        />
+      )}
+      <Flex alignItems="center" mt={4}>
+        <RelayFavicon size="xs" mr={2} url={url} />
+        <Text color="purple.500" fontFamily="var(--font-mono)">
+          {normalizeURL(url)}
+        </Text>
+      </Flex>
+      {info?.name && (
+        <Flex
+          fontFamily="var(--font-mono)"
+          alignItems="center"
+          justifyContent="space-between"
+          width="230px"
+          mt={4}
+        >
+          <Text fontWeight={500}>Name</Text>
+          <Text>{info.name === "unset" ? "N/A" : info.name}</Text>
+        </Flex>
+      )}
+      {info?.contact && (
+        <Flex
+          fontFamily="var(--font-mono)"
+          alignItems="center"
+          justifyContent="space-between"
+          width="230px"
+          mt={2}
+        >
+          <Text fontWeight={500}>Contact</Text>
+          <Text>{info.contact === "unset" ? "N/A" : info.contact}</Text>
+        </Flex>
+      )}
+      {info?.description && (
+        <Flex
+          flexDirection="column"
+          fontFamily="var(--font-mono)"
+          width="230px"
+          mt={2}
+        >
+          <Text fontWeight={500} mb={2}>
+            Description
+          </Text>
+          <Text>{info.description}</Text>
+        </Flex>
+      )}
+      {info?.supported_nips && (
+        <Flex
+          flexDirection="column"
+          fontFamily="var(--font-mono)"
+          width="230px"
+          mt={2}
+        >
+          <Text fontWeight={500} mb={2}>
+            NIPs
+          </Text>
+          <Flex flexWrap="wrap">
+            {info.supported_nips.map((n) => (
+              <Box mr={2}>
+                <Nip n={n} />
+              </Box>
+            ))}
+          </Flex>
+        </Flex>
+      )}
+    </Flex>
+  );
+}
+
 export default function Relays(props) {
   const { pool, connectedRelays } = useNostr();
-  const { relays } = useRelays();
+  const { relays, selectedRelay } = useRelays();
   const [relay, setRelay] = useState("");
   const isValidRelay = relay.startsWith("ws://") || relay.startsWith("wss://");
   const { add } = useRelays();
@@ -101,6 +203,7 @@ export default function Relays(props) {
 
   return (
     <Box>
+      <RelayCard mb={6} url={selectedRelay} />
       <Heading mb={4} fontSize="2xl" as="h3">
         Relays
       </Heading>
