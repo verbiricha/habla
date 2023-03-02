@@ -133,6 +133,7 @@ export default function Reactions({
   }
 
   async function zapRequest(content) {
+    // todo: amount
     const ev = {
       kind: 9734,
       content,
@@ -142,7 +143,7 @@ export default function Reactions({
         ["e", event.id],
         ["p", event.pubkey],
         ["a", naddr],
-        ["relays", ...relays],
+        ["relays", ...relays.map(({ url }) => url)],
       ],
     };
     try {
