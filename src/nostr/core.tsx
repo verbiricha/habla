@@ -8,6 +8,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { sha256 } from "js-sha256";
 
 import {
   Relay,
@@ -178,8 +179,8 @@ export function useNostrEvents({
   }, {} as Record<string, Set<string>>);
 
   // Lets us detect changes in the nested filter object for the useEffect hook
-  const filterBase64 =
-    typeof window !== "undefined" ? window.btoa(JSON.stringify(filter)) : null;
+  const filterHash =
+    typeof window !== "undefined" ? sha256(JSON.stringify(filter)) : null;
 
   const _unsubscribe = (sub: Sub) => {
     log(debug, "info", `🙉 nostr: Unsubscribing from filter:`, filter);
@@ -230,7 +231,7 @@ export function useNostrEvents({
       sub.unsub();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterBase64, enabled]);
+  }, [filterHash, enabled]);
 
   return {
     isLoading: isLoading || isLoadingProvider,
