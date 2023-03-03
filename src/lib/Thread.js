@@ -222,9 +222,13 @@ export default function Thread({ event }) {
     return result;
   }, [events, related.events]);
 
+  const filtered = root.events.filter((r) => {
+    return r.tags.filter((t) => t[0] === "e").length === 1;
+  });
+
   return (
     <>
-      {root.events.map((ev) => (
+      {filtered.map((ev) => (
         <Comment root={ev.id} key={ev.id} ev={ev} chains={chains} />
       ))}
     </>
