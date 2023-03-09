@@ -66,7 +66,7 @@ function extractMentions(fragments, tags) {
           const matchTag = match.match(/#\[(\d+)\]/);
           if (matchTag && matchTag.length === 2) {
             const idx = parseInt(matchTag[1]);
-            const ref = tags?.find((a) => a[2] === idx);
+            const ref = tags?.find((a, i) => i === idx);
             if (ref) {
               switch (ref[0]) {
                 case "p": {
