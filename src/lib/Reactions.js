@@ -142,6 +142,7 @@ export default function Reactions({
       tags: [
         ["e", event.id],
         ["p", event.pubkey],
+        ["amount", Math.floor(amount * 1000)],
         ["a", naddr],
         ["relays", ...relays.map(({ url }) => url)],
       ],
@@ -305,7 +306,7 @@ export default function Reactions({
       {showUsers && likes.length > 0 && (
         <>
           {likes.map((ev) => (
-            <Flex key={getEventId(ev)} alignItems="center">
+            <Flex key={getEventId(ev)} alignItems="center" mb={2}>
               <User showNip={false} pubkey={ev.pubkey} />
               <Text> liked</Text>
             </Flex>
