@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Flex, Heading, HStack, Text } from "@chakra-ui/react";
+import { Flex, Heading, Text } from "@chakra-ui/react";
 
 import { getMetadata, encodeNaddr } from "../nostr";
 import { RelayList } from "./Relays";
@@ -27,11 +27,11 @@ export default function EventItem({ relays, event }) {
         <time>{formatTime(metadata.publishedAt * 1000)}</time>
       )}
       {metadata?.summary && <Text>{metadata.summary}</Text>}
-      <HStack mt={4} spacing={4}>
+      <Flex mt={4} flexWrap="wrap">
         {metadata?.hashtags?.map((t) => (
-          <Hashtag key={t} tag={t} />
+          <Hashtag mr={2} mb={2} key={t} tag={t} />
         ))}
-      </HStack>
+      </Flex>
       <Reactions event={event} />
     </Flex>
   );

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Box, Flex, HStack, Heading, Text, Image } from "@chakra-ui/react";
+import { Box, Flex, Heading, Text, Image } from "@chakra-ui/react";
 
 import { getEventId, getMetadata, encodeNaddr } from "../nostr";
 
@@ -18,11 +18,11 @@ function formatTime(time) {
 
 function Hashtags({ hashtags }) {
   return (
-    <HStack spacing={2} mt={4}>
+    <Flex mt={4} flexWrap="wrap">
       {hashtags.map((t) => (
-        <Hashtag key={t} tag={t} />
+        <Hashtag key={t} mr={2} mb={2} tag={t} />
       ))}
-    </HStack>
+    </Flex>
   );
 }
 
