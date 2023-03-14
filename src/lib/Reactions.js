@@ -293,7 +293,7 @@ export default function Reactions({
         <>
           {zappers.map(({ id, content, pubkey, amount }) => (
             <>
-              <Flex key={id} alignItems="center">
+              <Flex key={id} alignItems="center" mb={2}>
                 <User showNip={false} pubkey={pubkey} />
                 <Text> zapped {amount} sats</Text>
               </Flex>

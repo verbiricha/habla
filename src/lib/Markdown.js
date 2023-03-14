@@ -2,6 +2,7 @@ import { useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkToc from "remark-toc";
 import { visit, SKIP } from "unist-util-visit";
 
 import {
@@ -287,7 +288,7 @@ export default function Markdown({ tags = [], content }) {
   return (
     <ReactMarkdown
       components={components}
-      remarkPlugins={[replaceLinkHrefs, remarkGfm]}
+      remarkPlugins={[replaceLinkHrefs, remarkGfm, remarkToc]}
     >
       {content}
     </ReactMarkdown>
