@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Box, Flex, Heading, Text, Image } from "@chakra-ui/react";
 
 import { getEventId, getMetadata, encodeNaddr } from "../nostr";
@@ -37,9 +38,18 @@ export default function Event({
   ...rest
 }) {
   useCached(`event:${getEventId(event)}`, event, { isEvent: true });
+  const { hash } = useLocation();
   const metadata = getMetadata(event);
   const naddr = encodeNaddr(event); //, randomSlice(Array.from(relays), 3));
   const href = `/a/${naddr}`;
+  useEffect(() => {
+    if (hash?.length > 1) {
+      const el = document.querySelector(hash);
+      if (el) {
+        el.scrollIntoView();
+      }
+    }
+  }, [hash]);
   return (
     <>
       <Box as="article" key={event.id}>

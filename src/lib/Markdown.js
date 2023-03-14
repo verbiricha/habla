@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkToc from "remark-toc";
+import slugify from "slugify";
 import { visit, SKIP } from "unist-util-visit";
 
 import {
@@ -259,6 +260,24 @@ function transformText(ps, tags) {
 export default function Markdown({ tags = [], content }) {
   const components = useMemo(() => {
     return {
+      h1: ({ children }) => (
+        <h1 id={slugify(children[0], { lower: true })}>{children}</h1>
+      ),
+      h2: ({ children }) => (
+        <h2 id={slugify(children[0], { lower: true })}>{children}</h2>
+      ),
+      h3: ({ children }) => (
+        <h3 id={slugify(children[0], { lower: true })}>{children}</h3>
+      ),
+      h4: ({ children }) => (
+        <h4 id={slugify(children[0], { lower: true })}>{children}</h4>
+      ),
+      h5: ({ children }) => (
+        <h5 id={slugify(children[0], { lower: true })}>{children}</h5>
+      ),
+      h6: ({ children }) => (
+        <h6 id={slugify(children[0], { lower: true })}>{children}</h6>
+      ),
       p: ({ children }) => children && transformText(children, tags),
       a: (props) => <Link to={props.href}>{props.children}</Link>,
     };
