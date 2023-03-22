@@ -2,7 +2,9 @@ import { useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 import remarkToc from "remark-toc";
+import rehypeKatex from "rehype-katex";
 import slugify from "slugify";
 import HyperText from "./HyperText";
 import HashtagLink from "./HashtagLink";
@@ -321,7 +323,8 @@ export default function Markdown({ tags = [], content }) {
   return (
     <ReactMarkdown
       components={components}
-      remarkPlugins={[replaceLinkHrefs, remarkGfm, remarkToc]}
+      remarkPlugins={[replaceLinkHrefs, remarkGfm, remarkToc, remarkMath]}
+      rehypePlugins={[rehypeKatex]}
     >
       {content}
     </ReactMarkdown>
