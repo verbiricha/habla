@@ -4,6 +4,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkToc from "remark-toc";
 import slugify from "slugify";
+import HyperText from "./HyperText";
+import HashtagLink from "./HashtagLink";
 import { visit, SKIP } from "unist-util-visit";
 
 import {
@@ -23,7 +25,7 @@ import Naddr from "./Naddr";
 import Note from "./Note";
 import Mention from "./Mention";
 
-export const MentionRegex = /(#\[\d+\])/gi;
+const MentionRegex = /(#\[\d+\])/gi;
 
 export function replaceMentions(f, tags) {
   return f
@@ -42,7 +44,7 @@ export function replaceMentions(f, tags) {
               return hexToBech32(ref[1], "note");
             }
             case "t": {
-              return `#${ref[1]}`;
+              return <HashtagLink tag={ref[1]} />;
             }
             case "a": {
               const [k, p, d] = ref[1].split(":");
@@ -261,25 +263,37 @@ export default function Markdown({ tags = [], content }) {
   const components = useMemo(() => {
     return {
       h1: ({ children }) => (
-        <h1 id={slugify(children[0], { lower: true })}>{children}</h1>
+        <h1 id={children?.at(0) && slugify(children[0], { lower: true })}>
+          {children}
+        </h1>
       ),
       h2: ({ children }) => (
-        <h2 id={slugify(children[0], { lower: true })}>{children}</h2>
+        <h2 id={children?.at(0) && slugify(children[0], { lower: true })}>
+          {children}
+        </h2>
       ),
       h3: ({ children }) => (
-        <h3 id={slugify(children[0], { lower: true })}>{children}</h3>
+        <h3 id={children?.at(0) && slugify(children[0], { lower: true })}>
+          {children}
+        </h3>
       ),
       h4: ({ children }) => (
-        <h4 id={slugify(children[0], { lower: true })}>{children}</h4>
+        <h4 id={children?.at(0) && slugify(children[0], { lower: true })}>
+          {children}
+        </h4>
       ),
       h5: ({ children }) => (
-        <h5 id={slugify(children[0], { lower: true })}>{children}</h5>
+        <h5 id={children?.at(0) && slugify(children[0], { lower: true })}>
+          {children}
+        </h5>
       ),
       h6: ({ children }) => (
-        <h6 id={slugify(children[0], { lower: true })}>{children}</h6>
+        <h6 id={children?.at(0) && slugify(children[0], { lower: true })}>
+          {children}
+        </h6>
       ),
       p: ({ children }) => children && transformText(children, tags),
-      a: (props) => <Link to={props.href}>{props.children}</Link>,
+      a: (props) => <HyperText link={props.href}>{props.children}</HyperText>,
     };
   }, [tags]);
 

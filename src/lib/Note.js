@@ -1,3 +1,4 @@
+import "./Note.css";
 import { Card, CardHeader, CardBody } from "@chakra-ui/react";
 
 import { useNostrEvents } from "../nostr";
@@ -19,10 +20,8 @@ export default function Note({ id, relays }) {
   });
   const note = cached || events[0];
   return (
-    <Card background={surface}>
-      <CardHeader>
-        {note && <User linkToProfile={false} pubkey={note.pubkey} />}
-      </CardHeader>
+    <Card className="note" background={surface}>
+      <CardHeader>{note && <User pubkey={note.pubkey} />}</CardHeader>
       <CardBody mt="-40px" ml="60px">
         {note && <Markdown content={note.content} tags={note.tags} />}
       </CardBody>
