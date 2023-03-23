@@ -116,3 +116,8 @@ article li p {
 article p > a  {
   color: #A966FF;
 }
+
+article iframe {
+  margin: 0 auto;
+  border-radius: var(--border-radius);
+}

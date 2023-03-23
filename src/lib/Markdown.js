@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import remarkToc from "remark-toc";
 import rehypeKatex from "rehype-katex";
+import rehypeRaw from "rehype-raw";
 import slugify from "slugify";
 import HyperText from "./HyperText";
 import HashtagLink from "./HashtagLink";
@@ -324,7 +325,7 @@ export default function Markdown({ tags = [], content }) {
     <ReactMarkdown
       components={components}
       remarkPlugins={[replaceLinkHrefs, remarkGfm, remarkToc, remarkMath]}
-      rehypePlugins={[rehypeKatex]}
+      rehypePlugins={[rehypeRaw, rehypeKatex]}
     >
       {content}
     </ReactMarkdown>
