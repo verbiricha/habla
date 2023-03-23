@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Box, Flex, Heading, Text, Image } from "@chakra-ui/react";
+import { Box, Flex, Heading, Text, Image, IconButton } from "@chakra-ui/react";
+import { ViewIcon, ViewOffIcon as HideIcon } from "@chakra-ui/icons";
 
 import { getEventId, getMetadata, encodeNaddr } from "../nostr";
 
@@ -41,6 +42,7 @@ export default function Event({
   const { hash } = useLocation();
   const metadata = getMetadata(event);
   const isSensitive = metadata.sensitive;
+  const [blurPictures, setBlurPictures] = useState(isSensitive);
   const naddr = encodeNaddr(event); //, randomSlice(Array.from(relays), 3));
   const href = `/a/${naddr}`;
   useEffect(() => {
@@ -53,13 +55,37 @@ export default function Event({
   }, [hash]);
   return (
     <>
-      <Box as="article" key={event.id}>
+      <Box
+        as="article"
+        key={event.id}
+        className={`${blurPictures ? "article-blurred" : ""}`}
+      >
         <Flex justifyContent="space-around">
           {event.pubkey && showUser && (
             <User pubkey={event.pubkey} relays={relays} />
           )}
           <RelayList ml="auto" relays={relays} />
         </Flex>
+        {isSensitive && (
+          <Flex alignItems="center" color="secondary.500">
+            <Text color="secondary.500" fontSize="md">
+              This post was marked as sensitive
+            </Text>
+            {metadata.warning && (
+              <Text color="red.500" fontSize="md">
+                {" "}
+                {metadata.warning}
+              </Text>
+            )}
+            <IconButton
+              variant="unstyled"
+              size="sm"
+              icon={blurPictures ? <ViewIcon /> : <HideIcon />}
+              onClick={() => setBlurPictures(!blurPictures)}
+              pb={1}
+            />
+          </Flex>
+        )}
         <Link to={href}>
           <Heading fontSize="52px" fontFamily="var(--article-heading)" as="h1">
             {metadata.title}
@@ -85,7 +111,9 @@ export default function Event({
           )}
         </Link>
         {children}
-        {!isPreview && <Markdown content={event.content} tags={event.tags} />}
+        <div className="content">
+          {!isPreview && <Markdown content={event.content} tags={event.tags} />}
+        </div>
         <Hashtags hashtags={metadata?.hashtags ?? []} />
         <Reactions
           showUsers={showReactions}

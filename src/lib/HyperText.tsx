@@ -58,7 +58,7 @@ export default function HyperText({
                 rel="noreferrer"
                 className="ext"
               >
-                {url.toString()}
+                {children || url.toString()}
               </a>
             );
         }

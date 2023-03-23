@@ -1,3 +1,11 @@
+.article-blurred .article-image {
+  filter: blur(4px);
+}
+
+.article-blurred .content img {
+  filter: blur(4px);
+}
+
 article {
   overflow: hidden;
   white-space: pre-wrap;
@@ -90,6 +98,8 @@ article img {
 
 article .article-image {
   object-fit: cover;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 article p a {

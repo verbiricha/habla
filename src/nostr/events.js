@@ -69,6 +69,6 @@ export function getMetadata(ev) {
     publishedAt: findTag(ev.tags, "published_at"),
     hashtags: findTags(ev.tags, "t"),
     sensitive: Boolean(warning),
-    warning: warning?.at(1),
+    warning: warning,
   };
 }
