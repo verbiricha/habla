@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Box, Flex, Heading, Text, Image, IconButton } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Heading,
+  Text,
+  Image,
+  IconButton,
+  Stat,
+  StatLabel,
+  StatNumber,
+} from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon as HideIcon } from "@chakra-ui/icons";
 
 import { getEventId, getMetadata, encodeNaddr } from "../nostr";
@@ -42,6 +52,7 @@ export default function Event({
   const { hash } = useLocation();
   const metadata = getMetadata(event);
   const isSensitive = metadata.sensitive;
+  const isBounty = metadata.reward !== null;
   const [blurPictures, setBlurPictures] = useState(isSensitive);
   const naddr = encodeNaddr(event); //, randomSlice(Array.from(relays), 3));
   const href = `/a/${naddr}`;
@@ -110,12 +121,19 @@ export default function Event({
             <blockquote className="summary">{metadata.summary}</blockquote>
           )}
         </Link>
+        {isBounty && (
+          <Stat>
+            <StatLabel>Bounty</StatLabel>
+            <StatNumber>{metadata.reward} sats</StatNumber>
+          </Stat>
+        )}
         {children}
         <div className="content">
           {!isPreview && <Markdown content={event.content} tags={event.tags} />}
         </div>
         <Hashtags hashtags={metadata?.hashtags ?? []} />
         <Reactions
+          isBounty={isBounty}
           showUsers={showReactions}
           showComments={showComments}
           event={event}

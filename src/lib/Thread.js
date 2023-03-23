@@ -4,6 +4,7 @@ import {
   useToast,
   Flex,
   Box,
+  Text,
   Textarea,
   Button,
   IconButton,
@@ -117,10 +118,24 @@ export function Reply({ root, event, showReply, setShowReply }) {
   ) : null;
 }
 
-function Comment({ root, ev, chains }) {
+function Comment({ isBounty, root, ev, chains }) {
   const [showReply, setShowReply] = useState(false);
   const replies = chains.get(ev.id);
-  return (
+  return isBounty ? (
+    <>
+      <Flex alignItems="center" key={getEventId(ev)} mb={2}>
+        <User showNip={false} pubkey={ev.pubkey} />
+        <Text> pledged {ev.content} sats</Text>
+      </Flex>
+      <Flex flexDirection="column" ml="10px">
+        {replies?.map((r) => (
+          <>
+            <Comment isBounty={isBounty} root={root} ev={r} chains={chains} />
+          </>
+        ))}
+      </Flex>
+    </>
+  ) : (
     <Flex flexDirection="column" key={getEventId(ev)} alignItems="flex-start">
       <User showNip={false} pubkey={ev.pubkey} />
       <Box ml="60px" width="calc(100% - 60px)">
@@ -142,7 +157,7 @@ function Comment({ root, ev, chains }) {
       <Flex flexDirection="column" ml="10px">
         {replies?.map((r) => (
           <>
-            <Comment root={root} ev={r} chains={chains} />
+            <Comment isBounty={isBounty} root={root} ev={r} chains={chains} />
           </>
         ))}
       </Flex>
@@ -150,7 +165,7 @@ function Comment({ root, ev, chains }) {
   );
 }
 
-export default function Thread({ event }) {
+export default function Thread({ isBounty, event }) {
   const [trackingEvents, setTrackingEvents] = useState([event.id]);
   const naddr = eventAddress(event);
   const root = useNostrEvents({
@@ -229,7 +244,13 @@ export default function Thread({ event }) {
   return (
     <>
       {filtered.map((ev) => (
-        <Comment root={ev.id} key={ev.id} ev={ev} chains={chains} />
+        <Comment
+          isBounty={isBounty}
+          root={ev.id}
+          key={ev.id}
+          ev={ev}
+          chains={chains}
+        />
       ))}
     </>
   );

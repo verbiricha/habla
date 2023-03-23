@@ -70,6 +70,7 @@ function getZapAmount(zap) {
 export default function Reactions({
   showComments = false,
   showUsers = false,
+  isBounty = false,
   event,
 }) {
   const { publish } = useNostr();
@@ -302,7 +303,7 @@ export default function Reactions({
           ))}
         </>
       )}
-      {showComments && <Thread event={event} />}
+      {showComments && <Thread isBounty={isBounty} event={event} />}
       {showUsers && likes.length > 0 && (
         <>
           {likes.map((ev) => (
