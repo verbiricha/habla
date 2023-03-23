@@ -266,32 +266,62 @@ export default function Markdown({ tags = [], content }) {
   const components = useMemo(() => {
     return {
       h1: ({ children }) => (
-        <h1 id={children?.at(0) && slugify(children[0], { lower: true })}>
+        <h1
+          id={
+            typeof children?.at(0) === "string" &&
+            slugify(children[0], { lower: true })
+          }
+        >
           {children}
         </h1>
       ),
       h2: ({ children }) => (
-        <h2 id={children?.at(0) && slugify(children[0], { lower: true })}>
+        <h2
+          id={
+            typeof children?.at(0) === "string" &&
+            slugify(children[0], { lower: true })
+          }
+        >
           {children}
         </h2>
       ),
       h3: ({ children }) => (
-        <h3 id={children?.at(0) && slugify(children[0], { lower: true })}>
+        <h3
+          id={
+            typeof children?.at(0) === "string" &&
+            slugify(children[0], { lower: true })
+          }
+        >
           {children}
         </h3>
       ),
       h4: ({ children }) => (
-        <h4 id={children?.at(0) && slugify(children[0], { lower: true })}>
+        <h4
+          id={
+            typeof children?.at(0) === "string" &&
+            slugify(children[0], { lower: true })
+          }
+        >
           {children}
         </h4>
       ),
       h5: ({ children }) => (
-        <h5 id={children?.at(0) && slugify(children[0], { lower: true })}>
+        <h5
+          id={
+            typeof children?.at(0) === "string" &&
+            slugify(children[0], { lower: true })
+          }
+        >
           {children}
         </h5>
       ),
       h6: ({ children }) => (
-        <h6 id={children?.at(0) && slugify(children[0], { lower: true })}>
+        <h6
+          id={
+            typeof children?.at(0) === "string" &&
+            slugify(children[0], { lower: true })
+          }
+        >
           {children}
         </h6>
       ),
