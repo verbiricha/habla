@@ -142,10 +142,12 @@ export function useNostr() {
 }
 
 export function useNostrEvents({
+  id,
   filter,
   relays,
   enabled = true,
 }: {
+  id?: string;
   filter: Filter;
   relays?: string[];
   enabled?: boolean;
@@ -165,6 +167,10 @@ export function useNostrEvents({
   const [unsubscribe, setUnsubscribe] = useState<() => void | void>(() => {
     return;
   });
+
+  useEffect(() => {
+    setEvents([]);
+  }, [id]);
 
   let onEventCallback: null | OnEventFunc = null;
   let onSubscribeCallback: null | OnSubscribeFunc = null;

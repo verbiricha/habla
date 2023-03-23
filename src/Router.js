@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Home from "./pages/index";
 import Tag from "./pages/tag";
 import Address from "./pages/address";
+import Search from "./pages/search";
 import Article from "./pages/article";
 import Profile from "./pages/profile";
 import NProfile from "./pages/nprofile";
@@ -11,6 +12,10 @@ export default createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "search",
+    element: <Search />,
   },
   {
     path: "/:p",

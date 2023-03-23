@@ -106,8 +106,7 @@ export function RelayCard({ url, ...rest }) {
     <Flex
       flexDirection="column"
       padding="12px 21px"
-      alignItems="center"
-      justifyContent="center"
+      alignItems="flex-start"
       border="1px solid"
       borderColor={surface}
       borderRadius="var(--border-radius)"
@@ -115,12 +114,14 @@ export function RelayCard({ url, ...rest }) {
       {...rest}
     >
       {info?.pubkey && (
-        <User
-          key={info?.pubkey}
-          size="xl"
-          showUsername={false}
-          pubkey={info.pubkey}
-        />
+        <Box margin="0 auto">
+          <User
+            key={info?.pubkey}
+            size="xl"
+            showUsername={false}
+            pubkey={info.pubkey}
+          />
+        </Box>
       )}
       <Flex alignItems="center" mt={4}>
         <RelayFavicon size="xs" mr={2} url={url} />
@@ -131,8 +132,7 @@ export function RelayCard({ url, ...rest }) {
       {info?.name && (
         <Flex
           fontFamily="var(--font-mono)"
-          alignItems="center"
-          justifyContent="space-between"
+          flexDirection="column"
           width="230px"
           mt={4}
         >
@@ -141,13 +141,7 @@ export function RelayCard({ url, ...rest }) {
         </Flex>
       )}
       {info?.contact && (
-        <Flex
-          fontFamily="var(--font-mono)"
-          alignItems="center"
-          justifyContent="space-between"
-          width="230px"
-          mt={2}
-        >
+        <Flex fontFamily="var(--font-mono)" flexDirection="column" mt={2}>
           <Text fontWeight={500}>Contact</Text>
           <Text>{info.contact === "unset" ? "N/A" : info.contact}</Text>
         </Flex>

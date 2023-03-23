@@ -2,10 +2,14 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getKey, getJsonKey } from "./storage";
 
 const defaultRelays = [
+  { url: "wss://relay.nostr.band/", options: { read: true, write: true } },
   { url: "wss://relay.damus.io/", options: { read: true, write: true } },
   { url: "wss://nos.lol/", options: { read: true, write: true } },
   { url: "wss://offchain.pub/", options: { read: true, write: true } },
-  { url: "wss://nostr-pub.wellorder.net", options: { read: true, write: true } },
+  {
+    url: "wss://nostr-pub.wellorder.net",
+    options: { read: true, write: true },
+  },
   {
     url: "wss://relay.nostr.wirednet.jp/",
     options: { read: true, write: true },

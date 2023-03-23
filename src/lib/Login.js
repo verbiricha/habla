@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 import { useColorMode, Flex, Button } from "@chakra-ui/react";
-import { MoonIcon, SunIcon, EditIcon } from "@chakra-ui/icons";
+import { MoonIcon, SunIcon, SearchIcon, EditIcon } from "@chakra-ui/icons";
 
 import User from "./User";
 import useLoggedInUser from "./useLoggedInUser";
@@ -22,6 +22,11 @@ export default function Login() {
 
   return user ? (
     <Flex alignItems="center">
+      <Link to="/search">
+        <Button color="secondary.500" variant="unstyled">
+          <SearchIcon />
+        </Button>
+      </Link>
       <Link to="/write">
         <Button color="secondary.500" variant="unstyled">
           <EditIcon />
