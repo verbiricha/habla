@@ -37,6 +37,11 @@ export default function Login() {
     </Flex>
   ) : (
     <Flex>
+      <Link to="/search">
+        <Button color="secondary.500" variant="unstyled">
+          <SearchIcon />
+        </Button>
+      </Link>
       {themeSelector}
       {window.nostr && (
         <Button size="md" onClick={logIn}>
