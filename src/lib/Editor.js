@@ -38,6 +38,8 @@ export default function MyEditor({ event, children }) {
   const [summary, setSummary] = useState(metadata?.summary ?? "");
   const [image, setImage] = useState(metadata?.image ?? "");
   const [publishedAt] = useState(metadata?.publishedAt);
+  const [sensitive, setIsSensitive] = useState(metadata?.sensitive ?? false);
+  const [warning, setWarning] = useState(metadata?.warning ?? "");
   const [hashtags, setHashtags] = useState(
     metadata?.hashtags?.join(", ") ?? ""
   );
@@ -86,6 +88,13 @@ export default function MyEditor({ event, children }) {
     ];
     if (image?.length > 0) {
       tags.push(["image", image]);
+    }
+    if (sensitive) {
+      if (warning?.length > 0) {
+        tags.push(["content-warning", warning]);
+      } else {
+        tags.push(["content-warning"]);
+      }
     }
     const ev = {
       content,
@@ -144,24 +153,31 @@ export default function MyEditor({ event, children }) {
           <FormLabel>Title</FormLabel>
           <Input
             value={title}
+            placeholder="Title for your article"
             onChange={(ev) => setTitle(ev.target.value)}
             size="md"
+            mb={2}
           />
           <FormLabel>Image</FormLabel>
           <Input
+            placeholder="Link to the main article image"
             value={image}
             onChange={(ev) => setImage(ev.target.value)}
             size="md"
+            mb={2}
           />
           <FormLabel>Slug</FormLabel>
           <Input
             value={slug}
+            placeholder="Unique identifier for the article"
             onChange={(ev) => setSlug(ev.target.value)}
             size="md"
+            mb={2}
           />
           <FormLabel>Summary</FormLabel>
           <Textarea
             id="title"
+            placeholder="A brief summary of what your article is about"
             value={summary}
             onChange={(ev) => setSummary(ev.target.value)}
             size="md"
@@ -172,9 +188,10 @@ export default function MyEditor({ event, children }) {
             placeholder="List of tags separated by comma: nostr, markdown"
             onChange={(ev) => setHashtags(ev.target.value)}
             size="md"
+            mb={2}
           />
           <FormLabel>Content</FormLabel>
-          <Box height={400}>
+          <Box height={400} mb={2}>
             <MdEditor
               value={content}
               renderHTML={(text) => (
@@ -183,6 +200,22 @@ export default function MyEditor({ event, children }) {
               onChange={onChange}
             />
           </Box>
+          <Flex alignItems="center">
+            <FormLabel>Sensitive content warning</FormLabel>
+            <Checkbox
+              isChecked={sensitive}
+              onChange={(ev) => setIsSensitive(ev.target.checked)}
+              mt={-1}
+              size="md"
+            />
+          </Flex>
+          <Input
+            value={warning}
+            onChange={(ev) => setWarning(ev.target.value)}
+            placeholder="nudity, language, violence, etc"
+            size="md"
+            mb={2}
+          />
           <Stack mt={5} direction="row-reverse" spacing={4} align="center">
             <Button colorScheme="purple" onClick={() => onPublish()}>
               Publish

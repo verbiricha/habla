@@ -60,6 +60,7 @@ export async function signEvent(ev) {
 }
 
 export function getMetadata(ev) {
+  const warning = findTag(ev.tags, "content-warning");
   return {
     title: findTag(ev.tags, "title")?.replace("\n", " "),
     d: findTag(ev.tags, "d"),
@@ -67,5 +68,7 @@ export function getMetadata(ev) {
     summary: findTag(ev.tags, "summary"),
     publishedAt: findTag(ev.tags, "published_at"),
     hashtags: findTags(ev.tags, "t"),
+    sensitive: Boolean(warning),
+    warning: warning?.at(1),
   };
 }
