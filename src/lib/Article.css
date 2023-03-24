@@ -90,10 +90,11 @@ article pre code {
 }
 
 article img {
-  width: 100%;
-  max-height: 420px;
+  max-width: 100% !important;
+  max-height: 420px !important;
   border-radius: var(--border-radius);
   object-fit: contain;
+  margin: 0 auto !important;
 }
 
 article .article-image {
