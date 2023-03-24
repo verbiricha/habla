@@ -130,4 +130,5 @@ article p > a  {
 article iframe {
   margin: 0 auto;
   border-radius: var(--border-radius);
+  max-width: 100%;
 }
