@@ -12,12 +12,10 @@ export function NoteEvent({ note }) {
   const { surface } = useColors();
   return (
     <Card className="note" background={surface} sx={{ textDecoration: "none" }}>
-      <NostrLink link={encodeTLV(note.pubkey, "npub")}>
-        <CardHeader>
-          <User linkToProfile={false} pubkey={note.pubkey} />
-        </CardHeader>
-      </NostrLink>
-      <NostrLink link={encodeTLV(note.id, "note")}>
+      <CardHeader>
+        <User pubkey={note.pubkey} />
+      </CardHeader>
+      <NostrLink link={`https://snort.social/e/${encodeTLV(note.id, "note")}`}>
         <CardBody mt="-40px" ml="60px">
           <Markdown content={note.content} tags={note.tags} />
         </CardBody>

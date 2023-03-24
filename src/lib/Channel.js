@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { ChatIcon } from "@chakra-ui/icons";
 
-import { useNostrEvents, encodeNevent } from "../nostr";
+import { useNostrEvents } from "../nostr";
 import Markdown from "./Markdown";
 import NostrLink from "./NostrLink";
 import useColors from "./useColors";
@@ -49,7 +49,7 @@ export default function Channel({ channel }) {
     : "";
 
   return (
-    <NostrLink link={encodeNevent(channel.id)}>
+    <NostrLink link={`https://garnet.nostrian.net/channels/${channel.id}`}>
       <Card className="note" background={surface}>
         <CardHeader>
           <Flex alignItems="center">

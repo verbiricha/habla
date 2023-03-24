@@ -23,7 +23,7 @@ export default function Badge({ ev }) {
   const description = findTag(ev.tags, "description");
   const image = findTag(ev.tags, "image");
   return (
-    <NostrLink link={naddr}>
+    <NostrLink link={`https://badges.page/b/${naddr}`}>
       <Card background={surface}>
         <CardHeader>
           <Flex>
