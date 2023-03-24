@@ -121,7 +121,7 @@ export function Reply({ root, event, showReply, setShowReply }) {
 function Comment({ isBounty, root, ev, chains }) {
   const [showReply, setShowReply] = useState(false);
   const replies = chains.get(ev.id);
-  return isBounty ? (
+  return isBounty && /^\d+$/.test(ev.content) ? (
     <>
       <Flex alignItems="center" key={getEventId(ev)} mb={2}>
         <User showNip={false} pubkey={ev.pubkey} />
