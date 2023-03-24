@@ -1,5 +1,6 @@
 import { encodeNevent, useNostrEvents } from "../nostr";
-import Note from "./Note";
+import { NoteEvent } from "./Note";
+import Channel from "./Channel";
 
 export default function NEvent({ id, relays }) {
   const { events } = useNostrEvents({
@@ -10,7 +11,11 @@ export default function NEvent({ id, relays }) {
   const ev = events[0];
 
   if (ev?.kind === 1) {
-    return <Note id={id} relays={relays} />;
+    return <NoteEvent note={ev} />;
+  }
+
+  if (ev?.kind === 40) {
+    return <Channel channel={ev} />;
   }
 
   return <>{encodeNevent(id, relays)}</>;

@@ -2,6 +2,7 @@ import { RelayList } from "./Relays";
 import User from "./User";
 
 export default function Nprofile({ pubkey, relays }) {
+  // todo: nostr link
   return (
     <>
       <User pubkey={pubkey} relays={relays} />

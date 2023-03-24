@@ -1,14 +1,32 @@
 import "./Note.css";
 import { Card, CardHeader, CardBody } from "@chakra-ui/react";
 
-import { useNostrEvents } from "../nostr";
+import { useNostrEvents, encodeTLV } from "../nostr";
 import User from "./User";
 import Markdown from "./Markdown";
+import NostrLink from "./NostrLink";
 import useColors from "./useColors";
 import useCached from "./useCached";
 
-export default function Note({ id, relays }) {
+export function NoteEvent({ note }) {
   const { surface } = useColors();
+  return (
+    <Card className="note" background={surface} sx={{ textDecoration: "none" }}>
+      <NostrLink link={encodeTLV(note.pubkey, "npub")}>
+        <CardHeader>
+          <User linkToProfile={false} pubkey={note.pubkey} />
+        </CardHeader>
+      </NostrLink>
+      <NostrLink link={encodeTLV(note.id, "note")}>
+        <CardBody mt="-40px" ml="60px">
+          <Markdown content={note.content} tags={note.tags} />
+        </CardBody>
+      </NostrLink>
+    </Card>
+  );
+}
+
+export default function Note({ id, relays }) {
   const cached = useCached(`note:${id}`);
   const { events } = useNostrEvents({
     filter: {
@@ -19,12 +37,5 @@ export default function Note({ id, relays }) {
     enabled: !cached,
   });
   const note = cached || events[0];
-  return (
-    <Card className="note" background={surface}>
-      <CardHeader>{note && <User pubkey={note.pubkey} />}</CardHeader>
-      <CardBody mt="-40px" ml="60px">
-        {note && <Markdown content={note.content} tags={note.tags} />}
-      </CardBody>
-    </Card>
-  );
+  return note ? <NoteEvent note={note} /> : null;
 }
