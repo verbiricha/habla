@@ -325,6 +325,9 @@ export default function Markdown({ tags = [], content }) {
           {children}
         </h6>
       ),
+      img: ({ alt, src }) => {
+        return <img key={src} alt={alt} src={src} />;
+      },
       p: ({ children }) => children && transformText(children, tags),
       a: (props) => {
         return <HyperText link={props.href}>{props.children}</HyperText>;
