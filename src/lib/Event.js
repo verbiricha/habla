@@ -77,7 +77,7 @@ export default function Event({
         {isSensitive && (
           <Flex alignItems="center" color="secondary.500">
             <Text color="secondary.500" fontSize="md">
-              This post was marked as sensitive
+              Sensitive Content
             </Text>
             {metadata.warning && (
               <Text color="red.500" fontSize="md">
