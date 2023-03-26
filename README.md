@@ -30,3 +30,18 @@ rsync --recursive --delete /path/to/habla/build/ your.server:/your/path/on/serve
 You will need a domain or subdomain for this as file references in the code
 are absolute paths, currently not allowing it to run Habla under
 `https://yourserver.com/habla/` for example.
+
+For deep links to articles for example to work, you have to tell your server to
+have requests not found be handled by your index.html. In `nginx` that can be
+achieved by adding:
+
+```
+server {
+  ...
+  location / {
+    autoindex off;
+    expires off;
+    add_header Cache-Control "public, max-age=0, s-maxage=0, must-revalidate" always;
+    try_files $uri /index.html =404;
+  }
+```
