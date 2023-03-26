@@ -2,10 +2,11 @@ import { createBrowserRouter } from "react-router-dom";
 import Home from "./pages/index";
 import Tag from "./pages/tag";
 import Address from "./pages/address";
+import Relay from "./pages/relay";
 import Search from "./pages/search";
-import Article from "./pages/article";
 import Profile from "./pages/profile";
 import NProfile from "./pages/nprofile";
+import NPub from "./pages/npub";
 import Write from "./pages/write";
 
 export default createBrowserRouter([
@@ -18,8 +19,8 @@ export default createBrowserRouter([
     element: <Search />,
   },
   {
-    path: "/:p",
-    element: <Profile />,
+    path: "/r/:nrelay",
+    element: <Relay />,
   },
   {
     path: "/a/:naddr",
@@ -30,8 +31,8 @@ export default createBrowserRouter([
     element: <NProfile />,
   },
   {
-    path: "/:p/:d",
-    element: <Article />,
+    path: "/p/:npub",
+    element: <NPub />,
   },
   {
     path: "/t/:t",
@@ -40,5 +41,9 @@ export default createBrowserRouter([
   {
     path: "write",
     element: <Write />,
+  },
+  {
+    path: ":p",
+    element: <Profile />,
   },
 ]);

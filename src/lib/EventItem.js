@@ -3,7 +3,7 @@ import { Flex, Heading, Text } from "@chakra-ui/react";
 
 import { getMetadata, encodeNaddr } from "../nostr";
 import { RelayList } from "./Relays";
-import Hashtag from "./Hashtag";
+import { Hashtags } from "./Hashtag";
 import Reactions from "./Reactions";
 
 function formatTime(time) {
@@ -21,18 +21,19 @@ export default function EventItem({ relays, event }) {
         <Link to={href}>
           <Heading as="h1">{metadata?.title}</Heading>
         </Link>
-        <RelayList relays={relays} />
       </Flex>
       {metadata?.publishedAt && (
         <time>{formatTime(metadata.publishedAt * 1000)}</time>
       )}
       {metadata?.summary && <Text>{metadata.summary}</Text>}
-      <Flex mt={4} flexWrap="wrap">
-        {metadata?.hashtags?.map((t) => (
-          <Hashtag mr={2} mb={2} key={t} tag={t} />
-        ))}
+      <Flex alignItems="center" flexDirection="row" mt={2}>
+        <Text fontSize="md" color="secondary.500" fontFamily="var(--font-mono)">
+          seen in
+        </Text>
+        <RelayList ml={2} linkToNrelay={true} relays={relays} />
       </Flex>
-      <Reactions event={event} />
+      <Hashtags hashtags={metadata?.hashtags ?? []} />
+      <Reactions mt={0} event={event} />
     </Flex>
   );
 }

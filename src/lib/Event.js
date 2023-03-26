@@ -18,7 +18,7 @@ import { getEventId, getMetadata, encodeNaddr } from "../nostr";
 import useCached from "./useCached";
 import User from "./User";
 import Markdown from "./Markdown";
-import Hashtag from "./Hashtag";
+import { Hashtags } from "./Hashtag";
 import Reactions from "./Reactions";
 import { RelayList } from "./Relays";
 
@@ -28,23 +28,13 @@ function formatTime(time) {
   }).format(time);
 }
 
-function Hashtags({ hashtags }) {
-  return (
-    <Flex mt={4} flexWrap="wrap">
-      {hashtags.map((t) => (
-        <Hashtag key={t} mr={2} mb={2} tag={t} />
-      ))}
-    </Flex>
-  );
-}
-
 export default function Event({
   showUser = true,
   isPreview = true,
   showReactions = false,
   showComments = false,
   event,
-  relays,
+  relays = [],
   children,
   ...rest
 }) {
@@ -54,7 +44,7 @@ export default function Event({
   const isSensitive = metadata.sensitive;
   const isBounty = metadata.reward !== null;
   const [blurPictures, setBlurPictures] = useState(isSensitive);
-  const naddr = encodeNaddr(event); //, randomSlice(Array.from(relays), 3));
+  const naddr = encodeNaddr(event, Array.from(relays));
   const href = `/a/${naddr}`;
   useEffect(() => {
     if (hash?.length > 1) {
@@ -64,6 +54,14 @@ export default function Event({
       }
     }
   }, [hash]);
+  const seenIn = (
+    <Flex alignItems="center" flexDirection="row" mt={2}>
+      <Text fontSize="md" color="secondary.500" fontFamily="var(--font-mono)">
+        seen in
+      </Text>
+      <RelayList ml={2} linkToNrelay={true} relays={relays} />
+    </Flex>
+  );
   return (
     <>
       <Box
@@ -71,11 +69,10 @@ export default function Event({
         key={event.id}
         className={`${blurPictures ? "article-blurred" : ""}`}
       >
-        <Flex justifyContent="space-around">
+        <Flex justifyContent="flex-start" width="100%">
           {event.pubkey && showUser && (
             <User pubkey={event.pubkey} relays={relays} />
           )}
-          <RelayList ml="auto" relays={relays} />
         </Flex>
         {isSensitive && (
           <Flex alignItems="center" color="secondary.500">
@@ -101,6 +98,7 @@ export default function Event({
           <Heading fontSize="52px" fontFamily="var(--article-heading)" as="h1">
             {metadata.title}
           </Heading>
+          {!isPreview && seenIn}
           <Flex alignItems="flex-start">
             {metadata.publishedAt && (
               <Text
@@ -131,6 +129,7 @@ export default function Event({
         <div className="content">
           {!isPreview && <Markdown content={event.content} tags={event.tags} />}
         </div>
+        {isPreview && seenIn}
         <Hashtags hashtags={metadata?.hashtags ?? []} />
         <Reactions
           isBounty={isBounty}

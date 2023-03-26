@@ -8,7 +8,7 @@ import Event from "./Event";
 import useLoggedInUser from "./useLoggedInUser";
 import useCached from "./useCached";
 
-export default function Article({ d, pubkey, relays }) {
+export default function Article({ d, pubkey, relays = [] }) {
   const { user } = useLoggedInUser();
   const isMe = user === pubkey;
   const [isEditing, setIsEditing] = useBoolean(false);
@@ -18,6 +18,7 @@ export default function Article({ d, pubkey, relays }) {
       "#d": [d],
       kinds: [30023],
     },
+    relays,
   });
   const ev = useCached(`event:30023:${pubkey}:${d}`, events[0], {
     isEvent: true,

@@ -1,26 +1,29 @@
 import { useState, useMemo } from "react";
+import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet";
 
 import { Flex, Button, Heading, Text } from "@chakra-ui/react";
 
-import { useNostrEvents, normalizeURL } from "../nostr";
+import { useNostrEvents, normalizeURL, decodeNrelay } from "../nostr";
 import Authors from "../lib/Authors";
 import Tags from "../lib/Tags";
 import Layout from "../lib/Layout";
 import Feed from "../lib/Feed";
-import Relays from "../lib/Relays";
+import { RelayCard } from "../lib/Relays";
 
-export default function Home() {
+export default function Relay() {
+  const { nrelay } = useParams();
+  const relay = decodeNrelay(nrelay);
   const [followsOnly, setFollowsOnly] = useState(false);
-  const { relays, follows, selectedRelay } = useSelector((s) => s.relay);
-  const relayUrls = relays.map((r) => r.url);
+  const { user, follows } = useSelector((s) => s.relay);
   const followsFeed = useNostrEvents({
     filter: {
       kinds: [30023],
       limit: 20,
       authors: follows,
     },
+    relays: [relay],
     enabled: followsOnly,
   });
   const allFeed = useNostrEvents({
@@ -29,40 +32,28 @@ export default function Home() {
       limit: 20,
     },
     enabled: !followsOnly,
+    relays: [relay],
   });
-  const { events, seen, seenByRelay } = followsOnly ? followsFeed : allFeed;
+  const { events, seenByRelay } = followsOnly ? followsFeed : allFeed;
 
   const filteredEvents = useMemo(() => {
-    if (!selectedRelay) {
-      return events;
-    }
-
-    let ids = new Set([]);
-    const normalized = normalizeURL(selectedRelay);
-    const seenInRelay = seen[normalized];
-    if (seenInRelay) {
-      Array.from(seenInRelay).forEach((i) => {
-        ids.add(i);
-      });
-    }
-
-    return events
-      .filter((ev) => ids.has(ev.id))
-      .filter((ev) => (followsOnly ? follows.includes(ev.pubkey) : true));
-  }, [events, seen, selectedRelay, follows, followsOnly]);
+    return events.filter((ev) =>
+      followsOnly ? follows.includes(ev.pubkey) : true
+    );
+  }, [events, follows, followsOnly]);
 
   return (
     <>
       <Helmet>
         <meta charSet="utf-8" />
-        <title>Habla</title>
+        <title>Habla - Notes on {relay}</title>
       </Helmet>
       <Layout
         aside={
           <Flex flexDirection="column" as="aside" width={320} p={4} pr={4}>
+            <RelayCard url={relay} />
+            <Authors events={filteredEvents} />
             <Tags events={filteredEvents} />
-            <Authors events={filteredEvents} relays={relayUrls} />
-            <Relays />
           </Flex>
         }
       >
@@ -74,7 +65,7 @@ export default function Home() {
           >
             Notes on{" "}
             <Text as="span" color="purple.500">
-              {selectedRelay}
+              {normalizeURL(relay)}
             </Text>
           </Heading>
         </Flex>
@@ -91,19 +82,25 @@ export default function Home() {
           >
             All
           </Button>
-          <Button
-            color={!followsOnly ? "secondary.500" : "var(--font)"}
-            fontWeight={followsOnly ? 500 : 400}
-            fontSize="14px"
-            fontFamily="var(--font-mono)"
-            lineHeight="16px"
-            variant="unstyled"
-            onClick={() => setFollowsOnly(true)}
-          >
-            Follows
-          </Button>
+          {user && (
+            <Button
+              color={!followsOnly ? "secondary.500" : "var(--font)"}
+              fontWeight={followsOnly ? 500 : 400}
+              fontSize="14px"
+              fontFamily="var(--font-mono)"
+              lineHeight="16px"
+              variant="unstyled"
+              onClick={() => setFollowsOnly(true)}
+            >
+              Follows
+            </Button>
+          )}
         </Flex>
-        <Feed events={filteredEvents} seenByRelay={seenByRelay} />
+        <Feed
+          relays={[relay]}
+          events={filteredEvents}
+          seenByRelay={seenByRelay}
+        />
       </Layout>
     </>
   );

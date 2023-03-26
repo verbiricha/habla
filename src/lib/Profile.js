@@ -1,13 +1,12 @@
 import { useNostrEvents, useProfile, getEventId } from "../nostr";
-import { Flex, Text, Avatar, Heading } from "@chakra-ui/react";
+import { Flex, Box, Text, Avatar, Heading } from "@chakra-ui/react";
 
 import EventItem from "./EventItem";
-import { RelayList } from "./Relays";
 import Nip05 from "./nip05";
 
 export default function Profile({ pubkey, relays }) {
   const { data } = useProfile({ pubkey });
-  const { seen, events } = useNostrEvents({
+  const { events, seenByRelay } = useNostrEvents({
     filter: {
       authors: [pubkey],
       kinds: [30023],
@@ -23,13 +22,6 @@ export default function Profile({ pubkey, relays }) {
             <Heading as="h1">{data?.name}</Heading>
             <Nip05 fontSize="xl" pubkey={pubkey} nip05={data?.nip05} />
             <Text>{data?.about}</Text>
-            {relays && (
-              <RelayList
-                relays={relays}
-                showUrl={true}
-                flexDirection="column"
-              />
-            )}
           </Flex>
         </Flex>
       </Flex>
@@ -39,11 +31,13 @@ export default function Profile({ pubkey, relays }) {
           Posts ({`${events.length}`})
         </Heading>
         {events.map((e) => (
-          <EventItem
-            relays={relays || seen[getEventId(e)]}
-            key={getEventId(e)}
-            event={e}
-          />
+          <Box mb={6}>
+            <EventItem
+              relays={seenByRelay && Array.from(seenByRelay[e.id])}
+              key={getEventId(e)}
+              event={e}
+            />
+          </Box>
         ))}
       </Flex>
     </>

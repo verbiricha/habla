@@ -39,12 +39,12 @@ export function encodeTLV(hex, prefix, relays, author, kind) {
   return bech32.encode(
     prefix,
     bech32.toWords([...tl0, ...tl1, ...tl2, ...tl3]),
-    420
+    1000
   );
 }
 
 export function decodeTLV(str) {
-  const decoded = bech32.decode(str, 420);
+  const decoded = bech32.decode(str, 1000);
   const data = bech32.fromWords(decoded.words);
 
   const entries = [];
@@ -87,10 +87,16 @@ export function decodeNaddr(naddr) {
   return address;
 }
 
+export function encodeNrelay(relay) {
+  return encodeTLV(relay, "nrelay");
+}
+
 export function decodeNrelay(nrelay) {
-  const decoded = decodeTLV(nrelay);
-  const rawRelay = decoded.find(({ type }) => type === 0);
-  return hexToString(rawRelay.value);
+  try {
+    const decoded = decodeTLV(nrelay);
+    const rawRelay = decoded.find(({ type }) => type === 0);
+    return hexToString(rawRelay.value);
+  } catch (error) {}
 }
 
 export function decodeNprofile(nprofile) {
@@ -134,7 +140,7 @@ export function hexToBech32(hex, prefix) {
 }
 
 export function bech32ToHex(s) {
-  const { words } = bech32.decode(s, 420);
+  const { words } = bech32.decode(s, 1000);
   const bytes = Buffer.from(bech32.fromWords(words));
   return bytes.toString("hex");
 }

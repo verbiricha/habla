@@ -3,7 +3,7 @@ import { Stack } from "@chakra-ui/react";
 import { getEventId } from "../nostr";
 import Event from "./Event";
 
-export default function Feed({ events, seenByRelay }) {
+export default function Feed({ events, seenByRelay, ...rest }) {
   return (
     <Stack spacing={12}>
       {events.map((ev) => (
@@ -11,6 +11,7 @@ export default function Feed({ events, seenByRelay }) {
           key={getEventId(ev)}
           relays={seenByRelay && seenByRelay[ev.id]}
           event={ev}
+          {...rest}
         />
       ))}
     </Stack>

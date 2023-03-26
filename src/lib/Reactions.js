@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { decode } from "light-bolt11-decoder";
 
@@ -12,6 +13,7 @@ import {
   Input,
   Text,
   Textarea,
+  Heading,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -21,7 +23,7 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import { QRCodeCanvas } from "qrcode.react";
-import { TriangleUpIcon, ChatIcon } from "@chakra-ui/icons";
+import { TriangleUpIcon, ChatIcon, LinkIcon } from "@chakra-ui/icons";
 
 import {
   getEventId,
@@ -31,6 +33,8 @@ import {
   useNostrEvents,
   useProfile,
   signEvent,
+  getMetadata,
+  encodeNaddr,
   findTag,
 } from "../nostr";
 import { useLnURLService, loadInvoice } from "./LNUrl";
@@ -72,6 +76,7 @@ export default function Reactions({
   showUsers = false,
   isBounty = false,
   event,
+  ...rest
 }) {
   const { publish } = useNostr();
   const { user, relays } = useSelector((s) => s.relay);
@@ -79,7 +84,7 @@ export default function Reactions({
   const naddr = eventAddress(event);
   const { events } = useNostrEvents({
     filter: {
-      kinds: [7, 9735],
+      kinds: [7, 30023, 9735],
       "#a": [naddr],
     },
   });
@@ -97,6 +102,7 @@ export default function Reactions({
   const likes = events.filter(
     (e) => e.kind === 7 && e.content === "+" && e.pubkey !== event.pubkey
   );
+  const mentions = events.filter((e) => e.kind === 30023);
   const liked = likes.find((e) => e.pubkey === user);
   const zaps = events.filter((e) => e.kind === 9735);
   const zappers = useMemo(() => {
@@ -193,7 +199,7 @@ export default function Reactions({
   return (
     <>
       <Flex>
-        <HStack spacing={4} mt={4}>
+        <HStack spacing={4} mt={4} {...rest}>
           <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
             <IconButton
               variant="unstyled"
@@ -228,6 +234,12 @@ export default function Reactions({
               />
             </Flex>
           )}
+          <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
+            <LinkIcon />
+            <Text as="span" ml={4} fontSize="xl">
+              {mentions.length}
+            </Text>
+          </Flex>
         </HStack>
       </Flex>
       {showZap && lnurl && (
@@ -291,7 +303,8 @@ export default function Reactions({
         setShowReply={setShowReply}
       />
       {showUsers && zappers.length > 0 && (
-        <>
+        <Box mt={2} mb={2}>
+          <Heading mb={2}>Zaps</Heading>
           {zappers.map(({ id, content, pubkey, amount }) => (
             <>
               <Flex key={id} alignItems="center" mb={2}>
@@ -301,19 +314,53 @@ export default function Reactions({
               <Text ml="60px">{content}</Text>
             </>
           ))}
-        </>
+        </Box>
       )}
-      {showComments && <Thread isBounty={isBounty} event={event} />}
+      {showComments && (
+        <Box mt={2} mb={2}>
+          <Heading mb={2}>Comments</Heading>
+          <Thread isBounty={isBounty} event={event} />
+        </Box>
+      )}
       {showUsers && likes.length > 0 && (
-        <>
+        <Box mt={2} mb={2}>
+          <Heading mb={2}>Liked</Heading>
           {likes.map((ev) => (
             <Flex key={getEventId(ev)} alignItems="center" mb={2}>
               <User showNip={false} pubkey={ev.pubkey} />
               <Text> liked</Text>
             </Flex>
           ))}
-        </>
+        </Box>
+      )}
+      {showComments && mentions.length > 0 && (
+        <Box mt={2} mb={2}>
+          <Heading mb={2}>Mentions</Heading>
+          {mentions.map((ev) => (
+            <ArticlePreview ev={ev} />
+          ))}
+        </Box>
       )}
     </>
+  );
+}
+
+function ArticlePreview({ ev }) {
+  const meta = getMetadata(ev);
+  const naddr = encodeNaddr(ev);
+  return (
+    <Box key={ev.id} mb={2}>
+      <Link to={`/a/${naddr}`}>
+        <Flex flexDirection="column">
+          <Text fontSize="4xl">{meta?.title}</Text>
+          <Flex alignItems="center" flexDirection="row">
+            <Text fontSize="xs" color="secondary.500">
+              by{" "}
+            </Text>
+            <User ml={2} size="xs" pubkey={ev.pubkey} fontSize="md" />
+          </Flex>
+        </Flex>
+      </Link>
+    </Box>
   );
 }

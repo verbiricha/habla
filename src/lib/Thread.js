@@ -241,7 +241,7 @@ export default function Thread({ isBounty, event }) {
     return r.tags.filter((t) => t[0] === "e").length === 1;
   });
 
-  return (
+  return filtered.length > 0 ? (
     <>
       {filtered.map((ev) => (
         <Comment
@@ -253,5 +253,9 @@ export default function Thread({ isBounty, event }) {
         />
       ))}
     </>
+  ) : (
+    <Text fontSize="md" color="secondary.500">
+      No comments yet
+    </Text>
   );
 }

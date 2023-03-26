@@ -215,7 +215,7 @@ function extractNrelays(fragments) {
           if (i.startsWith("nrelay1")) {
             try {
               const relay = decodeNrelay(i);
-              return <NRelay relay={relay} />;
+              return <NRelay nrelay={i} relay={relay} />;
             } catch (error) {
               return i;
             }

@@ -1,5 +1,15 @@
 import { useNavigate } from "react-router-dom";
-import { Tag } from "@chakra-ui/react";
+import { Flex, Tag } from "@chakra-ui/react";
+
+export function Hashtags({ hashtags }) {
+  return (
+    <Flex mt={4} flexWrap="wrap">
+      {hashtags.map((t) => (
+        <Hashtag key={t} mr={2} mb={2} tag={t} />
+      ))}
+    </Flex>
+  );
+}
 
 export default function Hashtag({ tag, ...rest }) {
   const navigate = useNavigate();

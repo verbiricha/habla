@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useNostr, normalizeURL } from "../nostr";
+import { Link } from "react-router-dom";
+import { useNostr, normalizeURL, encodeNrelay } from "../nostr";
 
 import {
   Box,
@@ -72,20 +73,41 @@ function sorted(s: Set<any>) {
   return sorted;
 }
 
-export function RelayList({ relays, showUrl = false, ...props }) {
+export function RelayList({
+  linkToNrelay = false,
+  relays,
+  showUrl = false,
+  ...props
+}) {
   const urls = relays ? sorted(relays) : [];
   return (
     <Flex {...props}>
-      {urls.map((url) => (
-        <Flex alignItems="center" key={url}>
-          <RelayFavicon url={url} mr={2} />
-          {showUrl && (
-            <Text margin={0} my={1} fontFamily="var(--font-mono)" fontSize="md">
-              {normalizeURL(url)}
-            </Text>
-          )}
-        </Flex>
-      ))}
+      {urls.map((url) => {
+        const content = (
+          <Flex alignItems="center">
+            <RelayFavicon url={url} mr={2} />
+            {showUrl && (
+              <Text
+                margin={0}
+                my={1}
+                fontFamily="var(--font-mono)"
+                fontSize="md"
+                color="purple.500"
+                style={{ textDecoration: "none" }}
+              >
+                {normalizeURL(url)}
+              </Text>
+            )}
+          </Flex>
+        );
+        return linkToNrelay ? (
+          <Link key={url} to={`/r/${encodeNrelay(url)}`}>
+            {content}
+          </Link>
+        ) : (
+          content
+        );
+      })}
     </Flex>
   );
 }
@@ -111,21 +133,21 @@ export function RelayCard({ url, ...rest }) {
       borderColor={surface}
       borderRadius="var(--border-radius)"
       fontSize="14px"
+      mb={2}
       {...rest}
     >
-      {info?.pubkey && (
-        <Box margin="0 auto">
-          <User
-            key={info?.pubkey}
-            size="xl"
-            showUsername={false}
-            pubkey={info.pubkey}
-          />
-        </Box>
-      )}
-      <Flex alignItems="center" mt={4}>
-        <RelayFavicon size="xs" mr={2} url={url} />
-        <Text color="purple.500" fontFamily="var(--font-mono)">
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        flexDirection="column"
+        width="100%"
+      >
+        <RelayFavicon url={url} mb={2} size="md" />
+        <Text
+          textAlign="center"
+          color="purple.500"
+          fontFamily="var(--font-mono)"
+        >
           {normalizeURL(url)}
         </Text>
       </Flex>
@@ -171,11 +193,19 @@ export function RelayCard({ url, ...rest }) {
           </Text>
           <Flex flexWrap="wrap">
             {info.supported_nips.map((n) => (
-              <Box mr={2}>
+              <Box mr={2} key={n}>
                 <Nip n={n} />
               </Box>
             ))}
           </Flex>
+        </Flex>
+      )}
+      {info?.pubkey && info.pubkey !== "unset" && (
+        <Flex width="100%" flexDirection="column" mt={2}>
+          <Text fontWeight={500} mb={2}>
+            Operator
+          </Text>
+          <User key={info?.pubkey} size="xs" pubkey={info.pubkey} />
         </Flex>
       )}
     </Flex>
@@ -196,19 +226,16 @@ export default function Relays(props) {
 
   return (
     <Box>
-      <RelayCard mb={6} url={selectedRelay} />
       <Heading mb={4} fontSize="2xl" as="h3">
         Relays
       </Heading>
       <Flex flexDirection={"column"} {...props}>
         {relays.map((url) => (
-          <>
-            <Relay
-              isConnected={connectedRelays.includes(normalizeURL(url))}
-              key={url}
-              url={url}
-            />
-          </>
+          <Relay
+            isConnected={connectedRelays.includes(normalizeURL(url))}
+            key={url}
+            url={url}
+          />
         ))}
       </Flex>
       <InputGroup size="md" mb={6} mt={3}>
