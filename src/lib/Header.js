@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
   Flex,
@@ -106,6 +106,8 @@ function RelaySelector(props) {
 }
 
 export default function Header() {
+  const loc = useLocation();
+  const isRelayPage = loc.pathname.startsWith("/r/");
   return (
     <Flex alignItems="center" justifyContent="space-between" as="header" p={4}>
       <Link to="/">
@@ -116,7 +118,7 @@ export default function Header() {
           Habla
         </Heading>
       </Link>
-      <RelaySelector ml={2} />
+      {!isRelayPage && <RelaySelector ml={2} />}
       <Login />
     </Flex>
   );
