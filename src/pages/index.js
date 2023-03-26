@@ -60,8 +60,8 @@ export default function Home() {
       <Layout
         aside={
           <Flex flexDirection="column" as="aside" width={320} p={4} pr={4}>
-            <Tags events={filteredEvents} />
             <Authors events={filteredEvents} relays={relayUrls} />
+            <Tags events={filteredEvents} />
             <Relays />
           </Flex>
         }
