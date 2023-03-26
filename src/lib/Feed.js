@@ -9,7 +9,7 @@ export default function Feed({ events, seenByRelay, ...rest }) {
       {events.map((ev) => (
         <Event
           key={getEventId(ev)}
-          relays={seenByRelay && seenByRelay[ev.id]}
+          relays={seenByRelay && Array.from(seenByRelay[ev.id])}
           event={ev}
           {...rest}
         />

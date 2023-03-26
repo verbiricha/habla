@@ -23,6 +23,8 @@ export default function Article({ d, pubkey, relays = [] }) {
   const ev = useCached(`event:30023:${pubkey}:${d}`, events[0], {
     isEvent: true,
   });
+  const seenIn =
+    seenByRelay && seenByRelay[ev.id] ? Array.from(seenByRelay[ev.id]) : relays;
 
   return (
     <>
@@ -37,7 +39,7 @@ export default function Article({ d, pubkey, relays = [] }) {
         <Event
           key={ev.id}
           isPreview={false}
-          relays={relays || seenByRelay[ev?.id]}
+          relays={seenIn}
           showReactions={true}
           showComments={true}
           event={ev}

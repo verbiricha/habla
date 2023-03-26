@@ -44,7 +44,7 @@ export default function Event({
   const isSensitive = metadata.sensitive;
   const isBounty = metadata.reward !== null;
   const [blurPictures, setBlurPictures] = useState(isSensitive);
-  const naddr = encodeNaddr(event, Array.from(relays));
+  const naddr = encodeNaddr(event, relays);
   const href = `/a/${naddr}`;
   useEffect(() => {
     if (hash?.length > 1) {
