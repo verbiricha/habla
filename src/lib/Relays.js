@@ -214,7 +214,7 @@ export function RelayCard({ url, ...rest }) {
 
 export default function Relays(props) {
   const { pool, connectedRelays } = useNostr();
-  const { relays, selectedRelay } = useRelays();
+  const { relays } = useRelays();
   const [relay, setRelay] = useState("");
   const isValidRelay = relay.startsWith("ws://") || relay.startsWith("wss://");
   const { add } = useRelays();

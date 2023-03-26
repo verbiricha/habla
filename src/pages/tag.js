@@ -1,11 +1,9 @@
-import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { Flex, Heading } from "@chakra-ui/react";
 
 import { useNostrEvents } from "../nostr";
 import Layout from "../lib/Layout";
-import User from "../lib/User";
 import Feed from "../lib/Feed";
 import Relays from "../lib/Relays";
 import Authors from "../lib/Authors";
