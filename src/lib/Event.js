@@ -95,7 +95,7 @@ export default function Event({
           </Flex>
         )}
         <Link to={href}>
-          <Heading fontSize="52px" fontFamily="var(--article-heading)" as="h1">
+          <Heading fontFamily="var(--article-heading)" as="h1">
             {metadata.title}
           </Heading>
           {!isPreview && seenIn}
