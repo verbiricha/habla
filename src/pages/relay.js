@@ -20,7 +20,6 @@ export default function Relay() {
   const followsFeed = useNostrEvents({
     filter: {
       kinds: [30023],
-      limit: 20,
       authors: follows,
     },
     relays: [relay],
@@ -29,7 +28,6 @@ export default function Relay() {
   const allFeed = useNostrEvents({
     filter: {
       kinds: [30023],
-      limit: 20,
     },
     enabled: !followsOnly,
     relays: [relay],
