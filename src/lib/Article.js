@@ -24,7 +24,9 @@ export default function Article({ d, pubkey, relays = [] }) {
     isEvent: true,
   });
   const seenIn =
-    seenByRelay && seenByRelay[ev.id] ? Array.from(seenByRelay[ev.id]) : relays;
+    seenByRelay && ev?.id && seenByRelay[ev.id]
+      ? Array.from(seenByRelay[ev.id])
+      : relays;
 
   return (
     <>
