@@ -5,9 +5,12 @@ function processContent(ev, replaceTags) {
   const replaceNpub = (match: string) => {
     try {
       const hex = bech32ToHex(match);
-      const idx = ev.tags.length;
-      ev.tags.push(["p", hex, idx]);
-      return `#[${idx}]`;
+      const tag = ["p", hex];
+      const hasTag = ev.tags.find((t) => t[0] === "p" && t[1] === hex);
+      if (!hasTag) {
+        ev.tags.push(tag);
+      }
+      return match;
     } catch (error) {
       return match;
     }
@@ -15,9 +18,12 @@ function processContent(ev, replaceTags) {
   const replaceNaddr = (match: string) => {
     try {
       const { k, pubkey, d } = decodeNaddr(match);
-      const idx = ev.tags.length;
-      ev.tags.push(["a", `${k}:${pubkey}:${d}`, idx]);
-      return `#[${idx}]`;
+      const addr = `${k}:${pubkey}:${d}`;
+      const hasTag = ev.tags.find((t) => t[0] === "a" && t[1] === addr);
+      if (!hasTag) {
+        ev.tags.push(["a", addr]);
+      }
+      return match;
     } catch (error) {
       return match;
     }
@@ -25,18 +31,22 @@ function processContent(ev, replaceTags) {
   const replaceNoteId = (match: string) => {
     try {
       const hex = bech32ToHex(match);
-      const idx = ev.tags.length;
-      ev.tags.push(["e", hex, idx]);
-      return `#[${idx}]`;
+      const hasTag = ev.tags.find((t) => t[0] === "e" && t[1] === hex);
+      if (!hasTag) {
+        ev.tags.push(["e", hex]);
+      }
+      return match;
     } catch (error) {
       return match;
     }
   };
   const replaceHashtag = (match: string) => {
     const tag = match.slice(1);
-    const idx = ev.tags.length;
-    ev.tags.push(["t", tag, idx]);
-    return `#[${idx}]`;
+    const hasTag = ev.tags.find((t) => t[0] === "t" && t[1] === tag);
+    if (!hasTag) {
+      ev.tags.push(["t", tag]);
+    }
+    return match;
   };
   const replaced = ev.content
     .replace(/\bnpub1[a-z0-9]+\b(?=(?:[^`]*`[^`]*`)*[^`]*$)/g, replaceNpub)

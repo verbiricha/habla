@@ -7,6 +7,8 @@ import remarkToc from "remark-toc";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
 import slugify from "slugify";
+import { nip19 } from "nostr-tools";
+
 import HyperText from "./HyperText";
 import HashtagLink from "./HashtagLink";
 import { visit, SKIP } from "unist-util-visit";
@@ -17,6 +19,7 @@ import {
   encodeTLV,
   decodeNprofile,
   decodeNaddr,
+  encodeNevent,
   decodeNevent,
   decodeNrelay,
 } from "../nostr";
@@ -41,17 +44,23 @@ export function replaceMentions(f, tags) {
         if (ref) {
           switch (ref[0]) {
             case "p": {
-              return hexToBech32(ref[1], "npub");
+              // todo: nprofile?
+              return `nostr:${hexToBech32(ref[1], "npub")}`;
             }
             case "e": {
-              return hexToBech32(ref[1], "note");
+              const maybeRelay = ref[2];
+              if (maybeRelay) {
+                return `nostr:${encodeNevent(ref[1], [maybeRelay])}`;
+              } else {
+                return `nostr:${hexToBech32(ref[1], "note")}`;
+              }
             }
             case "t": {
               return <HashtagLink tag={ref[1]} />;
             }
             case "a": {
               const [k, p, d] = ref[1].split(":");
-              return encodeTLV(d, "naddr", [], p, Number(k));
+              return `nostr:${encodeTLV(d, "naddr", [], p, Number(k))}`;
             }
             default:
               return ref[1];
@@ -115,10 +124,11 @@ function extractNpubs(fragments) {
   return fragments
     .map((f) => {
       if (typeof f === "string") {
-        return f.split(/(npub1[a-z0-9]+)/g).map((i) => {
-          if (i.startsWith("npub1")) {
+        return f.split(/nostr:(npub1[a-z0-9]+)/g).map((i) => {
+          if (i.includes("npub1")) {
             try {
-              const id = bech32ToHex(i);
+              const raw = i.replace(/^nostr:/, "");
+              const id = bech32ToHex(raw);
               return <Mention pubkey={id} />;
             } catch (error) {
               return i;
@@ -137,8 +147,8 @@ function extractNaddrs(fragments) {
   return fragments
     .map((f) => {
       if (typeof f === "string") {
-        return f.split(/(naddr1[a-z0-9]+)/g).map((i) => {
-          if (i.startsWith("naddr1")) {
+        return f.split(/nostr:(naddr1[a-z0-9]+)/g).map((i) => {
+          if (i.includes("naddr1")) {
             try {
               const { kind, pubkey, d, relays } = decodeNaddr(i);
               return (
@@ -167,7 +177,7 @@ function extractNprofiles(fragments) {
   return fragments
     .map((f) => {
       if (typeof f === "string") {
-        return f.split(/(nprofile1[a-z0-9]+)/g).map((i) => {
+        return f.split(/nostr:(nprofile1[a-z0-9]+)/g).map((i) => {
           if (i.startsWith("nprofile1")) {
             try {
               const { pubkey, relays } = decodeNprofile(i);
@@ -189,7 +199,7 @@ function extractNevents(fragments) {
   return fragments
     .map((f) => {
       if (typeof f === "string") {
-        return f.split(/(nevent1[a-z0-9]+)/g).map((i) => {
+        return f.split(/nostr:(nevent1[a-z0-9]+)/g).map((i) => {
           if (i.startsWith("nevent1")) {
             try {
               const { id, relays } = decodeNevent(i);
@@ -211,7 +221,7 @@ function extractNrelays(fragments) {
   return fragments
     .map((f) => {
       if (typeof f === "string") {
-        return f.split(/(nrelay1[a-z0-9]+)/g).map((i) => {
+        return f.split(/nostr:(nrelay1[a-z0-9]+)/g).map((i) => {
           if (i.startsWith("nrelay1")) {
             try {
               const relay = decodeNrelay(i);
@@ -233,7 +243,7 @@ function extractNoteIds(fragments) {
   return fragments
     .map((f) => {
       if (typeof f === "string") {
-        return f.split(/(note1[a-z0-9]+)/g).map((i) => {
+        return f.split(/nostr:(note1[a-z0-9]+)/g).map((i) => {
           if (i.startsWith("note1")) {
             try {
               const id = bech32ToHex(i);

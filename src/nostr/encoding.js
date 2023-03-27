@@ -1,6 +1,7 @@
 import { Buffer } from "buffer";
 import { bech32 } from "bech32";
 import * as secp from "@noble/secp256k1";
+import { nip19 } from "nostr-tools";
 import { findTag } from "./tags";
 
 export function encodeTLV(hex, prefix, relays, author, kind) {
@@ -73,18 +74,19 @@ function hexToString(value: string) {
 }
 
 export function decodeNaddr(naddr) {
-  const decoded = decodeTLV(naddr);
-  const rawD = decoded.find(({ type }) => type === 0);
-  const d = hexToString(rawD.value);
-  const relays = decoded
-    .filter(({ type }) => type === 1)
-    .map(({ value }) => hexToString(value));
-  const rawK = decoded.find(({ type }) => type === 3);
-  const k = Buffer.from(rawK.value, "hex").readUInt32BE();
-  const rawP = decoded.find(({ type }) => type === 2);
-  const pubkey = rawP.value;
-  const address = { d, k, pubkey, relays };
-  return address;
+  try {
+    const decoded = nip19.decode(naddr);
+    if (decoded.type === "naddr") {
+      const data = decoded.data;
+      return {
+        d: data.identifier,
+        k: data.kind,
+        kind: data.kind,
+        pubkey: data.pubkey,
+        relays: data.relays,
+      };
+    }
+  } catch (error) {}
 }
 
 export function encodeNrelay(relay) {

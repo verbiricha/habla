@@ -33,7 +33,7 @@ export default function Articles({ title = "Articles", events }) {
       </Heading>
       <Flex flexDirection="column">
         {events.map((ev) => {
-          return <ArticlePreview ev={ev} />;
+          return <ArticlePreview key={ev.id} ev={ev} />;
         })}
       </Flex>
     </>
