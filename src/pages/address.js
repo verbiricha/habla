@@ -12,7 +12,7 @@ import Articles from "../lib/Articles";
 
 export default function AddressPage() {
   const { naddr } = useParams();
-  const { relays, pubkey, d } = naddr ? decodeNaddr(naddr) : {};
+  const { relays, pubkey, d } = naddr ? decodeNaddr(naddr) ?? {} : {};
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [naddr]);

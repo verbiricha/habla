@@ -32,6 +32,7 @@ import Note from "./Note";
 import Mention from "./Mention";
 
 const MentionRegex = /(#\[\d+\])/gi;
+const NostrPrefixRegex = /^nostr:/;
 
 export function replaceMentions(f, tags) {
   return f
@@ -124,10 +125,10 @@ function extractNpubs(fragments) {
   return fragments
     .map((f) => {
       if (typeof f === "string") {
-        return f.split(/nostr:(npub1[a-z0-9]+)/g).map((i) => {
-          if (i.includes("npub1")) {
+        return f.split(/(nostr:npub1[a-z0-9]+)/g).map((i) => {
+          if (i.startsWith("nostr:npub1")) {
             try {
-              const raw = i.replace(/^nostr:/, "");
+              const raw = i.replace(NostrPrefixRegex, "");
               const id = bech32ToHex(raw);
               return <Mention pubkey={id} />;
             } catch (error) {
@@ -147,13 +148,14 @@ function extractNaddrs(fragments) {
   return fragments
     .map((f) => {
       if (typeof f === "string") {
-        return f.split(/nostr:(naddr1[a-z0-9]+)/g).map((i) => {
-          if (i.includes("naddr1")) {
+        return f.split(/(nostr:naddr1[a-z0-9]+)/g).map((i) => {
+          if (i.startsWith("nostr:naddr1")) {
             try {
-              const { kind, pubkey, d, relays } = decodeNaddr(i);
+              const naddr = i.replace(NostrPrefixRegex, "");
+              const { kind, pubkey, d, relays } = decodeNaddr(naddr);
               return (
                 <Naddr
-                  naddr={i}
+                  naddr={naddr}
                   kind={kind}
                   pubkey={pubkey}
                   d={d}
@@ -177,10 +179,12 @@ function extractNprofiles(fragments) {
   return fragments
     .map((f) => {
       if (typeof f === "string") {
-        return f.split(/nostr:(nprofile1[a-z0-9]+)/g).map((i) => {
-          if (i.startsWith("nprofile1")) {
+        return f.split(/(nostr:nprofile1[a-z0-9]+)/g).map((i) => {
+          if (i.startsWith("nostr:nprofile1")) {
             try {
-              const { pubkey, relays } = decodeNprofile(i);
+              const { pubkey, relays } = decodeNprofile(
+                i.replace(NostrPrefixRegex, "")
+              );
               return <NProfile pubkey={pubkey} relays={relays} />;
             } catch (error) {
               return i;
@@ -199,11 +203,12 @@ function extractNevents(fragments) {
   return fragments
     .map((f) => {
       if (typeof f === "string") {
-        return f.split(/nostr:(nevent1[a-z0-9]+)/g).map((i) => {
-          if (i.startsWith("nevent1")) {
+        return f.split(/(nostr:nevent1[a-z0-9]+)/g).map((i) => {
+          if (i.startsWith("nostr:nevent1")) {
             try {
-              const { id, relays } = decodeNevent(i);
-              return <NEvent id={id} relays={relays} />;
+              const nevent = i.replace(NostrPrefixRegex, "");
+              const { id, relays } = decodeNevent(nevent);
+              return <NEvent nevent={nevent} id={id} relays={relays} />;
             } catch (error) {
               return i;
             }
@@ -221,10 +226,10 @@ function extractNrelays(fragments) {
   return fragments
     .map((f) => {
       if (typeof f === "string") {
-        return f.split(/nostr:(nrelay1[a-z0-9]+)/g).map((i) => {
-          if (i.startsWith("nrelay1")) {
+        return f.split(/(nostr:nrelay1[a-z0-9]+)/g).map((i) => {
+          if (i.startsWith("nostr:nrelay1")) {
             try {
-              const relay = decodeNrelay(i);
+              const relay = decodeNrelay(i.replace(NostrPrefixRegex, ""));
               return <NRelay nrelay={i} relay={relay} />;
             } catch (error) {
               return i;
@@ -243,10 +248,10 @@ function extractNoteIds(fragments) {
   return fragments
     .map((f) => {
       if (typeof f === "string") {
-        return f.split(/nostr:(note1[a-z0-9]+)/g).map((i) => {
-          if (i.startsWith("note1")) {
+        return f.split(/(nostr:note1[a-z0-9]+)/g).map((i) => {
+          if (i.startsWith("nostr:note1")) {
             try {
-              const id = bech32ToHex(i);
+              const id = bech32ToHex(i.replace(NostrPrefixRegex, ""));
               return <Note id={id} />;
             } catch (error) {
               return i;

@@ -129,9 +129,13 @@ function Comment({ isBounty, root, ev, chains }) {
       </Flex>
       <Flex flexDirection="column" ml="10px">
         {replies?.map((r) => (
-          <>
-            <Comment isBounty={isBounty} root={root} ev={r} chains={chains} />
-          </>
+          <Comment
+            key={r.id}
+            isBounty={isBounty}
+            root={root}
+            ev={r}
+            chains={chains}
+          />
         ))}
       </Flex>
     </>
@@ -156,9 +160,13 @@ function Comment({ isBounty, root, ev, chains }) {
       </Box>
       <Flex flexDirection="column" ml="10px">
         {replies?.map((r) => (
-          <>
-            <Comment isBounty={isBounty} root={root} ev={r} chains={chains} />
-          </>
+          <Comment
+            key={r.id}
+            isBounty={isBounty}
+            root={root}
+            ev={r}
+            chains={chains}
+          />
         ))}
       </Flex>
     </Flex>

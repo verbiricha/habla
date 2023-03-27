@@ -8,14 +8,18 @@ import NostrLink from "./NostrLink";
 import useColors from "./useColors";
 import useCached from "./useCached";
 
-export function NoteEvent({ note }) {
+export function NoteEvent({ note, nevent }) {
   const { surface } = useColors();
   return (
     <Card className="note" background={surface} sx={{ textDecoration: "none" }}>
       <CardHeader>
         <User pubkey={note.pubkey} />
       </CardHeader>
-      <NostrLink link={`https://snort.social/e/${encodeTLV(note.id, "note")}`}>
+      <NostrLink
+        link={`https://snort.social/e/${
+          nevent ? nevent : encodeTLV(note.id, "note")
+        }`}
+      >
         <CardBody mt="-40px" ml="60px">
           <Markdown content={note.content} tags={note.tags} />
         </CardBody>
