@@ -7,7 +7,6 @@ import remarkToc from "remark-toc";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
 import slugify from "slugify";
-import { nip19 } from "nostr-tools";
 
 import HyperText from "./HyperText";
 import HashtagLink from "./HashtagLink";

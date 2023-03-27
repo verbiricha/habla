@@ -1,8 +1,10 @@
-import { useNostrEvents, useProfile, getEventId } from "../nostr";
+import { useNostrEvents, useProfile } from "../nostr";
 import { Flex, Box, Text, Avatar, Heading } from "@chakra-ui/react";
 
+import { eventAddress } from "../nostr";
 import EventItem from "./EventItem";
 import Nip05 from "./nip05";
+import useReactions from "./useReactions";
 
 export default function Profile({ pubkey, relays }) {
   const { data } = useProfile({ pubkey });
@@ -13,6 +15,8 @@ export default function Profile({ pubkey, relays }) {
     },
     relays,
   });
+  const addresses = events.map(eventAddress);
+  const reactions = useReactions({ addresses });
   return (
     <>
       <Flex alignItems="center">
@@ -30,15 +34,22 @@ export default function Profile({ pubkey, relays }) {
         <Heading as="h2" mb={4}>
           Posts ({`${events.length}`})
         </Heading>
-        {events.map((e) => (
-          <Box mb={6}>
-            <EventItem
-              relays={seenByRelay && Array.from(seenByRelay[e.id])}
-              key={getEventId(e)}
-              event={e}
-            />
-          </Box>
-        ))}
+        {events.map((ev) => {
+          const addr = eventAddress(ev);
+          const eventReactions = reactions.filter((r) =>
+            r.tags.find((t) => t[0] === "a" && t[1] === addr)
+          );
+          return (
+            <Box mb={6}>
+              <EventItem
+                reactions={eventReactions}
+                relays={seenByRelay && Array.from(seenByRelay[ev.id])}
+                key={addr}
+                event={ev}
+              />
+            </Box>
+          );
+        })}
       </Flex>
     </>
   );

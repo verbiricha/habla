@@ -8,7 +8,7 @@ import Event from "./Event";
 import useLoggedInUser from "./useLoggedInUser";
 import useCached from "./useCached";
 
-export default function Article({ d, pubkey, relays = [] }) {
+export default function Article({ d, pubkey, relays = [], reactions = [] }) {
   const toast = useToast();
   const { user } = useLoggedInUser();
   const isMe = user === pubkey;
@@ -58,6 +58,7 @@ export default function Article({ d, pubkey, relays = [] }) {
           key={ev.id}
           isPreview={false}
           relays={seenIn}
+          reactions={reactions}
           showReactions={true}
           showComments={true}
           event={ev}

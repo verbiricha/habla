@@ -4,15 +4,20 @@ import { Helmet } from "react-helmet";
 
 import { Flex, Button, Heading, Text } from "@chakra-ui/react";
 
-import { useNostrEvents, normalizeURL } from "../nostr";
+import { useNostrEvents, normalizeURL, eventAddress } from "../nostr";
 import Authors from "../lib/Authors";
 import Tags from "../lib/Tags";
 import Layout from "../lib/Layout";
 import Feed from "../lib/Feed";
 import Relays from "../lib/Relays";
 
+const RECENT = "recent";
+const HOT = "hot";
+const TOP = "top";
+
 export default function Home() {
   const [followsOnly, setFollowsOnly] = useState(false);
+  const [sortBy, setSortBy] = useState(RECENT);
   const { relays, follows, selectedRelay } = useSelector((s) => s.relay);
   const relayUrls = relays.map((r) => r.url);
   const followsFeed = useNostrEvents({
@@ -51,6 +56,14 @@ export default function Home() {
       .filter((ev) => (followsOnly ? follows.includes(ev.pubkey) : true));
   }, [events, seen, selectedRelay, follows, followsOnly]);
 
+  const addresses = filteredEvents.map(eventAddress);
+  const reactions = useNostrEvents({
+    filter: {
+      "#a": addresses,
+      kinds: [7, 9735, 30023],
+    },
+  });
+
   return (
     <>
       <Helmet>
@@ -78,32 +91,60 @@ export default function Home() {
             </Text>
           </Heading>
         </Flex>
-        <Flex justifyContent="flex-end" width="100%">
-          <Button
-            color={followsOnly ? "secondary.500" : "var(--font)"}
-            fontWeight={followsOnly ? 400 : 500}
-            fontSize="14px"
-            fontFamily="var(--font-mono)"
-            lineHeight="16px"
-            variant="unstyled"
-            mr={3}
-            onClick={() => setFollowsOnly(false)}
-          >
-            All
-          </Button>
-          <Button
-            color={!followsOnly ? "secondary.500" : "var(--font)"}
-            fontWeight={followsOnly ? 500 : 400}
-            fontSize="14px"
-            fontFamily="var(--font-mono)"
-            lineHeight="16px"
-            variant="unstyled"
-            onClick={() => setFollowsOnly(true)}
-          >
-            Follows
-          </Button>
+        <Flex justifyContent="space-between" width="100%">
+          <Flex alignItems="center">
+            <Text
+              fontSize="sm"
+              fontFamily="var(--font-mono)"
+              color="secondary.500"
+            >
+              Sort by:
+            </Text>
+            <Button
+              color={sortBy !== RECENT ? "secondary.500" : "var(--font)"}
+              fontWeight={sortBy !== RECENT ? 400 : 500}
+              fontSize="14px"
+              fontFamily="var(--font-mono)"
+              lineHeight="16px"
+              variant="unstyled"
+              ml={2}
+              mr={3}
+              onClick={() => setSortBy(RECENT)}
+            >
+              Recent
+            </Button>
+          </Flex>
+          <Flex>
+            <Button
+              color={followsOnly ? "secondary.500" : "var(--font)"}
+              fontWeight={followsOnly ? 400 : 500}
+              fontSize="14px"
+              fontFamily="var(--font-mono)"
+              lineHeight="16px"
+              variant="unstyled"
+              mr={3}
+              onClick={() => setFollowsOnly(false)}
+            >
+              All
+            </Button>
+            <Button
+              color={!followsOnly ? "secondary.500" : "var(--font)"}
+              fontWeight={followsOnly ? 500 : 400}
+              fontSize="14px"
+              fontFamily="var(--font-mono)"
+              lineHeight="16px"
+              variant="unstyled"
+              onClick={() => setFollowsOnly(true)}
+            >
+              Follows
+            </Button>
+          </Flex>
         </Flex>
-        <Feed events={filteredEvents} seenByRelay={seenByRelay} />
+        <Feed
+          reactions={reactions.events}
+          events={filteredEvents}
+          seenByRelay={seenByRelay}
+        />
       </Layout>
     </>
   );

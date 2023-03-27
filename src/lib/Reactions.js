@@ -1,9 +1,11 @@
-import { useState, useMemo } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { decode } from "light-bolt11-decoder";
+import EmojiPicker, { Emoji } from "emoji-picker-react";
 
 import {
+  useColorMode,
   useToast,
   Box,
   Flex,
@@ -23,14 +25,13 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import { QRCodeCanvas } from "qrcode.react";
-import { TriangleUpIcon, ChatIcon, LinkIcon } from "@chakra-ui/icons";
+import { AddIcon, ChatIcon, LinkIcon } from "@chakra-ui/icons";
 
 import {
   getEventId,
   eventAddress,
   dateToUnix,
   useNostr,
-  useNostrEvents,
   useProfile,
   signEvent,
   getMetadata,
@@ -71,7 +72,70 @@ function getZapAmount(zap) {
   }
 }
 
+function useOnClickOutside(ref, onClickOutside) {
+  useEffect(() => {
+    function handleClickOutside(ev) {
+      if (ref && ref.current && !ref.current.contains(ev.target)) {
+        onClickOutside();
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref]);
+}
+
+function EmojiModal({ colorMode, isOpen, onEmojiClick, onClose }) {
+  const ref = useRef(null);
+  useOnClickOutside(ref, onClose);
+  function onEmoji(emoji) {
+    onEmojiClick(emoji);
+    onClose();
+  }
+  return (
+    isOpen && (
+      <Box ref={ref} width="350px">
+        <EmojiPicker onEmojiClick={onEmoji} theme={colorMode} />
+      </Box>
+    )
+  );
+}
+
+function ZapModal({ header, isOpen, onClose, invoice }) {
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>{header}</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <Flex alignItems="center" justifyContent="center">
+            <Box p={4} bg="white" borderRadius="var(--border-radius)">
+              <QRCodeCanvas value={invoice} size={250} />
+            </Box>
+          </Flex>
+        </ModalBody>
+
+        <ModalFooter>
+          <Button
+            colorScheme="purple"
+            mr={3}
+            onClick={() => window.open(`lightning:${invoice}`)}
+          >
+            Open wallet
+          </Button>
+          <Button colorScheme="blue" mr={3} onClick={onClose}>
+            Close
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+}
+
 export default function Reactions({
+  events = [],
   showComments = false,
   showUsers = false,
   isBounty = false,
@@ -82,12 +146,7 @@ export default function Reactions({
   const { user, relays } = useSelector((s) => s.relay);
   const toast = useToast();
   const naddr = eventAddress(event);
-  const { events } = useNostrEvents({
-    filter: {
-      kinds: [7, 30023, 9735],
-      "#a": [naddr],
-    },
-  });
+  const { colorMode } = useColorMode();
   const { data } = useProfile({ pubkey: event.pubkey });
   const lnurl = useLnURLService(data?.lud06 || data?.lud16);
 
@@ -95,13 +154,31 @@ export default function Reactions({
   const [comment, setComment] = useState("");
   const [showZap, setShowZap] = useState(false);
   const [invoice, setInvoice] = useState();
-  const [showModal, setShowModal] = useState(false);
+  const [showZapModal, setShowZapModal] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const webln = useWebln(showZap);
   const [amount, setAmount] = useState(0);
-
   const likes = events.filter(
     (e) => e.kind === 7 && e.content === "+" && e.pubkey !== event.pubkey
   );
+  const emojis = useMemo(() => {
+    const emo = events
+      .filter(
+        (e) =>
+          e.kind === 7 &&
+          e.content !== "+" &&
+          e.content !== "-" &&
+          e.pubkey !== event.pubkey
+      )
+      .reduce((acc, ev) => {
+        const count = acc[ev.content] ?? 0;
+        return { ...acc, [ev.content]: count + 1 };
+      }, {});
+    const entries = Object.entries(emo);
+    entries.sort((a, b) => a.count - b.count);
+    return entries;
+  }, [events]);
+  const reactions = events.filter((e) => e.kind === 7);
   const mentions = events.filter((e) => e.kind === 30023);
   const liked = likes.find((e) => e.pubkey === user);
   const zaps = events.filter((e) => e.kind === 9735);
@@ -140,7 +217,6 @@ export default function Reactions({
   }
 
   async function zapRequest(content) {
-    // todo: amount
     const ev = {
       kind: 9734,
       content,
@@ -174,11 +250,11 @@ export default function Reactions({
         onZapCancel();
       } catch (error) {
         setInvoice(invoice.pr);
-        setShowModal(true);
+        setShowZapModal(true);
       }
     } else {
       setInvoice(invoice.pr);
-      setShowModal(true);
+      setShowZapModal(true);
     }
   }
 
@@ -187,7 +263,8 @@ export default function Reactions({
     setComment("");
     setInvoice();
     setShowZap(false);
-    setShowModal(false);
+    setShowZapModal(false);
+    setShowEmojiPicker(false);
   }
 
   function like() {
@@ -196,23 +273,23 @@ export default function Reactions({
     }
   }
 
+  function hasReactedWith(emoji) {
+    return events.find(
+      (r) => r.kind === 7 && r.pubkey === user && r.content === emoji
+    );
+  }
+
+  function emojiReact({ emoji }) {
+    if (!hasReactedWith(emoji)) {
+      react(emoji);
+    }
+  }
+
   return (
     <>
-      <Flex>
+      <Flex sx={{ position: "relative", overflow: "visible" }}>
         <HStack spacing={4} mt={4} {...rest}>
-          <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
-            <IconButton
-              variant="unstyled"
-              color={liked ? "purple.500" : "var(--font)"}
-              icon={<TriangleUpIcon />}
-              size="sm"
-              onClick={like}
-            />
-            <Text as="span" ml={4} fontSize="xl">
-              {likes.length}
-            </Text>
-          </Flex>
-          <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
+          <Flex alignItems="center" flexDirection="row">
             <IconButton
               color={zapped ? "purple.500" : "var(--font)"}
               variant="unstyled"
@@ -220,12 +297,12 @@ export default function Reactions({
               size="sm"
               onClick={() => setShowZap(true)}
             />
-            <Text as="span" ml={4} fontSize="xl">
+            <Text as="span" fontSize="xl">
               {zapsTotal}
             </Text>
           </Flex>
           {showComments && (
-            <Flex alignItems="center" flexDirection="row">
+            <Flex alignItems="center" flexDirection="row" ml={2}>
               <IconButton
                 variant="unstyled"
                 icon={<ChatIcon />}
@@ -234,14 +311,61 @@ export default function Reactions({
               />
             </Flex>
           )}
-          <Flex alignItems="center" flexDirection="row" minWidth={"80px"}>
+          <Flex alignItems="center" flexDirection="row" ml={2}>
             <LinkIcon />
             <Text as="span" ml={4} fontSize="xl">
               {mentions.length}
             </Text>
           </Flex>
+          <Flex alignItems="center" flexDirection="row">
+            <IconButton
+              variant="unstyled"
+              icon={<Emoji unified="1f49c" size="20" />}
+              size="sm"
+              style={{ filter: liked ? "none" : "grayscale(100%)" }}
+              onClick={like}
+            />
+            <Text as="span" ml={2} fontSize="xl">
+              {likes.length}
+            </Text>
+          </Flex>
+          {emojis.map(([e, count]) => {
+            return (
+              <Flex alignItems="center" flexDirection="row" key={e}>
+                <Button
+                  variant="unstyled"
+                  size="sm"
+                  fontSize="20px"
+                  style={{
+                    filter: hasReactedWith(e) ? "none" : "grayscale(100%)",
+                  }}
+                  onClick={() => react(e)}
+                >
+                  {e}
+                </Button>
+                <Text as="span" ml={2} fontSize="xl">
+                  {count}
+                </Text>
+              </Flex>
+            );
+          })}
+          <IconButton
+            isDisabled={showEmojiPicker}
+            variant="unstyled"
+            icon={<AddIcon />}
+            size="sm"
+            onClick={(ev) => {
+              setShowEmojiPicker(true);
+            }}
+          />
         </HStack>
       </Flex>
+      <EmojiModal
+        colorMode={colorMode}
+        isOpen={showEmojiPicker}
+        onEmojiClick={emojiReact}
+        onClose={() => setShowEmojiPicker(false)}
+      />
       {showZap && lnurl && (
         <Flex flexDirection="column">
           <Input
@@ -267,35 +391,12 @@ export default function Reactions({
           </Flex>
         </Flex>
       )}
-      <Modal isOpen={showModal} onClose={onZapCancel}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
-            Zap {data?.name} {amount} sats
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Flex alignItems="center" justifyContent="center">
-              <Box p={4} bg="white" borderRadius="var(--border-radius)">
-                <QRCodeCanvas value={invoice} size={250} />
-              </Box>
-            </Flex>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button
-              colorScheme="purple"
-              mr={3}
-              onClick={() => window.open(`lightning:${invoice}`)}
-            >
-              Open wallet
-            </Button>
-            <Button colorScheme="blue" mr={3} onClick={onZapCancel}>
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <ZapModal
+        header={`Zap ${data?.name} ${amount} sats`}
+        invoice={invoice}
+        isOpen={showZapModal}
+        onClose={onZapCancel}
+      />
       <Reply
         root={event.id}
         event={event}
@@ -322,13 +423,18 @@ export default function Reactions({
           <Thread isBounty={isBounty} event={event} />
         </Box>
       )}
-      {showUsers && likes.length > 0 && (
+      {showUsers && reactions.length > 0 && (
         <Box mt={2} mb={2}>
-          <Heading mb={2}>Liked</Heading>
-          {likes.map((ev) => (
+          <Heading mb={2}>Reactions</Heading>
+          {reactions.map((ev) => (
             <Flex key={getEventId(ev)} alignItems="center" mb={2}>
               <User showNip={false} pubkey={ev.pubkey} />
-              <Text> liked</Text>
+              <Text>
+                {ev.content === "+" && " liked"}
+                {ev.content === "-" && " disliked"}
+                {!["+", "-"].includes(ev.content) &&
+                  ` reacted with ${ev.content}`}
+              </Text>
             </Flex>
           ))}
         </Box>

@@ -12,7 +12,7 @@ function formatTime(time) {
   }).format(time);
 }
 
-export default function EventItem({ relays, event }) {
+export default function EventItem({ relays, event, reactions }) {
   const metadata = getMetadata(event);
   const href = `/a/${encodeNaddr(event, relays)}`;
   return (
@@ -33,7 +33,7 @@ export default function EventItem({ relays, event }) {
         <RelayList ml={2} linkToNrelay={true} relays={relays} />
       </Flex>
       <Hashtags hashtags={metadata?.hashtags ?? []} />
-      <Reactions mt={0} event={event} />
+      <Reactions mt={0} event={event} events={reactions} />
     </Flex>
   );
 }

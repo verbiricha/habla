@@ -2,11 +2,12 @@ import { useParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { Flex, Heading } from "@chakra-ui/react";
 
-import { useNostrEvents } from "../nostr";
+import { useNostrEvents, eventAddress } from "../nostr";
 import Layout from "../lib/Layout";
 import Feed from "../lib/Feed";
 import Relays from "../lib/Relays";
 import Authors from "../lib/Authors";
+import useReactions from "../lib/useReactions";
 
 export default function Tag() {
   const { t } = useParams();
@@ -17,6 +18,8 @@ export default function Tag() {
       limit: 256,
     },
   });
+  const addresses = events.map(eventAddress);
+  const reactions = useReactions({ addresses });
 
   return (
     <>
@@ -35,7 +38,7 @@ export default function Tag() {
         <Heading as="h2" mb={6}>
           Hashtag: #{t}
         </Heading>
-        <Feed seenByRelay={seenByRelay} events={events} />
+        <Feed seenByRelay={seenByRelay} events={events} reactions={reactions} />
       </Layout>
     </>
   );

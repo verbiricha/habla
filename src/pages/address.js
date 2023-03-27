@@ -9,10 +9,12 @@ import ProfileCard from "../lib/ProfileCard";
 import Layout from "../lib/Layout";
 import Article from "../lib/Article";
 import Articles from "../lib/Articles";
+import useReactions from "../lib/useReactions";
 
 export default function AddressPage() {
   const { naddr } = useParams();
-  const { relays, pubkey, d } = naddr ? decodeNaddr(naddr) ?? {} : {};
+  const { relays, pubkey, d, kind } = naddr ? decodeNaddr(naddr) ?? {} : {};
+  const addr = `${kind}:${pubkey}:${d}`;
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [naddr]);
@@ -34,6 +36,7 @@ export default function AddressPage() {
       return findTag(ev.tags, "d") !== d;
     });
   }, [feed.events, d]);
+  const reactions = useReactions({ addresses: [addr], relays });
   return (
     <>
       <Helmet>
@@ -50,7 +53,13 @@ export default function AddressPage() {
           </Flex>
         }
       >
-        <Article key={naddr} d={d} pubkey={pubkey} relays={relays} />
+        <Article
+          key={naddr}
+          d={d}
+          pubkey={pubkey}
+          relays={relays}
+          reactions={reactions}
+        />
       </Layout>
     </>
   );

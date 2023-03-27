@@ -5,12 +5,18 @@ import { Helmet } from "react-helmet";
 
 import { Flex, Button, Heading, Text } from "@chakra-ui/react";
 
-import { useNostrEvents, normalizeURL, decodeNrelay } from "../nostr";
+import {
+  useNostrEvents,
+  normalizeURL,
+  decodeNrelay,
+  eventAddress,
+} from "../nostr";
 import Authors from "../lib/Authors";
 import Tags from "../lib/Tags";
 import Layout from "../lib/Layout";
 import Feed from "../lib/Feed";
 import { RelayCard } from "../lib/Relays";
+import useReactions from "../lib/useReactions";
 
 export default function Relay() {
   const { nrelay } = useParams();
@@ -39,6 +45,9 @@ export default function Relay() {
       followsOnly ? follows.includes(ev.pubkey) : true
     );
   }, [events, follows, followsOnly]);
+
+  const addresses = filteredEvents.map(eventAddress);
+  const reactions = useReactions({ addresses });
 
   return (
     <>
@@ -96,6 +105,7 @@ export default function Relay() {
         </Flex>
         <Feed
           relays={[relay]}
+          reactions={reactions}
           events={filteredEvents}
           seenByRelay={seenByRelay}
         />

@@ -111,7 +111,7 @@ article ul, article ol {
   padding-left: 21px;
 }
 
-article li {
+article > ul, ol > li {
   list-style: disc inside;
 }
 
