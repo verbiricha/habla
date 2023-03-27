@@ -9,7 +9,6 @@ import {
   useToast,
   Box,
   Flex,
-  HStack,
   Button,
   IconButton,
   Input,
@@ -288,8 +287,8 @@ export default function Reactions({
   return (
     <>
       <Flex sx={{ position: "relative", overflow: "visible" }}>
-        <HStack spacing={4} mt={4} {...rest}>
-          <Flex alignItems="center" flexDirection="row">
+        <Flex mt={4} flexWrap="wrap" {...rest}>
+          <Flex alignItems="center" flexDirection="row" mr={2}>
             <IconButton
               color={zapped ? "purple.500" : "var(--font)"}
               variant="unstyled"
@@ -311,13 +310,13 @@ export default function Reactions({
               />
             </Flex>
           )}
-          <Flex alignItems="center" flexDirection="row" ml={2}>
+          <Flex alignItems="center" flexDirection="row" ml={2} mr={4}>
             <LinkIcon />
             <Text as="span" ml={4} fontSize="xl">
               {mentions.length}
             </Text>
           </Flex>
-          <Flex alignItems="center" flexDirection="row">
+          <Flex alignItems="center" flexDirection="row" mr={4}>
             <IconButton
               variant="unstyled"
               icon={<Emoji unified="1f49c" size="20" />}
@@ -331,7 +330,7 @@ export default function Reactions({
           </Flex>
           {emojis.map(([e, count]) => {
             return (
-              <Flex alignItems="center" flexDirection="row" key={e}>
+              <Flex alignItems="center" flexDirection="row" key={e} mr={4}>
                 <Button
                   variant="unstyled"
                   size="sm"
@@ -358,7 +357,7 @@ export default function Reactions({
               setShowEmojiPicker(true);
             }}
           />
-        </HStack>
+        </Flex>
       </Flex>
       <EmojiModal
         colorMode={colorMode}
