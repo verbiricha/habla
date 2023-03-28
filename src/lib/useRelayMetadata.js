@@ -25,7 +25,7 @@ export default function useRelayInfo(relay) {
   const [info, setInfo] = useState();
 
   useEffect(() => {
-    const key = `info:${relay}`;
+    const key = `nip11:${relay}`;
     const cached = getJsonKey(key);
     if (!cached) {
       getRelayInfo(relay).then((i) => {

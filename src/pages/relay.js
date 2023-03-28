@@ -15,7 +15,7 @@ import Authors from "../lib/Authors";
 import Tags from "../lib/Tags";
 import Layout from "../lib/Layout";
 import Feed from "../lib/Feed";
-import { RelayCard } from "../lib/Relays";
+import Relays, { RelayCard } from "../lib/Relays";
 import useReactions from "../lib/useReactions";
 
 export default function Relay() {
@@ -26,6 +26,7 @@ export default function Relay() {
   const followsFeed = useNostrEvents({
     filter: {
       kinds: [30023],
+      limit: 100,
       authors: follows,
     },
     relays: [relay],
@@ -34,6 +35,7 @@ export default function Relay() {
   const allFeed = useNostrEvents({
     filter: {
       kinds: [30023],
+      limit: 100,
     },
     enabled: !followsOnly,
     relays: [relay],
@@ -61,6 +63,9 @@ export default function Relay() {
             <RelayCard url={relay} />
             <Authors events={filteredEvents} />
             <Tags events={filteredEvents} />
+            <Flex mt={4}>
+              <Relays />
+            </Flex>
           </Flex>
         }
       >

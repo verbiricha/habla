@@ -3,6 +3,7 @@ import Home from "./pages/index";
 import Tag from "./pages/tag";
 import Address from "./pages/address";
 import Relay from "./pages/relay";
+import Relays from "./pages/relays";
 import Search from "./pages/search";
 import Profile from "./pages/profile";
 import NProfile from "./pages/nprofile";
@@ -17,6 +18,10 @@ export default createBrowserRouter([
   {
     path: "search",
     element: <Search />,
+  },
+  {
+    path: "relays",
+    element: <Relays />,
   },
   {
     path: "/r/:nrelay",

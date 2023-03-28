@@ -17,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { PhoneIcon, DeleteIcon } from "@chakra-ui/icons";
 
+import ExternalLink from "./ExternalLink";
 import User from "./User";
 import useRelays from "./useRelays";
 import useColors from "./useColors";
@@ -115,66 +116,52 @@ export function RelayList({
 function Nip({ n }) {
   const href = `https://nips.be/${n}`;
   return (
-    <a target="_blank" rel="noopener noreferrer" href={href}>
-      <Text>{n}</Text>
-    </a>
+    <ExternalLink to={href}>
+      {n < 10 && "0"}
+      {n}
+    </ExternalLink>
   );
 }
 
 export function RelayCard({ url, ...rest }) {
+  const width = "320px";
   const { surface } = useColors();
   const info = useRelayInfo(url);
-  return (
+  return info ? (
     <Flex
       flexDirection="column"
       padding="12px 21px"
-      alignItems="flex-start"
       border="1px solid"
       borderColor={surface}
       borderRadius="var(--border-radius)"
       fontSize="14px"
       mb={2}
+      width={width}
       {...rest}
     >
-      <Flex
-        alignItems="center"
-        justifyContent="center"
-        flexDirection="column"
-        width="100%"
-      >
-        <RelayFavicon url={url} mb={2} size="md" />
-        <Text
-          textAlign="center"
-          color="purple.500"
-          fontFamily="var(--font-mono)"
-        >
-          {normalizeURL(url)}
-        </Text>
-      </Flex>
       {info?.name && (
-        <Flex
+        <Heading
           fontFamily="var(--font-mono)"
-          flexDirection="column"
-          width="230px"
-          mt={4}
+          fontWeight={500}
+          as="h3"
+          fontSize="xl"
         >
-          <Text fontWeight={500}>Name</Text>
-          <Text>{info.name === "unset" ? "N/A" : info.name}</Text>
-        </Flex>
+          {info.name === "unset" ? "N/A" : info.name}
+        </Heading>
       )}
-      {info?.contact && (
-        <Flex fontFamily="var(--font-mono)" flexDirection="column" mt={2}>
-          <Text fontWeight={500}>Contact</Text>
-          <Text>{info.contact === "unset" ? "N/A" : info.contact}</Text>
+      <Flex fontFamily="var(--font-mono)" flexDirection="column" mt={4}>
+        <Text fontWeight={500}>URL</Text>
+        <Flex>
+          <Link to={`/r/${encodeNrelay(url)}`}>
+            <RelayFavicon url={url} mr={2} />
+            <Text as="span" color="purple.500">
+              {normalizeURL(url)}
+            </Text>
+          </Link>
         </Flex>
-      )}
+      </Flex>
       {info?.description && (
-        <Flex
-          flexDirection="column"
-          fontFamily="var(--font-mono)"
-          width="230px"
-          mt={2}
-        >
+        <Flex flexDirection="column" fontFamily="var(--font-mono)" mt={2}>
           <Text fontWeight={500} mb={2}>
             Description
           </Text>
@@ -182,12 +169,7 @@ export function RelayCard({ url, ...rest }) {
         </Flex>
       )}
       {info?.supported_nips && (
-        <Flex
-          flexDirection="column"
-          fontFamily="var(--font-mono)"
-          width="230px"
-          mt={2}
-        >
+        <Flex flexDirection="column" fontFamily="var(--font-mono)" mt={2}>
           <Text fontWeight={500} mb={2}>
             NIPs
           </Text>
@@ -200,8 +182,8 @@ export function RelayCard({ url, ...rest }) {
           </Flex>
         </Flex>
       )}
-      {info?.pubkey && info.pubkey !== "unset" && (
-        <Flex width="100%" flexDirection="column" mt={2}>
+      {info?.pubkey && info.pubkey !== "unset" && info.pubkey.length === 64 && (
+        <Flex width="260px" flexDirection="column" mt={2}>
           <Text fontWeight={500} mb={2}>
             Operator
           </Text>
@@ -209,7 +191,7 @@ export function RelayCard({ url, ...rest }) {
         </Flex>
       )}
     </Flex>
-  );
+  ) : null;
 }
 
 export default function Relays(props) {
@@ -229,7 +211,7 @@ export default function Relays(props) {
       <Heading mb={4} fontSize="2xl" as="h3">
         Relays
       </Heading>
-      <Flex flexDirection={"column"} {...props}>
+      <Flex flexDirection="column" {...props}>
         {relays.map((url) => (
           <Relay
             isConnected={connectedRelays.includes(normalizeURL(url))}

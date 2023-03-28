@@ -34,6 +34,7 @@ const initialState = {
   follows,
   contacts,
   selectedRelay,
+  compatibleRelays: [],
 };
 
 export const relaySlice = createSlice({
@@ -61,6 +62,9 @@ export const relaySlice = createSlice({
     setUser(state, action) {
       state.user = action.payload;
     },
+    setCompatibleRelays(state, action) {
+      state.compatibleRelays = action.payload;
+    },
   },
 });
 
@@ -72,6 +76,7 @@ export const {
   setUser,
   setFollows,
   setContacts,
+  setCompatibleRelays,
 } = relaySlice.actions;
 
 export default relaySlice.reducer;
