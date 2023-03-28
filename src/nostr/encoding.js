@@ -4,6 +4,8 @@ import * as secp from "@noble/secp256k1";
 import { nip19 } from "nostr-tools";
 import { findTag } from "./tags";
 
+const BECH32_MAX_BYTES = 1000;
+
 export function encodeTLV(hex, prefix, relays, author, kind) {
   const enc = new TextEncoder();
 
@@ -40,12 +42,12 @@ export function encodeTLV(hex, prefix, relays, author, kind) {
   return bech32.encode(
     prefix,
     bech32.toWords([...tl0, ...tl1, ...tl2, ...tl3]),
-    1000
+    BECH32_MAX_BYTES
   );
 }
 
 export function decodeTLV(str) {
-  const decoded = bech32.decode(str, 1000);
+  const decoded = bech32.decode(str, BECH32_MAX_BYTES);
   const data = bech32.fromWords(decoded.words);
 
   const entries = [];
@@ -142,13 +144,13 @@ export function hexToBech32(hex, prefix) {
 }
 
 export function bech32ToHex(s) {
-  const { words } = bech32.decode(s, 1000);
+  const { words } = bech32.decode(s, BECH32_MAX_BYTES);
   const bytes = Buffer.from(bech32.fromWords(words));
   return bytes.toString("hex");
 }
 
 export function bech32ToText(str: string) {
-  const decoded = bech32.decode(str, 1000);
+  const decoded = bech32.decode(str, BECH32_MAX_BYTES);
   const buf = bech32.fromWords(decoded.words);
   return new TextDecoder().decode(Uint8Array.from(buf));
 }

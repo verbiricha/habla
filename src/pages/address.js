@@ -48,7 +48,11 @@ export default function AddressPage() {
           <Flex flexDirection="column" as="aside" width={320} p={4} pr={12}>
             <ProfileCard pubkey={pubkey} />
             {events.length > 0 && (
-              <Articles title="Other articles" events={events} />
+              <Articles
+                title="Other articles"
+                events={events}
+                relays={relays}
+              />
             )}
           </Flex>
         }
