@@ -4,7 +4,7 @@ import * as secp from "@noble/secp256k1";
 import { nip19 } from "nostr-tools";
 import { findTag } from "./tags";
 
-const BECH32_MAX_BYTES = 1000;
+const BECH32_MAX_BYTES = 2000;
 
 export function encodeTLV(hex, prefix, relays, author, kind) {
   const enc = new TextEncoder();
