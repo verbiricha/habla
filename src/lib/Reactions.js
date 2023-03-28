@@ -173,8 +173,8 @@ export default function Reactions({
       created_at: dateToUnix(),
       tags: [
         ["e", event.id],
-        ["a", naddr],
         ["p", event.pubkey],
+        ["a", naddr],
       ],
     };
     try {
