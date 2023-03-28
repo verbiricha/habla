@@ -133,6 +133,7 @@ export default function Event({
         {isPreview && seenIn}
         <Hashtags hashtags={metadata?.hashtags ?? []} />
         <Reactions
+          relays={relays}
           events={reactions}
           isBounty={isBounty}
           showUsers={showReactions}

@@ -53,7 +53,7 @@ function extractThread(ev) {
   return ret;
 }
 
-export function Reply({ root, event, showReply, setShowReply }) {
+export function Reply({ root, event, showReply, setShowReply, relays }) {
   const toast = useToast();
   const naddr = eventAddress(event);
   const { publish } = useNostr();
@@ -64,14 +64,14 @@ export function Reply({ root, event, showReply, setShowReply }) {
       content,
       kind: 1,
       created_at: dateToUnix(),
-      tags: [["e", root, "", "root"]],
+      tags: [["e", root, relays[0] ?? "", "root"]],
     };
     if (root !== event.id) {
-      ev.tags.push(["e", event.id, "", "reply"]);
+      ev.tags.push(["e", event.id, relays[0] ?? "", "reply"]);
     }
-    ev.tags.push(["p", event.pubkey]);
+    ev.tags.push(["p", event.pubkey, relays[0] ?? ""]);
     if (event.kind === 30023) {
-      ev.tags.push(["a", naddr]);
+      ev.tags.push(["a", naddr, relays[0] ?? ""]);
     }
     try {
       const signed = await sign(ev);
@@ -118,7 +118,7 @@ export function Reply({ root, event, showReply, setShowReply }) {
   ) : null;
 }
 
-function Comment({ isBounty, root, ev, chains }) {
+function Comment({ isBounty, root, ev, chains, relays }) {
   const [showReply, setShowReply] = useState(false);
   const replies = chains.get(ev.id);
   return isBounty && /^\d+$/.test(ev.content) ? (
@@ -131,6 +131,7 @@ function Comment({ isBounty, root, ev, chains }) {
         {replies?.map((r) => (
           <Comment
             key={r.id}
+            relays={relays}
             isBounty={isBounty}
             root={root}
             ev={r}
@@ -152,6 +153,7 @@ function Comment({ isBounty, root, ev, chains }) {
           onClick={() => setShowReply((s) => !s)}
         />
         <Reply
+          relays={relays}
           root={root}
           event={ev}
           showReply={showReply}
@@ -161,6 +163,7 @@ function Comment({ isBounty, root, ev, chains }) {
       <Flex flexDirection="column" ml="10px">
         {replies?.map((r) => (
           <Comment
+            relays={relays}
             key={r.id}
             isBounty={isBounty}
             root={root}
@@ -173,7 +176,7 @@ function Comment({ isBounty, root, ev, chains }) {
   );
 }
 
-export default function Thread({ isBounty, event }) {
+export default function Thread({ isBounty, event, relays }) {
   const [trackingEvents, setTrackingEvents] = useState([event.id]);
   const naddr = eventAddress(event);
   const root = useNostrEvents({
@@ -181,18 +184,21 @@ export default function Thread({ isBounty, event }) {
       kinds: [1],
       "#a": [naddr],
     },
+    relays,
   });
   const { events } = useNostrEvents({
     filter: {
       ids: trackingEvents,
       kinds: [1],
     },
+    relays,
   });
   const related = useNostrEvents({
     filter: {
       "#e": trackingEvents,
       kinds: [1],
     },
+    relays,
   });
 
   useEffect(() => {
@@ -253,6 +259,7 @@ export default function Thread({ isBounty, event }) {
     <>
       {filtered.map((ev) => (
         <Comment
+          relays={relays}
           isBounty={isBounty}
           root={ev.id}
           key={ev.id}

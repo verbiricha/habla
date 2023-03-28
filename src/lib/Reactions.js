@@ -110,11 +110,12 @@ export default function Reactions({
   showComments = false,
   showUsers = false,
   isBounty = false,
+  relays = [],
   event,
   ...rest
 }) {
   const { publish } = useNostr();
-  const { user, relays } = useSelector((s) => s.relay);
+  const { user, relays: userRelays } = useSelector((s) => s.relay);
   const toast = useToast();
   const naddr = eventAddress(event);
   const { colorMode } = useColorMode();
@@ -172,9 +173,8 @@ export default function Reactions({
       kind: 7,
       created_at: dateToUnix(),
       tags: [
-        ["e", event.id],
-        ["p", event.pubkey],
-        ["a", naddr],
+        ["e", event.id, relays[0] ?? ""],
+        ["a", naddr, relays[0] ?? ""],
       ],
     };
     try {
@@ -195,11 +195,11 @@ export default function Reactions({
       pubkey: user,
       created_at: dateToUnix(),
       tags: [
-        ["e", event.id],
-        ["p", event.pubkey],
+        ["e", event.id, relays[0] ?? ""],
+        ["p", event.pubkey, relays[0] ?? ""],
         ["amount", Math.floor(amount * 1000)],
-        ["a", naddr],
-        ["relays", ...relays.map(({ url }) => url)],
+        ["a", naddr, relays[0] ?? ""],
+        ["relays", ...userRelays.map(({ url }) => url)],
       ],
     };
     try {
@@ -370,6 +370,7 @@ export default function Reactions({
         onClose={onZapCancel}
       />
       <Reply
+        relays={relays}
         root={event.id}
         event={event}
         showReply={showReply}
@@ -392,7 +393,7 @@ export default function Reactions({
       {showComments && (
         <Box mt={2} mb={2}>
           <Heading mb={2}>Comments</Heading>
-          <Thread isBounty={isBounty} event={event} />
+          <Thread relays={relays} isBounty={isBounty} event={event} />
         </Box>
       )}
       {showUsers && reactions.length > 0 && (
