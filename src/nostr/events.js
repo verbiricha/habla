@@ -1,3 +1,4 @@
+import { decode } from "light-bolt11-decoder";
 import { bech32ToHex, decodeNaddr } from "./encoding";
 import { findTag, findTags } from "./tags";
 
@@ -83,4 +84,32 @@ export function getMetadata(ev) {
     warning: warning,
     reward: /^\d+$/.test(reward) ? Number(reward) : null,
   };
+}
+
+export function getZapRequest(zap) {
+  let zapRequest = findTag(zap.tags, "description");
+  if (zapRequest) {
+    try {
+      if (zapRequest.startsWith("%")) {
+        zapRequest = decodeURIComponent(zapRequest);
+      }
+      return JSON.parse(zapRequest);
+    } catch (e) {
+      console.warn("Invalid zap", zapRequest);
+    }
+  }
+}
+
+export function getZapAmount(zap) {
+  try {
+    const invoice = findTag(zap.tags, "bolt11");
+    if (invoice) {
+      const decoded = decode(invoice);
+      const amount = decoded.sections.find(({ name }) => name === "amount");
+      return Number(amount.value) / 1000;
+    }
+    return 0;
+  } catch (error) {
+    return 0;
+  }
 }

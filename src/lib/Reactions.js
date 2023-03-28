@@ -1,7 +1,6 @@
 import { useRef, useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { decode } from "light-bolt11-decoder";
 import EmojiPicker, { Emoji } from "emoji-picker-react";
 
 import {
@@ -35,41 +34,14 @@ import {
   signEvent,
   getMetadata,
   encodeNaddr,
-  findTag,
+  getZapAmount,
+  getZapRequest,
 } from "../nostr";
 import { useLnURLService, loadInvoice } from "./LNUrl";
 import Thread, { Reply } from "./Thread";
 import User from "./User";
 import ZapIcon from "./Zap";
 import useWebln from "./useWebln";
-
-function getZapRequest(zap) {
-  let zapRequest = findTag(zap.tags, "description");
-  if (zapRequest) {
-    try {
-      if (zapRequest.startsWith("%")) {
-        zapRequest = decodeURIComponent(zapRequest);
-      }
-      return JSON.parse(zapRequest);
-    } catch (e) {
-      console.warn("Invalid zap", zapRequest);
-    }
-  }
-}
-
-function getZapAmount(zap) {
-  try {
-    const invoice = findTag(zap.tags, "bolt11");
-    if (invoice) {
-      const decoded = decode(invoice);
-      const amount = decoded.sections.find(({ name }) => name === "amount");
-      return Number(amount.value) / 1000;
-    }
-    return 0;
-  } catch (error) {
-    return 0;
-  }
-}
 
 function useOnClickOutside(ref, onClickOutside) {
   useEffect(() => {

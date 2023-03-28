@@ -1,10 +1,17 @@
 import { useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet";
+import { Emoji } from "emoji-picker-react";
 
 import { Flex, Button, Heading, Text } from "@chakra-ui/react";
 
-import { useNostrEvents, normalizeURL, eventAddress } from "../nostr";
+import {
+  useNostrEvents,
+  normalizeURL,
+  eventAddress,
+  findTag,
+  getZapAmount,
+} from "../nostr";
 import Authors from "../lib/Authors";
 import Tags from "../lib/Tags";
 import Layout from "../lib/Layout";
@@ -18,7 +25,7 @@ const TOP = "top";
 export default function Home() {
   const [followsOnly, setFollowsOnly] = useState(false);
   const [sortBy, setSortBy] = useState(RECENT);
-  const { relays, follows, selectedRelay } = useSelector((s) => s.relay);
+  const { user, relays, follows, selectedRelay } = useSelector((s) => s.relay);
   const relayUrls = relays.map((r) => r.url);
   const followsFeed = useNostrEvents({
     filter: {
@@ -63,6 +70,33 @@ export default function Home() {
       kinds: [7, 9735, 30023],
     },
   });
+
+  function reactionCount(ev) {
+    const addr = eventAddress(ev);
+    return reactions.events.filter((ev) => findTag(ev.tags, "a") === addr)
+      .length;
+  }
+
+  function zapCount(ev) {
+    const addr = eventAddress(ev);
+    return reactions.events
+      .filter((ev) => ev.kind === 9735 && findTag(ev.tags, "a") === addr)
+      .map(getZapAmount)
+      .reduce((acc, a) => acc + a, 0);
+  }
+
+  const sortedEvents = useMemo(() => {
+    if (sortBy === RECENT) {
+      return filteredEvents;
+    }
+    const sorted = [...filteredEvents];
+    if (sortBy === HOT) {
+      sorted.sort((a, b) => reactionCount(b) - reactionCount(a));
+    } else {
+      sorted.sort((a, b) => zapCount(b) - zapCount(a));
+    }
+    return sorted;
+  }, [filteredEvents, sortBy]);
 
   return (
     <>
@@ -113,36 +147,67 @@ export default function Home() {
             >
               Recent
             </Button>
-          </Flex>
-          <Flex>
             <Button
-              color={followsOnly ? "secondary.500" : "var(--font)"}
-              fontWeight={followsOnly ? 400 : 500}
+              color={sortBy !== TOP ? "secondary.500" : "var(--font)"}
+              fontWeight={sortBy !== TOP ? 400 : 500}
               fontSize="14px"
               fontFamily="var(--font-mono)"
               lineHeight="16px"
               variant="unstyled"
+              onClick={() => setSortBy(TOP)}
               mr={3}
-              onClick={() => setFollowsOnly(false)}
             >
-              All
+              <Flex alignItems="center">
+                <Emoji unified="26a1" size="20" />
+                <Text ml={1}>Top</Text>
+              </Flex>
             </Button>
             <Button
-              color={!followsOnly ? "secondary.500" : "var(--font)"}
-              fontWeight={followsOnly ? 500 : 400}
+              color={sortBy !== HOT ? "secondary.500" : "var(--font)"}
+              fontWeight={sortBy !== HOT ? 400 : 500}
               fontSize="14px"
               fontFamily="var(--font-mono)"
               lineHeight="16px"
               variant="unstyled"
-              onClick={() => setFollowsOnly(true)}
+              onClick={() => setSortBy(HOT)}
             >
-              Follows
+              <Flex alignItems="center">
+                <Emoji unified="1f525" size="20" />
+                <Text ml={1}>Hot</Text>
+              </Flex>
             </Button>
           </Flex>
+          {user && (
+            <Flex>
+              <Button
+                color={followsOnly ? "secondary.500" : "var(--font)"}
+                fontWeight={followsOnly ? 400 : 500}
+                fontSize="14px"
+                fontFamily="var(--font-mono)"
+                lineHeight="16px"
+                variant="unstyled"
+                mr={3}
+                onClick={() => setFollowsOnly(false)}
+              >
+                All
+              </Button>
+              <Button
+                color={!followsOnly ? "secondary.500" : "var(--font)"}
+                fontWeight={followsOnly ? 500 : 400}
+                fontSize="14px"
+                fontFamily="var(--font-mono)"
+                lineHeight="16px"
+                variant="unstyled"
+                onClick={() => setFollowsOnly(true)}
+              >
+                Follows
+              </Button>
+            </Flex>
+          )}
         </Flex>
         <Feed
           reactions={reactions.events}
-          events={filteredEvents}
+          events={sortedEvents}
           seenByRelay={seenByRelay}
         />
       </Layout>
