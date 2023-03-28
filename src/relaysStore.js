@@ -3,11 +3,11 @@ import { getKey, getJsonKey } from "./storage";
 
 const defaultRelays = [
   {
-    url: "wss://nostr-relay.nokotaro.com/",
+    url: "wss://nostr-pub.wellorder.net",
     options: { read: true, write: true },
   },
   {
-    url: "wss://nostr-pub.wellorder.net",
+    url: "wss://nostr-relay.nokotaro.com/",
     options: { read: true, write: true },
   },
   { url: "wss://relay.nostr.band/", options: { read: true, write: true } },
