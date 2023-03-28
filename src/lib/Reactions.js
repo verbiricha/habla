@@ -174,6 +174,7 @@ export default function Reactions({
       tags: [
         ["e", event.id],
         ["a", naddr],
+        ["p", event.pubkey],
       ],
     };
     try {
