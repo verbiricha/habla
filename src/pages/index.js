@@ -11,6 +11,7 @@ import {
   eventAddress,
   findTag,
   getZapAmount,
+  getZapRequest,
 } from "../nostr";
 import Authors from "../lib/Authors";
 import Tags from "../lib/Tags";
@@ -73,14 +74,21 @@ export default function Home() {
 
   function reactionCount(ev) {
     const addr = eventAddress(ev);
-    return reactions.events.filter((ev) => findTag(ev.tags, "a") === addr)
-      .length;
+    return reactions.events.filter(
+      (e) =>
+        e.kind === 7 && findTag(e.tags, "a") === addr && ev.pubkey !== e.pubkey
+    ).length;
   }
 
   function zapCount(ev) {
     const addr = eventAddress(ev);
     return reactions.events
-      .filter((ev) => ev.kind === 9735 && findTag(ev.tags, "a") === addr)
+      .filter(
+        (e) =>
+          e.kind === 9735 &&
+          e.tags.find((t) => t[0] === "a" && t[1] === addr) &&
+          getZapRequest(e)?.pubkey !== ev.pubkey
+      )
       .map(getZapAmount)
       .reduce((acc, a) => acc + a, 0);
   }
