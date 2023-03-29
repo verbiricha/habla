@@ -7,9 +7,13 @@ Available in https://habla.news.
 ## If You have never heard of nostr before, [start here](https://nostr.com/get-started).
 
 
-**BTCSessions has a couple tutorials** that will teach you how to create your own key.  The following video is a tutorial for Alby. You can also set up a custodial wallet on the Alby extention as well, if you want to recieve zaps*:
+I created a video that teaches you how to create a nostr key and custodial lightning address with alby.  
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/qn-Zp491t4Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+You will need a nostr key to start a nostr blog.
+
+
+[![albyVid](https://github.com/BrutusBondBTC/blogPics/blob/main/albyVid2.png?raw=true)](https://tube.bloggingbitcoin.nohost.me/w/7r8Da5iY4u9eLXwgJPkc4Z)
+
 
 
 ## If You Already Have A Key Set Up On Alby, Start Here:
