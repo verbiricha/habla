@@ -202,6 +202,18 @@ export default function MyEditor({ event, children }) {
                 size="md"
                 mb={2}
               />
+              <FormLabel>Content</FormLabel>
+              <Box height={600} mb={2}>
+                <MdEditor
+                  value={content}
+                  config={{ view: { html: false } }}
+                  preview="edit"
+                  renderHTML={(text) => (
+                    <EventPreview event={{ ...event, content }} />
+                  )}
+                  onChange={onChange}
+                />
+              </Box>
               <FormLabel>Summary</FormLabel>
               <Textarea
                 id="title"
@@ -210,7 +222,7 @@ export default function MyEditor({ event, children }) {
                 onChange={(ev) => setSummary(ev.target.value)}
                 size="md"
               />
-              <FormLabel>Tags</FormLabel>
+              <FormLabel mt={2}>Tags</FormLabel>
               <Input
                 value={hashtags}
                 placeholder="List of tags separated by comma: nostr, markdown"
@@ -218,17 +230,6 @@ export default function MyEditor({ event, children }) {
                 size="md"
                 mb={2}
               />
-              <FormLabel>Content</FormLabel>
-              <Box height={400} mb={2}>
-                <MdEditor
-                  value={content}
-                  preview="edit"
-                  renderHTML={(text) => (
-                    <EventPreview event={{ ...event, content }} />
-                  )}
-                  onChange={onChange}
-                />
-              </Box>
               <Flex alignItems="center">
                 <FormLabel>Sensitive content warning</FormLabel>
                 <Checkbox
