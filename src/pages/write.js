@@ -8,11 +8,7 @@ import useLoggedInUser from "../lib/useLoggedInUser";
 
 export default function Write() {
   const navigate = useNavigate();
-  const { user, logOut } = useLoggedInUser();
-  const handleLogout = () => {
-    logOut();
-    navigate("/");
-  };
+  const { user } = useLoggedInUser();
   return (
     <>
       <Helmet>
@@ -20,13 +16,7 @@ export default function Write() {
         <title>Habla</title>
       </Helmet>
       <Layout>
-        <Editor>
-          {user && (
-            <Button mt={4} onClick={handleLogout}>
-              Log out
-            </Button>
-          )}
-        </Editor>
+        <Editor />
       </Layout>
     </>
   );

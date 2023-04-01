@@ -7,6 +7,7 @@ import {
   Stack,
   FormLabel,
   Input,
+  Text,
   Textarea,
   Checkbox,
   CheckboxGroup,
@@ -23,7 +24,7 @@ import Event from "./Event";
 import { replaceMentions } from "./Markdown";
 import useRelays from "./useRelays";
 
-export default function MyEditor({ event, children }) {
+export default function MyEditor({ event }) {
   const { pool } = useNostr();
   const { relays } = useRelays();
   const metadata = event && getMetadata(event);
@@ -36,7 +37,7 @@ export default function MyEditor({ event, children }) {
   );
   const [publishedOn, setPublishedOn] = useState({});
   const [title, setTitle] = useState(metadata?.title ?? "");
-  const [slug, setSlug] = useState(metadata?.d ?? "");
+  const [slug, setSlug] = useState(metadata?.d ?? String(Date.now()));
   const [summary, setSummary] = useState(metadata?.summary ?? "");
   const [image, setImage] = useState(metadata?.image ?? "");
   const [publishedAt] = useState(metadata?.publishedAt);
@@ -189,14 +190,6 @@ export default function MyEditor({ event, children }) {
                 size="md"
                 mb={2}
               />
-              <FormLabel>Slug</FormLabel>
-              <Input
-                value={slug}
-                placeholder="Unique identifier for the article"
-                onChange={(ev) => setSlug(ev.target.value)}
-                size="md"
-                mb={2}
-              />
               <FormLabel>Content</FormLabel>
               <Box height={600} mb={2}>
                 <MdEditor
@@ -233,7 +226,7 @@ export default function MyEditor({ event, children }) {
                 size="md"
                 mb={2}
               />
-              <Flex alignItems="center">
+              <Flex alignItems="center" mt={4}>
                 <FormLabel>Sensitive content warning</FormLabel>
                 <Checkbox
                   isChecked={sensitive}
@@ -285,7 +278,17 @@ export default function MyEditor({ event, children }) {
                 ))}
               </Stack>
             </CheckboxGroup>
-            {children}
+            <Text fontSize="2xl" fontWeight={700} mt={2}>
+              Advanced options
+            </Text>
+            <FormLabel>d</FormLabel>
+            <Text my={2}>Unique identifier for the article</Text>
+            <Input
+              value={slug}
+              onChange={(ev) => setSlug(ev.target.value)}
+              size="md"
+              mb={2}
+            />
           </>
         )}
       </Box>

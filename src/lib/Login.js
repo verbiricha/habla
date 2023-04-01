@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import { useColorMode, Flex, Button } from "@chakra-ui/react";
 import { MoonIcon, SunIcon, SearchIcon, EditIcon } from "@chakra-ui/icons";
@@ -7,8 +7,14 @@ import User from "./User";
 import useLoggedInUser from "./useLoggedInUser";
 
 export default function Login() {
-  const { user, logIn } = useLoggedInUser();
+  const navigate = useNavigate();
+  const { user, logIn, logOut } = useLoggedInUser();
   const { colorMode, toggleColorMode } = useColorMode();
+
+  const handleLogout = () => {
+    logOut();
+    navigate("/");
+  };
 
   const themeSelector = (
     <Button variant="unstyled" onClick={toggleColorMode}>
@@ -22,6 +28,7 @@ export default function Login() {
 
   return user ? (
     <Flex alignItems="center">
+      <Button onClick={handleLogout}>Log out</Button>
       <Link to="/search">
         <Button color="secondary.500" variant="unstyled">
           <SearchIcon />
