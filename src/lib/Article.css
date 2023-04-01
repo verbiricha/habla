@@ -40,14 +40,13 @@ article h3 {
 
 article p, article i, article a, article li {
   font-family: var(--font);
-  font-size: 21px;
   letter-spacing: -0.03px;
   line-height: 1.58;
 }
 
 article blockquote {
   font-family: var(--article-heading);
-  font-size: 30px;
+  font-size: 21px;
   overflow-wrap: break-word;
   /* text-align: center; */
   padding: 0 0 0 50px;
