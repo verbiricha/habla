@@ -177,20 +177,15 @@ export default function MyEditor({ event, children }) {
           </>
         ) : (
           <>
+            <Button colorScheme="teal" onClick={() => setShowPreview(true)}>
+              Preview
+            </Button>
             <Box className="editor">
               <FormLabel>Title</FormLabel>
               <Input
                 value={title}
                 placeholder="Title for your article"
                 onChange={(ev) => setTitle(ev.target.value)}
-                size="md"
-                mb={2}
-              />
-              <FormLabel>Image</FormLabel>
-              <Input
-                placeholder="Link to the main article image"
-                value={image}
-                onChange={(ev) => setImage(ev.target.value)}
                 size="md"
                 mb={2}
               />
@@ -214,6 +209,14 @@ export default function MyEditor({ event, children }) {
                   onChange={onChange}
                 />
               </Box>
+              <FormLabel>Image</FormLabel>
+              <Input
+                placeholder="Link to the main article image"
+                value={image}
+                onChange={(ev) => setImage(ev.target.value)}
+                size="md"
+                mb={2}
+              />
               <FormLabel>Summary</FormLabel>
               <Textarea
                 id="title"
@@ -251,9 +254,6 @@ export default function MyEditor({ event, children }) {
                   Publish
                 </Button>
                 <Button onClick={() => onSave()}>Save</Button>
-                <Button colorScheme="teal" onClick={() => setShowPreview(true)}>
-                  Preview
-                </Button>
               </Stack>
             </Box>
             <CheckboxGroup
