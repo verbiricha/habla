@@ -19,6 +19,7 @@ import "react-markdown-editor-lite/lib/index.css";
 import { setJsonKey, getJsonKey } from "../storage";
 import { getMetadata, sign, dateToUnix, useNostr } from "../nostr";
 import EventPreview from "./EventPreview";
+import Event from "./Event";
 import { replaceMentions } from "./Markdown";
 import useRelays from "./useRelays";
 
@@ -26,6 +27,7 @@ export default function MyEditor({ event, children }) {
   const { pool } = useNostr();
   const { relays } = useRelays();
   const metadata = event && getMetadata(event);
+  const [showPreview, setShowPreview] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishOn, setPublishOn] = useState(
     relays.reduce((acc, r) => {
@@ -51,6 +53,18 @@ export default function MyEditor({ event, children }) {
     }
   });
   const toast = useToast();
+  const htags = hashtags
+    .split(",")
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0)
+    .map((t) => ["t", t]);
+  const previewTags = [
+    ["d", slug],
+    ["image", image],
+    ["title", title],
+    ["summary", summary],
+    ...htags,
+  ];
 
   useEffect(() => {
     const draft = getJsonKey(`draft:${title}`);
@@ -149,107 +163,130 @@ export default function MyEditor({ event, children }) {
   return (
     <Flex flexDirection="column" alignItems="center" px={4}>
       <Box minWidth={["100%", "100%", "786px"]} maxWidth="786px">
-        <Box className="editor">
-          <FormLabel>Title</FormLabel>
-          <Input
-            value={title}
-            placeholder="Title for your article"
-            onChange={(ev) => setTitle(ev.target.value)}
-            size="md"
-            mb={2}
-          />
-          <FormLabel>Image</FormLabel>
-          <Input
-            placeholder="Link to the main article image"
-            value={image}
-            onChange={(ev) => setImage(ev.target.value)}
-            size="md"
-            mb={2}
-          />
-          <FormLabel>Slug</FormLabel>
-          <Input
-            value={slug}
-            placeholder="Unique identifier for the article"
-            onChange={(ev) => setSlug(ev.target.value)}
-            size="md"
-            mb={2}
-          />
-          <FormLabel>Summary</FormLabel>
-          <Textarea
-            id="title"
-            placeholder="A brief summary of what your article is about"
-            value={summary}
-            onChange={(ev) => setSummary(ev.target.value)}
-            size="md"
-          />
-          <FormLabel>Tags</FormLabel>
-          <Input
-            value={hashtags}
-            placeholder="List of tags separated by comma: nostr, markdown"
-            onChange={(ev) => setHashtags(ev.target.value)}
-            size="md"
-            mb={2}
-          />
-          <FormLabel>Content</FormLabel>
-          <Box height={400} mb={2}>
-            <MdEditor
-              value={content}
-              renderHTML={(text) => (
-                <EventPreview event={{ tags: [], content: text }} />
-              )}
-              onChange={onChange}
-            />
-          </Box>
-          <Flex alignItems="center">
-            <FormLabel>Sensitive content warning</FormLabel>
-            <Checkbox
-              isChecked={sensitive}
-              onChange={(ev) => setIsSensitive(ev.target.checked)}
-              mt={-1}
-              size="md"
-            />
-          </Flex>
-          <Input
-            value={warning}
-            onChange={(ev) => setWarning(ev.target.value)}
-            placeholder="nudity, language, violence, etc"
-            size="md"
-            mb={2}
-          />
-          <Stack mt={5} direction="row-reverse" spacing={4} align="center">
-            <Button colorScheme="purple" onClick={() => onPublish()}>
-              Publish
+        {showPreview ? (
+          <>
+            <Button colorScheme="teal" onClick={() => setShowPreview(false)}>
+              Edit
             </Button>
-            <Button onClick={() => onSave()}>Save</Button>
-          </Stack>
-        </Box>
-        <CheckboxGroup colorScheme="green" defaultValue={["naruto", "kakashi"]}>
-          <Stack spacing={2} direction={"column"}>
-            {relays.map((r) => (
-              <Checkbox
-                key={r}
-                onChange={(e) =>
-                  setPublishOn({ ...publishOn, [r]: e.target.checked })
-                }
-                isChecked={publishOn[r]}
-              >
-                {r}{" "}
-                {isPublishing &&
-                  publishOn[r] &&
-                  !["ok", "failed"].includes(publishedOn[r]) && (
-                    <Spinner size="sm" />
+            <Event
+              event={{ tags: previewTags, content }}
+              isPreview={false}
+              showReactions={false}
+              showComments={false}
+            ></Event>
+          </>
+        ) : (
+          <>
+            <Box className="editor">
+              <FormLabel>Title</FormLabel>
+              <Input
+                value={title}
+                placeholder="Title for your article"
+                onChange={(ev) => setTitle(ev.target.value)}
+                size="md"
+                mb={2}
+              />
+              <FormLabel>Image</FormLabel>
+              <Input
+                placeholder="Link to the main article image"
+                value={image}
+                onChange={(ev) => setImage(ev.target.value)}
+                size="md"
+                mb={2}
+              />
+              <FormLabel>Slug</FormLabel>
+              <Input
+                value={slug}
+                placeholder="Unique identifier for the article"
+                onChange={(ev) => setSlug(ev.target.value)}
+                size="md"
+                mb={2}
+              />
+              <FormLabel>Summary</FormLabel>
+              <Textarea
+                id="title"
+                placeholder="A brief summary of what your article is about"
+                value={summary}
+                onChange={(ev) => setSummary(ev.target.value)}
+                size="md"
+              />
+              <FormLabel>Tags</FormLabel>
+              <Input
+                value={hashtags}
+                placeholder="List of tags separated by comma: nostr, markdown"
+                onChange={(ev) => setHashtags(ev.target.value)}
+                size="md"
+                mb={2}
+              />
+              <FormLabel>Content</FormLabel>
+              <Box height={400} mb={2}>
+                <MdEditor
+                  value={content}
+                  preview="edit"
+                  renderHTML={(text) => (
+                    <EventPreview event={{ ...event, content }} />
                   )}
-                {publishedOn[r] === "ok" && (
-                  <CheckIcon color="green.500" size="sm" />
-                )}
-                {publishedOn[r] === "failed" && (
-                  <CloseIcon color="red.500" size="sm" />
-                )}
-              </Checkbox>
-            ))}
-          </Stack>
-        </CheckboxGroup>
-        {children}
+                  onChange={onChange}
+                />
+              </Box>
+              <Flex alignItems="center">
+                <FormLabel>Sensitive content warning</FormLabel>
+                <Checkbox
+                  isChecked={sensitive}
+                  onChange={(ev) => setIsSensitive(ev.target.checked)}
+                  mt={-1}
+                  size="md"
+                />
+              </Flex>
+              <Input
+                value={warning}
+                onChange={(ev) => setWarning(ev.target.value)}
+                placeholder="nudity, language, violence, etc"
+                size="md"
+                mb={2}
+              />
+              <Stack mt={5} direction="row-reverse" spacing={4} align="center">
+                <Button colorScheme="purple" onClick={() => onPublish()}>
+                  Publish
+                </Button>
+                <Button onClick={() => onSave()}>Save</Button>
+                <Button colorScheme="teal" onClick={() => setShowPreview(true)}>
+                  Preview
+                </Button>
+              </Stack>
+            </Box>
+            <CheckboxGroup
+              colorScheme="green"
+              defaultValue={["naruto", "kakashi"]}
+            >
+              <Stack spacing={2} direction={"column"}>
+                {relays.map((r) => (
+                  <Checkbox
+                    key={r}
+                    onChange={(e) =>
+                      setPublishOn({ ...publishOn, [r]: e.target.checked })
+                    }
+                    isChecked={publishOn[r]}
+                  >
+                    {r}{" "}
+                    {isPublishing &&
+                      publishOn[r] &&
+                      !["ok", "failed"].includes(publishedOn[r]) && (
+                        <Spinner size="sm" />
+                      )}
+                    {publishedOn[r] === "ok" && (
+                      <CheckIcon color="green.500" size="sm" />
+                    )}
+                    {publishedOn[r] === "failed" && (
+                      <CloseIcon color="red.500" size="sm" />
+                    )}
+                  </Checkbox>
+                ))}
+              </Stack>
+            </CheckboxGroup>
+            {children}
+          </>
+        )}
       </Box>
     </Flex>
   );

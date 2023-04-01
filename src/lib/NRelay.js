@@ -7,7 +7,7 @@ import NostrLink from "./NostrLink";
 
 export default function NRelay({ nrelay, relay }) {
   return (
-    <NostrLink link={`/r/${nrelay}`}>
+    <NostrLink link={`/r/${nrelay.replace(/^nostr:/, "")}`}>
       <Flex alignItems="center" key={relay}>
         <RelayFavicon url={relay} mr={2} />
         <Text margin={0} my={1} fontFamily="var(--font-mono)" fontSize="md">
