@@ -19,10 +19,21 @@ export default function Profile({ pubkey, relays }) {
   const reactions = useReactions({ addresses });
   return (
     <>
-      <Flex alignItems="center">
-        <Flex flexDirection="row" mb={12}>
+      <Flex alignItems="center" flexDirection="column">
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          flexDirection="column"
+          mt={6}
+          mb={12}
+        >
           <Avatar src={data?.picture} name={data?.name} size="2xl" />
-          <Flex ml={8} flexDirection="column">
+          <Flex
+            ml={8}
+            alignItems="center"
+            justifyContent="center"
+            flexDirection="column"
+          >
             <Heading as="h1">{data?.name}</Heading>
             <Nip05 fontSize="xl" pubkey={pubkey} nip05={data?.nip05} />
             <Text>{data?.about}</Text>

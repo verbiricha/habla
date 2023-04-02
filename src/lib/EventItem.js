@@ -16,7 +16,15 @@ export default function EventItem({ relays, event, reactions }) {
   const metadata = getMetadata(event);
   const href = `/a/${encodeNaddr(event, relays.slice(0, 5))}`;
   return (
-    <Flex flexDirection="column" key={event.id}>
+    <Flex
+      flexDirection="column"
+      key={event.id}
+      sx={{
+        overflow: "hidden",
+        whiteSpace: "pre-wrap",
+        wordBreak: "break-word",
+      }}
+    >
       <Flex justifyContent="space-between">
         <Link to={href}>
           <Heading as="h1">{metadata?.title}</Heading>
