@@ -101,7 +101,7 @@ export function NostrProvider({
         });
       });
     }
-  }, []);
+  }, [debug, onConnectCallback, onDisconnectCallback, pool, relayUrls]);
 
   const publish = (event: NostrEvent, relays = relayUrls) => {
     log(

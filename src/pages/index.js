@@ -72,28 +72,28 @@ export default function Home() {
     },
   });
 
-  function reactionCount(ev) {
-    const addr = eventAddress(ev);
-    return reactions.events.filter(
-      (e) =>
-        e.kind === 7 && findTag(e.tags, "a") === addr && ev.pubkey !== e.pubkey
-    ).length;
-  }
-
-  function zapCount(ev) {
-    const addr = eventAddress(ev);
-    return reactions.events
-      .filter(
-        (e) =>
-          e.kind === 9735 &&
-          e.tags.find((t) => t[0] === "a" && t[1] === addr) &&
-          getZapRequest(e)?.pubkey !== ev.pubkey
-      )
-      .map(getZapAmount)
-      .reduce((acc, a) => acc + a, 0);
-  }
-
   const sortedEvents = useMemo(() => {
+    function reactionCount(ev) {
+      const addr = eventAddress(ev);
+      return reactions.events.filter(
+        (e) =>
+          e.kind === 7 && findTag(e.tags, "a") === addr && ev.pubkey !== e.pubkey
+      ).length;
+    }
+
+    function zapCount(ev) {
+      const addr = eventAddress(ev);
+      return reactions.events
+        .filter(
+          (e) =>
+            e.kind === 9735 &&
+            e.tags.find((t) => t[0] === "a" && t[1] === addr) &&
+            getZapRequest(e)?.pubkey !== ev.pubkey
+        )
+        .map(getZapAmount)
+        .reduce((acc, a) => acc + a, 0);
+    }
+
     if (sortBy === RECENT) {
       return filteredEvents;
     }
@@ -104,7 +104,7 @@ export default function Home() {
       sorted.sort((a, b) => zapCount(b) - zapCount(a));
     }
     return sorted;
-  }, [filteredEvents, sortBy]);
+  }, [filteredEvents, sortBy, reactions.events]);
 
   return (
     <>
