@@ -54,7 +54,7 @@ function useOnClickOutside(ref, onClickOutside) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [ref]);
+  }, [ref, onClickOutside]);
 }
 
 function EmojiModal({ colorMode, isOpen, onEmojiClick, onClose }) {
@@ -149,7 +149,7 @@ export default function Reactions({
     const entries = Object.entries(emo);
     entries.sort((a, b) => a.count - b.count);
     return entries;
-  }, [events]);
+  }, [events, event.pubkey]);
   const reactions = events.filter((e) => e.kind === 7);
   const mentions = events.filter((e) => e.kind === 30023);
   const liked = likes.find((e) => e.pubkey === user);
