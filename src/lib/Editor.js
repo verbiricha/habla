@@ -29,6 +29,7 @@ export default function MyEditor({ event }) {
   const { relays } = useRelays();
   const metadata = event && getMetadata(event);
   const [showPreview, setShowPreview] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishOn, setPublishOn] = useState(
     relays.reduce((acc, r) => {
@@ -282,17 +283,29 @@ export default function MyEditor({ event }) {
                 ))}
               </Stack>
             </CheckboxGroup>
-            <Text fontSize="2xl" fontWeight={700} mt={2}>
+            <Flex flexDirection="row" alignItems="center" px={4}>
+            <FormLabel htmlFor='adv' fontSize="2xl" fontWeight={700} mt={2}>
               Advanced options
-            </Text>
-            <FormLabel>d</FormLabel>
-            <Text my={2}>Unique identifier for the article</Text>
-            <Input
-              value={slug}
-              onChange={(ev) => setSlug(ev.target.value)}
-              size="md"
-              mb={2}
-            />
+            </FormLabel>
+            <Checkbox
+              id='adv'
+              onChange={() => {
+                setShowAdvanced(!showAdvanced)
+              }}
+              isChecked={showAdvanced} />
+            </Flex>
+            { showAdvanced
+              ? (<>
+                <FormLabel htmlFor='slug'>d</FormLabel>
+                <FormLabel htmlFor='slug' my={2}>Unique identifier for the article</FormLabel>
+                <Input
+                  id='slug'
+                  value={slug}
+                  onChange={(ev) => setSlug(ev.target.value)}
+                  size="md"
+                  mb={2}
+                /></>)
+              : '' }
           </>
         )}
       </Box>
