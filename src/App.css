@@ -37,6 +37,7 @@ a {
 .editor {
   width: 100%;
   min-height: 60vh;
+  margin-top: 1em;
 }
 
 .editor .rc-md-editor {

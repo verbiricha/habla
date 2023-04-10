@@ -182,8 +182,9 @@ export default function MyEditor({ event }) {
               Preview
             </Button>
             <Box className="editor">
-              <FormLabel>Title</FormLabel>
+              <FormLabel htmlFor='title'>Title</FormLabel>
               <Input
+                id='title'
                 value={title}
                 placeholder="Title for your article"
                 onChange={(ev) => setTitle(ev.target.value)}
@@ -202,24 +203,26 @@ export default function MyEditor({ event }) {
                   onChange={onChange}
                 />
               </Box>
-              <FormLabel>Image</FormLabel>
+              <FormLabel htmlFor='image'>Image</FormLabel>
               <Input
+                id='image'
                 placeholder="Link to the main article image"
                 value={image}
                 onChange={(ev) => setImage(ev.target.value)}
                 size="md"
                 mb={2}
               />
-              <FormLabel>Summary</FormLabel>
+              <FormLabel htmlFor='summary'>Summary</FormLabel>
               <Textarea
-                id="title"
+                id="summary"
                 placeholder="A brief summary of what your article is about"
                 value={summary}
                 onChange={(ev) => setSummary(ev.target.value)}
                 size="md"
               />
-              <FormLabel mt={2}>Tags</FormLabel>
+              <FormLabel htmlFor='tags' mt={2}>Tags</FormLabel>
               <Input
+                id='tags'
                 value={hashtags}
                 placeholder="List of tags separated by comma: nostr, markdown"
                 onChange={(ev) => setHashtags(ev.target.value)}
@@ -227,8 +230,9 @@ export default function MyEditor({ event }) {
                 mb={2}
               />
               <Flex alignItems="center" mt={4}>
-                <FormLabel>Sensitive content warning</FormLabel>
+                <FormLabel htmlFor='sensitive'>Sensitive content warning</FormLabel>
                 <Checkbox
+                  id='sensitive'
                   isChecked={sensitive}
                   onChange={(ev) => setIsSensitive(ev.target.checked)}
                   mt={-1}
