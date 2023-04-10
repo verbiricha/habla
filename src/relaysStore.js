@@ -1,24 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getKey, getJsonKey } from "./storage";
 
+const rw = { read: true, write: true }
 const defaultRelays = [
-  {
-    url: "wss://nostr-pub.wellorder.net",
-    options: { read: true, write: true },
-  },
-  {
-    url: "wss://nostr-relay.nokotaro.com/",
-    options: { read: true, write: true },
-  },
-  { url: "wss://relay.nostr.band/", options: { read: true, write: true } },
-  { url: "wss://relay.damus.io/", options: { read: true, write: true } },
-  { url: "wss://nos.lol/", options: { read: true, write: true } },
-  { url: "wss://offchain.pub/", options: { read: true, write: true } },
-  {
-    url: "wss://relay.nostr.wirednet.jp/",
-    options: { read: true, write: true },
-  },
-  { url: "wss://nostr.wine/", options: { read: true, write: true } },
+  { url: "wss://nostr-pub.wellorder.net", options: rw },
+  { url: "wss://nostr-relay.nokotaro.com/", options: rw },
+  { url: "wss://relay.nostr.band/", options: rw },
+  { url: "wss://relay.damus.io/", options: rw },
+  { url: "wss://nos.lol/", options: rw },
+  { url: "wss://offchain.pub/", options: rw },
+  { url: "wss://relay.nostr.wirednet.jp/", options: rw },
+  { url: "wss://nostr.wine/", options: rw },
 ];
 
 const user = getKey("p");
