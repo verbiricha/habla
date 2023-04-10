@@ -20,7 +20,7 @@ import "react-markdown-editor-lite/lib/index.css";
 import { setJsonKey, getJsonKey } from "../storage";
 import { getMetadata, sign, dateToUnix, useNostr } from "../nostr";
 import EventPreview from "./EventPreview";
-import Event from "./Event";
+import { Event } from "./Event";
 import { replaceMentions } from "./Markdown";
 import useRelays from "./useRelays";
 
