@@ -1,7 +1,7 @@
 import { Stack } from "@chakra-ui/react";
 
 import { getEventId, eventAddress } from "../nostr";
-import Event from "./Event";
+import { Event } from "./Event";
 
 export default function Feed({ events, reactions = [], seenByRelay, ...rest }) {
   return (

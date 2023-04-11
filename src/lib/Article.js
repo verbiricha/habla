@@ -4,7 +4,7 @@ import { EditIcon, RepeatIcon } from "@chakra-ui/icons";
 import "./Article.css";
 import { useNostr, useNostrEvents } from "../nostr";
 import Editor from "./Editor";
-import Event from "./Event";
+import { Event } from "./Event";
 import useLoggedInUser from "./useLoggedInUser";
 import useCached from "./useCached";
 
