@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getKey, getJsonKey } from "./storage";
 
-const rw = { read: true, write: true }
+const rw = { read: true, write: true };
 const defaultRelays = [
+  { url: "wss://nostr.wine/", options: rw },
   { url: "wss://nostr-pub.wellorder.net", options: rw },
   { url: "wss://nostr-relay.nokotaro.com/", options: rw },
   { url: "wss://relay.nostr.band/", options: rw },
@@ -10,7 +11,6 @@ const defaultRelays = [
   { url: "wss://nos.lol/", options: rw },
   { url: "wss://offchain.pub/", options: rw },
   { url: "wss://relay.nostr.wirednet.jp/", options: rw },
-  { url: "wss://nostr.wine/", options: rw },
 ];
 
 const user = getKey("p");

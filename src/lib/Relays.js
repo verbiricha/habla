@@ -207,37 +207,46 @@ export default function Relays(props) {
   };
 
   return (
-    <Box>
-      <Heading mb={4} fontSize="2xl" as="h3">
-        Relays
-      </Heading>
-      <Flex flexDirection="column" {...props}>
-        {relays.map((url) => (
-          <Relay
-            isConnected={connectedRelays.includes(normalizeURL(url))}
-            key={url}
-            url={url}
+    <>
+      <Box>
+        <Heading mb={4} fontSize="2xl" as="h3">
+          Relays
+        </Heading>
+        <Flex flexDirection="column" {...props}>
+          {relays.map((url) => (
+            <Relay
+              isConnected={connectedRelays.includes(normalizeURL(url))}
+              key={url}
+              url={url}
+            />
+          ))}
+        </Flex>
+        <InputGroup size="md" mb={6} mt={3}>
+          <Input
+            pr="4.5rem"
+            value={relay}
+            onChange={(e) => setRelay(e.target.value)}
+            placeholder="wss://relay.com"
           />
-        ))}
-      </Flex>
-      <InputGroup size="md" mb={6} mt={3}>
-        <Input
-          pr="4.5rem"
-          value={relay}
-          onChange={(e) => setRelay(e.target.value)}
-          placeholder="wss://relay.com"
-        />
-        <InputRightElement width="4.5rem">
-          <Button
-            isDisabled={!isValidRelay}
-            h="1.75rem"
-            size="sm"
-            onClick={handleClick}
-          >
-            Add
-          </Button>
-        </InputRightElement>
-      </InputGroup>
-    </Box>
+          <InputRightElement width="4.5rem">
+            <Button
+              isDisabled={!isValidRelay}
+              h="1.75rem"
+              size="sm"
+              onClick={handleClick}
+            >
+              Add
+            </Button>
+          </InputRightElement>
+        </InputGroup>
+        <Text fontSize="sm" color="secondary.500">
+          Find compatible relays in the{" "}
+          <Text as="span" color="purple.500" fontWeight={500}>
+            <Link to="/relays">relays</Link>
+          </Text>{" "}
+          page.
+        </Text>
+      </Box>
+    </>
   );
 }

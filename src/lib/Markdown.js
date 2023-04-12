@@ -273,7 +273,7 @@ function transformText(ps, tags) {
   fragments = extractNaddrs(fragments);
   fragments = extractNoteIds(fragments);
   fragments = extractNpubs(fragments);
-  return <p>{fragments}</p>;
+  return fragments;
 }
 
 export default function Markdown({ tags = [], content }) {
@@ -342,7 +342,11 @@ export default function Markdown({ tags = [], content }) {
       img: ({ alt, src }) => {
         return <img key={src} alt={alt} src={src} />;
       },
-      p: ({ children }) => children && transformText(children, tags),
+      li: ({ children }) =>
+        children && <li>{transformText(children, tags)}</li>,
+      td: ({ children }) =>
+        children && <td>{transformText(children, tags)}</td>,
+      p: ({ children }) => children && <p>{transformText(children, tags)}</p>,
       a: (props) => {
         return <HyperText link={props.href}>{props.children}</HyperText>;
       },
