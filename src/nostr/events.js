@@ -113,3 +113,15 @@ export function getZapAmount(zap) {
     return 0;
   }
 }
+
+export function dedupeByPubkey(events) {
+  let seen = new Set([]);
+  return events.filter((ev) => {
+    if (seen.has(ev.pubkey)) {
+      return false;
+    } else {
+      seen.add(ev.pubkey);
+      return true;
+    }
+  });
+}

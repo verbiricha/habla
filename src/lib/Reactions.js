@@ -36,6 +36,7 @@ import {
   encodeNaddr,
   getZapAmount,
   getZapRequest,
+  dedupeByPubkey,
 } from "../nostr";
 import { useLnURLService, loadInvoice } from "./LNUrl";
 import Thread, { Reply } from "./Thread";
@@ -130,8 +131,10 @@ export default function Reactions({
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const webln = useWebln(showZap);
   const [amount, setAmount] = useState(0);
-  const likes = events.filter(
-    (e) => e.kind === 7 && e.content === "+" && e.pubkey !== event.pubkey
+  const likes = dedupeByPubkey(
+    events.filter(
+      (e) => e.kind === 7 && e.content === "+" && e.pubkey !== event.pubkey
+    )
   );
   const emojis = useMemo(() => {
     const emo = events
@@ -150,7 +153,7 @@ export default function Reactions({
     entries.sort((a, b) => a.count - b.count);
     return entries;
   }, [events]);
-  const reactions = events.filter((e) => e.kind === 7);
+  const reactions = dedupeByPubkey(events.filter((e) => e.kind === 7));
   const mentions = events.filter((e) => e.kind === 30023);
   const liked = likes.find((e) => e.pubkey === user);
   const zaps = events.filter((e) => e.kind === 9735);
