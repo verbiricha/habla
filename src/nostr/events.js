@@ -73,8 +73,10 @@ export async function signEvent(ev) {
 export function getMetadata(ev) {
   const warning = findTag(ev.tags, "content-warning");
   const reward = findTag(ev.tags, "reward");
+  const title = findTag(ev.tags, "title")?.replace("\n", " ");
+  const subject = findTag(ev.tags, "subject")?.replace("\n", " ");
   return {
-    title: findTag(ev.tags, "title")?.replace("\n", " "),
+    title: title || subject,
     d: findTag(ev.tags, "d"),
     image: findTag(ev.tags, "image"),
     summary: findTag(ev.tags, "summary"),
