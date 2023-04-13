@@ -14,7 +14,7 @@ article {
 
 article h1 {
   font-family: var(--article-heading);
-  font-size: 48px;
+  font-size: 34px;
   text-align: left;
   margin-bottom: 8px;
 }

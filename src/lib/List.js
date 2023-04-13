@@ -70,6 +70,26 @@ export default function List({ ev }) {
           ))}
         </>
       )}
+      {groupedTags["t"] && (
+        <>
+          <Heading fontSize="xl">Tags</Heading>
+          {groupedTags["t"].map((t) => (
+            <Box my={2}>
+              <Tag tag={t} />
+            </Box>
+          ))}
+        </>
+      )}
+      {groupedTags["a"] && (
+        <>
+          <Heading fontSize="xl">Addresses</Heading>
+          {groupedTags["a"].map((t) => (
+            <Box my={2}>
+              <Tag tag={t} />
+            </Box>
+          ))}
+        </>
+      )}
     </Flex>
   );
 }
