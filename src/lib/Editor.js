@@ -18,7 +18,14 @@ import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 
 import { setJsonKey, getJsonKey } from "../storage";
-import { getMetadata, sign, dateToUnix, useNostr } from "../nostr";
+import {
+  LONG_FORM_NOTE,
+  LONG_FORM_NOTE_DRAFT,
+  getMetadata,
+  sign,
+  dateToUnix,
+  useNostr,
+} from "../nostr";
 import EventPreview from "./EventPreview";
 import Event from "./Event";
 import { replaceMentions } from "./Markdown";
@@ -59,13 +66,30 @@ export default function MyEditor({ event }) {
     .map((s) => s.trim())
     .filter((s) => s.length > 0)
     .map((t) => ["t", t]);
-  const previewTags = [
+  const createdAt = dateToUnix();
+  const tags = [
     ["d", slug],
-    ["image", image],
     ["title", title],
     ["summary", summary],
+    ["published_at", publishedAt ? String(publishedAt) : String(createdAt)],
     ...htags,
   ];
+  if (image?.length > 0) {
+    tags.push(["image", image]);
+  }
+  if (sensitive) {
+    if (warning?.length > 0) {
+      tags.push(["content-warning", warning]);
+    } else {
+      tags.push(["content-warning"]);
+    }
+  }
+  const ev = {
+    content,
+    kind: LONG_FORM_NOTE,
+    created_at: createdAt,
+    tags,
+  };
 
   useEffect(() => {
     const draft = getJsonKey(`draft:${title}`);
@@ -88,35 +112,6 @@ export default function MyEditor({ event }) {
   }
 
   async function onPublish() {
-    const createdAt = dateToUnix();
-    const htags = hashtags
-      .split(",")
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0)
-      .map((t) => ["t", t]);
-    const tags = [
-      ["d", slug],
-      ["title", title],
-      ["summary", summary],
-      ["published_at", publishedAt ? String(publishedAt) : String(createdAt)],
-      ...htags,
-    ];
-    if (image?.length > 0) {
-      tags.push(["image", image]);
-    }
-    if (sensitive) {
-      if (warning?.length > 0) {
-        tags.push(["content-warning", warning]);
-      } else {
-        tags.push(["content-warning"]);
-      }
-    }
-    const ev = {
-      content,
-      kind: 30023,
-      created_at: createdAt,
-      tags,
-    };
     try {
       const signed = await sign(ev, false);
       setIsPublishing(true);
@@ -150,15 +145,29 @@ export default function MyEditor({ event }) {
     }
   }
 
-  function onSave() {
-    setJsonKey(`draft:${slug}`, {
-      title,
-      slug,
-      summary,
-      image,
-      content,
-      hashtags,
-    });
+  async function onSave() {
+    try {
+      const signed = await sign({ ...ev, kind: LONG_FORM_NOTE_DRAFT }, false);
+      const relays = Object.entries(publishOn)
+        .filter(([r, publish]) => publish)
+        .map((r) => r.at(0));
+      for (const r of relays) {
+        await pool.ensureRelay(r);
+      }
+      const pub = pool.publish(relays, signed);
+      pub.on("ok", (r) => {
+        toast({
+          title: `Saved to ${r}`,
+          status: "success",
+        });
+      });
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Couldn't save draft , please try again",
+        status: "error",
+      });
+    }
   }
 
   return (
@@ -170,7 +179,7 @@ export default function MyEditor({ event }) {
               Edit
             </Button>
             <Event
-              event={{ tags: previewTags, content }}
+              event={{ tags: tags, content }}
               isPreview={false}
               showReactions={false}
               showComments={false}
@@ -182,9 +191,9 @@ export default function MyEditor({ event }) {
               Preview
             </Button>
             <Box className="editor">
-              <FormLabel htmlFor='title'>Title</FormLabel>
+              <FormLabel htmlFor="title">Title</FormLabel>
               <Input
-                id='title'
+                id="title"
                 value={title}
                 placeholder="Title for your article"
                 onChange={(ev) => setTitle(ev.target.value)}
@@ -203,16 +212,16 @@ export default function MyEditor({ event }) {
                   onChange={onChange}
                 />
               </Box>
-              <FormLabel htmlFor='image'>Image</FormLabel>
+              <FormLabel htmlFor="image">Image</FormLabel>
               <Input
-                id='image'
+                id="image"
                 placeholder="Link to the main article image"
                 value={image}
                 onChange={(ev) => setImage(ev.target.value)}
                 size="md"
                 mb={2}
               />
-              <FormLabel htmlFor='summary'>Summary</FormLabel>
+              <FormLabel htmlFor="summary">Summary</FormLabel>
               <Textarea
                 id="summary"
                 placeholder="A brief summary of what your article is about"
@@ -220,9 +229,11 @@ export default function MyEditor({ event }) {
                 onChange={(ev) => setSummary(ev.target.value)}
                 size="md"
               />
-              <FormLabel htmlFor='tags' mt={2}>Tags</FormLabel>
+              <FormLabel htmlFor="tags" mt={2}>
+                Tags
+              </FormLabel>
               <Input
-                id='tags'
+                id="tags"
                 value={hashtags}
                 placeholder="List of tags separated by comma: nostr, markdown"
                 onChange={(ev) => setHashtags(ev.target.value)}
@@ -230,9 +241,11 @@ export default function MyEditor({ event }) {
                 mb={2}
               />
               <Flex alignItems="center" mt={4}>
-                <FormLabel htmlFor='sensitive'>Sensitive content warning</FormLabel>
+                <FormLabel htmlFor="sensitive">
+                  Sensitive content warning
+                </FormLabel>
                 <Checkbox
-                  id='sensitive'
+                  id="sensitive"
                   isChecked={sensitive}
                   onChange={(ev) => setIsSensitive(ev.target.checked)}
                   mt={-1}
