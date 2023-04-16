@@ -111,8 +111,75 @@ export default function MyEditor({ event }) {
     setContent(text);
   }
 
+  function convertLinks(text) {
+    /*
+    create a array of strings that start with https:
+    */
+    var regex = /(https:\/\/\S+)/g;
+    var match = text.match(regex);
+    var arrOfReferences = [];
+    /*
+    it creates an array with the original URL and the reference note using NIP-27
+    */
+    function createReference(type, url) {
+      var descontructUrl = url.split("/");
+      var referenceElement = descontructUrl.filter(function (event) {
+        var hasType = event.startsWith(type);
+        if (hasType) {
+          return event;
+        }
+      });
+      var noteReference = [url, "nostr:" + referenceElement[0]];
+      return noteReference;
+    }
+    if (match === null) {
+      return text;
+    } else {
+      match === null || match === void 0
+        ? void 0
+        : match.map(function (url) {
+            var urlHasNpub = url.includes("npub");
+            var urlHasNadrr = url.includes("naddr");
+            var urlHasNotes = url.includes("note");
+            var urlHasNevent = url.includes("nevent");
+            var urlHasNprofile = url.includes("nprofile");
+            if (urlHasNpub) {
+              var arrWithReference = createReference("npub", url);
+              arrOfReferences.push(arrWithReference);
+            }
+            if (urlHasNadrr) {
+              var arrWithReference = createReference("naddr", url);
+              arrOfReferences.push(arrWithReference);
+            }
+            if (urlHasNotes) {
+              var arrWithReference = createReference("note", url);
+              arrOfReferences.push(arrWithReference);
+            }
+            if (urlHasNevent) {
+              var arrWithReference = createReference("nevent", url);
+              arrOfReferences.push(arrWithReference);
+            }
+            if (urlHasNprofile) {
+              var arrWithReference = createReference("nprofile", url);
+              arrOfReferences.push(arrWithReference);
+            }
+          });
+      var arrTextToReplace_1 = [text];
+      arrOfReferences.map(function (item, index) {
+        var initialUrl = item[0];
+        var eventReference = item[1];
+        arrTextToReplace_1.push(
+          arrTextToReplace_1[index].replace(initialUrl, eventReference)
+        );
+      });
+      var lastElement = arrTextToReplace_1.length - 1;
+      return arrTextToReplace_1[lastElement];
+    }
+  }
+
   async function onPublish() {
     try {
+      ev.content = convertLinks(ev.content)
       const signed = await sign(ev, false);
       setIsPublishing(true);
       const relays = Object.entries(publishOn)
