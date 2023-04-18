@@ -25,6 +25,7 @@ import {
   sign,
   dateToUnix,
   useNostr,
+  NIP27URLReplace,
 } from "../nostr";
 import EventPreview from "./EventPreview";
 import Event from "./Event";
@@ -108,7 +109,7 @@ export default function MyEditor({ event }) {
   }, [title]);
 
   function onChange({ text }) {
-    setContent(text);
+    setContent(NIP27URLReplace(text));
   }
 
   async function onPublish() {
