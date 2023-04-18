@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown, { uriTransformer } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import remarkToc from "remark-toc";
@@ -276,6 +276,16 @@ function transformText(ps, tags) {
   return fragments;
 }
 
+function nostrUriTransformer(uri) {
+  const nostrProtocol = 'nostr:';
+
+  if (uri.startsWith(nostrProtocol)) {
+    return uri;
+  } else {
+    return uriTransformer(uri);
+  }
+}
+
 export default function Markdown({ tags = [], content }) {
   const components = useMemo(() => {
     return {
@@ -379,6 +389,7 @@ export default function Markdown({ tags = [], content }) {
       components={components}
       remarkPlugins={[replaceLinkHrefs, remarkGfm, remarkToc, remarkMath]}
       rehypePlugins={[rehypeRaw, rehypeKatex]}
+      transformLinkUri={nostrUriTransformer}
     >
       {content}
     </ReactMarkdown>
