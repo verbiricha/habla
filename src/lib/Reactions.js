@@ -198,11 +198,11 @@ export default function Reactions({
       pubkey: user,
       created_at: dateToUnix(),
       tags: [
-        ["e", event.id, relays[0] ?? ""],
-        ["p", event.pubkey, relays[0] ?? ""],
-        ["amount", Math.floor(amount * 1000)],
-        ["a", naddr, relays[0] ?? ""],
         ["relays", ...userRelays.map(({ url }) => url)],
+        ["e", event.id],
+        ["p", event.pubkey],
+        ["amount", String(Math.floor(amount * 1000))],
+        ["a", naddr],
       ],
     };
     try {
@@ -214,22 +214,36 @@ export default function Reactions({
 
   async function onZap() {
     const req = await zapRequest(comment.trim());
-    const invoice = await loadInvoice(lnurl, amount, comment.trim(), req);
-    if (webln?.enabled) {
-      try {
-        await webln.sendPayment(invoice.pr);
-        toast({
-          title: "Paid",
-          status: "success",
-        });
-        onZapCancel();
-      } catch (error) {
-        setInvoice(invoice.pr);
-        setShowZapModal(true);
+    try {
+      const invoice = await loadInvoice(lnurl, amount, comment.trim(), req);
+      if (webln?.enabled) {
+        try {
+          await webln.sendPayment(invoice.pr);
+          toast({
+            title: "Paid",
+            status: "success",
+          });
+          onZapCancel();
+        } catch (error) {
+          setInvoice(invoice.pr);
+          setShowZapModal(true);
+        }
+      } else {
+        if (invoice?.pr) {
+          setInvoice(invoice.pr);
+          setShowZapModal(true);
+        } else {
+          toast({
+            title: "Could not get invoice",
+            status: "error",
+          });
+        }
       }
-    } else {
-      setInvoice(invoice.pr);
-      setShowZapModal(true);
+    } catch (error) {
+      toast({
+        title: "Could not get invoice",
+        status: "error",
+      });
     }
   }
 
