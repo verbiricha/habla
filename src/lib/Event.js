@@ -20,7 +20,7 @@ import User from "./User";
 import Markdown from "./Markdown";
 import { Hashtags } from "./Hashtag";
 import Reactions from "./Reactions";
-import { RelayList } from "./Relays";
+import SeenIn from "./SeenIn";
 
 function formatTime(time) {
   return new Intl.DateTimeFormat("en-US", {
@@ -55,14 +55,6 @@ export default function Event({
       }
     }
   }, [hash]);
-  const seenIn = (
-    <Flex alignItems="center" flexDirection="row" mt={2}>
-      <Text fontSize="md" color="secondary.500" fontFamily="var(--font-mono)">
-        seen in
-      </Text>
-      <RelayList ml={2} linkToNrelay={true} relays={relays} />
-    </Flex>
-  );
   return (
     <>
       <Box
@@ -99,7 +91,7 @@ export default function Event({
           <Heading fontFamily="var(--article-heading)" as="h1">
             {metadata.title}
           </Heading>
-          {!isPreview && seenIn}
+          {!isPreview && <SeenIn relays={relays} />}
           <Flex alignItems="flex-start">
             {metadata.publishedAt && (
               <Text
@@ -130,7 +122,7 @@ export default function Event({
         <div className="content">
           {!isPreview && <Markdown content={event.content} tags={event.tags} />}
         </div>
-        {isPreview && seenIn}
+        {isPreview && <SeenIn relays={relays} />}
         <Hashtags hashtags={metadata?.hashtags ?? []} />
         <Reactions
           relays={relays}

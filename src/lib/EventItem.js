@@ -5,6 +5,7 @@ import { getMetadata, encodeNaddr } from "../nostr";
 import { RelayList } from "./Relays";
 import { Hashtags } from "./Hashtag";
 import Reactions from "./Reactions";
+import SeenIn from "./SeenIn";
 
 function formatTime(time) {
   return new Intl.DateTimeFormat("en-US", {
@@ -34,12 +35,7 @@ export default function EventItem({ relays, event, reactions }) {
         <time>{formatTime(metadata.publishedAt * 1000)}</time>
       )}
       {metadata?.summary && <Text>{metadata.summary}</Text>}
-      <Flex alignItems="center" flexDirection="row" mt={2}>
-        <Text fontSize="md" color="secondary.500" fontFamily="var(--font-mono)">
-          seen in
-        </Text>
-        <RelayList ml={2} linkToNrelay={true} relays={relays} />
-      </Flex>
+      <SeenIn relays={relays} />
       <Hashtags hashtags={metadata?.hashtags ?? []} />
       <Reactions mt={0} event={event} events={reactions} />
     </Flex>

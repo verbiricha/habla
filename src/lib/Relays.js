@@ -82,11 +82,11 @@ export function RelayList({
 }) {
   const urls = relays ? sorted(relays) : [];
   return (
-    <Flex {...props}>
+    <Flex flexWrap="wrap" {...props}>
       {urls.map((url) => {
         const content = (
           <Flex alignItems="center">
-            <RelayFavicon url={url} mr={2} />
+            <RelayFavicon url={url} mr={2} mb={2} />
             {showUrl && (
               <Text
                 margin={0}
