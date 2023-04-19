@@ -263,11 +263,12 @@ export default function Reactions({
       tags: [["e", event.id, relays[0] ?? ""]],
     };
     if (naddr) {
-      ev.tags.push(["a", naddr, relays[0] ?? ""]);
+      ev.tags.push(["a", naddr]);
     }
     try {
       const signed = await signEvent(ev);
       pool.publish(userRelays, signed);
+      pool.publish(relays, signed);
     } catch (error) {
       toast({
         title: "Could not comment, create an account first",

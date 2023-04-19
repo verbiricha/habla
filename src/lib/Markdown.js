@@ -410,7 +410,7 @@ export default function Markdown({ tags = [], content, highlights = [] }) {
         }
       });
     },
-    [tags]
+    [tags, highlights]
   );
 
   return (
