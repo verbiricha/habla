@@ -19,13 +19,15 @@ export default function Highlight({ highlight, reactions, ...rest }) {
   const { surface } = useColors();
   return (
     <Card {...rest}>
-      <CardHeader>
+      <CardHeader style={{ paddingBottom: 4 }}>
         <Flex alignItems="center">
           <User size="sm" pubkey={highlight.pubkey} />
         </Flex>
       </CardHeader>
-      <CardBody>{highlight.content}</CardBody>
-      <CardFooter>
+      <CardBody sx={{ paddingTop: 0, paddingBottom: 0 }}>
+        {highlight.content}
+      </CardBody>
+      <CardFooter sx={{ paddingTop: 0 }}>
         <Reactions
           event={highlight}
           showHighlights={false}
