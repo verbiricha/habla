@@ -68,7 +68,7 @@ export default function Home() {
   const reactions = useNostrEvents({
     filter: {
       "#a": addresses,
-      kinds: [7, 9735, 30023],
+      kinds: [7, 9735, 30023, 9802],
     },
   });
 

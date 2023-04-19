@@ -5,7 +5,7 @@ import { useProfile } from "../nostr";
 export default function Mention({ pubkey }) {
   const { data } = useProfile({ pubkey });
   return (
-    <Link to={`/p/${nip19.npubEncode(pubkey)}`}>
+    <Link to={`https://snort.social/p/${nip19.npubEncode(pubkey)}`}>
       {data?.display_name || data?.name || pubkey}
     </Link>
   );

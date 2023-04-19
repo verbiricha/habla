@@ -7,11 +7,20 @@
   --font-mono: "IBM Plex Mono", monospace;
 }
 
+
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
   scroll-behavior: smooth;
+}
+
+mark {
+  background-color: #FFD1DC;
+}
+
+::selection {
+  background-color: #FFF2CC;
 }
 
 html,

@@ -134,8 +134,12 @@ export function encodeNevent(id, relays = []) {
 }
 
 export function eventAddress(ev) {
-  const d = findTag(ev.tags, "d");
-  return `${ev.kind}:${ev.pubkey}:${d}`;
+  const isReplaceable = ev.kind >= 10000 && ev.kind <= 19999;
+  const isParamReplaceable = ev.kind >= 30000 && ev.kind <= 39999;
+  if (isReplaceable || isParamReplaceable) {
+    const d = findTag(ev.tags, "d");
+    return `${ev.kind}:${ev.pubkey}:${d}`;
+  }
 }
 
 export function hexToBech32(hex, prefix) {

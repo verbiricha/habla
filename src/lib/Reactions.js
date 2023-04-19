@@ -23,7 +23,7 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 import { QRCodeCanvas } from "qrcode.react";
-import { AddIcon, ChatIcon, LinkIcon } from "@chakra-ui/icons";
+import { AddIcon, ChatIcon, LinkIcon, StarIcon } from "@chakra-ui/icons";
 
 import {
   getEventId,
@@ -74,7 +74,70 @@ function EmojiModal({ colorMode, isOpen, onEmojiClick, onClose }) {
   );
 }
 
-function ZapModal({ header, isOpen, onClose, invoice }) {
+function ZapModal({ event, header, lnurl, isOpen, onClose, naddr }) {
+  const [amount, setAmount] = useState(21);
+  const { user, relays: userRelays } = useSelector((s) => s.relay);
+  const [comment, setComment] = useState("");
+  const webln = useWebln(true);
+  const toast = useToast();
+  const [invoice, setInvoice] = useState();
+
+  async function zapRequest(content) {
+    const ev = {
+      kind: 9734,
+      content,
+      pubkey: user,
+      created_at: dateToUnix(),
+      tags: [
+        ["relays", ...userRelays.map(({ url }) => url)],
+        ["e", event.id],
+        ["p", event.pubkey],
+        ["amount", String(Math.floor(amount * 1000))],
+      ],
+    };
+    if (naddr) {
+      ev.tags.push(["a", naddr]);
+    }
+    try {
+      return window.nostr.signEvent(ev);
+    } catch (error) {
+      console.error("couldn't sign zap request");
+    }
+  }
+
+  async function onZap() {
+    const req = await zapRequest(comment.trim());
+    try {
+      const invoice = await loadInvoice(lnurl, amount, comment.trim(), req);
+      if (webln?.enabled) {
+        try {
+          await webln.sendPayment(invoice.pr);
+          toast({
+            title: "Paid",
+            status: "success",
+          });
+          onClose();
+        } catch (error) {
+          setInvoice(invoice.pr);
+        }
+      } else {
+        if (invoice?.pr) {
+          setInvoice(invoice.pr);
+        } else {
+          toast({
+            title: "Could not get invoice",
+            status: "error",
+          });
+        }
+      }
+    } catch (error) {
+      toast({
+        title: "Could not get invoice",
+        status: "error",
+      });
+    }
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -82,21 +145,45 @@ function ZapModal({ header, isOpen, onClose, invoice }) {
         <ModalHeader>{header}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Flex alignItems="center" justifyContent="center">
-            <Box p={4} bg="white" borderRadius="var(--border-radius)">
-              <QRCodeCanvas value={invoice} size={250} />
-            </Box>
+          <Flex flexDirection="column">
+            <Input
+              type="number"
+              min={lnurl.minSendable / 1000}
+              max={lnurl.maxSendable / 1000}
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              mt={4}
+            />
+            <Textarea
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              my={4}
+            />
+            <Flex alignSelf="flex-end">
+              <Button isDisabled={amount === 0} onClick={onZap}>
+                Zap
+              </Button>
+            </Flex>
           </Flex>
+          {invoice && (
+            <>
+              <Flex alignItems="center" justifyContent="center">
+                <Box p={4} bg="white" borderRadius="var(--border-radius)">
+                  <QRCodeCanvas value={invoice} size={250} />
+                </Box>
+              </Flex>
+              <Button
+                colorScheme="purple"
+                mr={3}
+                onClick={() => window.open(`lightning:${invoice}`)}
+              >
+                Open wallet
+              </Button>
+            </>
+          )}
         </ModalBody>
 
         <ModalFooter>
-          <Button
-            colorScheme="purple"
-            mr={3}
-            onClick={() => window.open(`lightning:${invoice}`)}
-          >
-            Open wallet
-          </Button>
           <Button colorScheme="blue" mr={3} onClick={onClose}>
             Close
           </Button>
@@ -109,13 +196,15 @@ function ZapModal({ header, isOpen, onClose, invoice }) {
 export default function Reactions({
   events = [],
   showComments = false,
+  showMentions = true,
+  showHighlights = true,
   showUsers = false,
   isBounty = false,
   relays = [],
   event,
   ...rest
 }) {
-  const { publish } = useNostr();
+  const { pool } = useNostr();
   const { user, relays: userRelays } = useSelector((s) => s.relay);
   const toast = useToast();
   const naddr = eventAddress(event);
@@ -124,13 +213,8 @@ export default function Reactions({
   const lnurl = useLnURLService(data?.lud06 || data?.lud16);
 
   const [showReply, setShowReply] = useState(false);
-  const [comment, setComment] = useState("");
   const [showZap, setShowZap] = useState(false);
-  const [invoice, setInvoice] = useState();
-  const [showZapModal, setShowZapModal] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const webln = useWebln(showZap);
-  const [amount, setAmount] = useState(0);
   const likes = dedupeByPubkey(
     events.filter(
       (e) => e.kind === 7 && e.content === "+" && e.pubkey !== event.pubkey
@@ -156,6 +240,7 @@ export default function Reactions({
   const reactions = dedupeByPubkey(events.filter((e) => e.kind === 7));
   const mentions = events.filter((e) => e.kind === 30023);
   const liked = likes.find((e) => e.pubkey === user);
+  const highlights = events.filter((e) => e.kind === 9802);
   const zaps = events.filter((e) => e.kind === 9735);
   const zappers = useMemo(() => {
     return zaps
@@ -175,14 +260,14 @@ export default function Reactions({
       content,
       kind: 7,
       created_at: dateToUnix(),
-      tags: [
-        ["e", event.id, relays[0] ?? ""],
-        ["a", naddr, relays[0] ?? ""],
-      ],
+      tags: [["e", event.id, relays[0] ?? ""]],
     };
+    if (naddr) {
+      ev.tags.push(["a", naddr, relays[0] ?? ""]);
+    }
     try {
       const signed = await signEvent(ev);
-      publish(signed);
+      pool.publish(userRelays, signed);
     } catch (error) {
       toast({
         title: "Could not comment, create an account first",
@@ -191,68 +276,8 @@ export default function Reactions({
     }
   }
 
-  async function zapRequest(content) {
-    const ev = {
-      kind: 9734,
-      content,
-      pubkey: user,
-      created_at: dateToUnix(),
-      tags: [
-        ["relays", ...userRelays.map(({ url }) => url)],
-        ["e", event.id],
-        ["p", event.pubkey],
-        ["amount", String(Math.floor(amount * 1000))],
-        ["a", naddr],
-      ],
-    };
-    try {
-      return window.nostr.signEvent(ev);
-    } catch (error) {
-      console.error("couldn't sign zap request");
-    }
-  }
-
-  async function onZap() {
-    const req = await zapRequest(comment.trim());
-    try {
-      const invoice = await loadInvoice(lnurl, amount, comment.trim(), req);
-      if (webln?.enabled) {
-        try {
-          await webln.sendPayment(invoice.pr);
-          toast({
-            title: "Paid",
-            status: "success",
-          });
-          onZapCancel();
-        } catch (error) {
-          setInvoice(invoice.pr);
-          setShowZapModal(true);
-        }
-      } else {
-        if (invoice?.pr) {
-          setInvoice(invoice.pr);
-          setShowZapModal(true);
-        } else {
-          toast({
-            title: "Could not get invoice",
-            status: "error",
-          });
-        }
-      }
-    } catch (error) {
-      toast({
-        title: "Could not get invoice",
-        status: "error",
-      });
-    }
-  }
-
   function onZapCancel() {
-    setAmount(0);
-    setComment("");
-    setInvoice();
     setShowZap(false);
-    setShowZapModal(false);
     setShowEmojiPicker(false);
   }
 
@@ -278,7 +303,7 @@ export default function Reactions({
     <>
       <Flex sx={{ position: "relative", overflow: "visible" }}>
         <Flex mt={4} flexWrap="wrap" {...rest}>
-          <Flex alignItems="center" flexDirection="row" mr={2}>
+          <Flex alignItems="center" flexDirection="row" mr={4}>
             <IconButton
               color={zapped ? "purple.500" : "var(--font)"}
               variant="unstyled"
@@ -290,22 +315,22 @@ export default function Reactions({
               {zapsTotal}
             </Text>
           </Flex>
-          {showComments && (
-            <Flex alignItems="center" flexDirection="row" ml={2}>
-              <IconButton
-                variant="unstyled"
-                icon={<ChatIcon />}
-                size="sm"
-                onClick={() => setShowReply((s) => !s)}
-              />
+          {showHighlights && (
+            <Flex alignItems="center" flexDirection="row" ml={2} mr={4}>
+              <StarIcon />
+              <Text as="span" ml={4} fontSize="xl">
+                {highlights.length}
+              </Text>
             </Flex>
           )}
-          <Flex alignItems="center" flexDirection="row" ml={2} mr={4}>
-            <LinkIcon />
-            <Text as="span" ml={4} fontSize="xl">
-              {mentions.length}
-            </Text>
-          </Flex>
+          {showMentions && (
+            <Flex alignItems="center" flexDirection="row" ml={2} mr={4}>
+              <LinkIcon />
+              <Text as="span" ml={4} fontSize="xl">
+                {mentions.length}
+              </Text>
+            </Flex>
+          )}
           <Flex alignItems="center" flexDirection="row" mr={4}>
             <IconButton
               variant="unstyled"
@@ -347,6 +372,16 @@ export default function Reactions({
               setShowEmojiPicker(true);
             }}
           />
+          {showComments && (
+            <Flex alignItems="center" flexDirection="row" ml={2}>
+              <IconButton
+                variant="unstyled"
+                icon={<ChatIcon />}
+                size="sm"
+                onClick={() => setShowReply((s) => !s)}
+              />
+            </Flex>
+          )}
         </Flex>
       </Flex>
       <EmojiModal
@@ -355,37 +390,16 @@ export default function Reactions({
         onEmojiClick={emojiReact}
         onClose={() => setShowEmojiPicker(false)}
       />
-      {showZap && lnurl && (
-        <Flex flexDirection="column">
-          <Input
-            type="number"
-            min={lnurl.minSendable / 1000}
-            max={lnurl.maxSendable / 1000}
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            mt={4}
-          />
-          <Textarea
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            my={4}
-          />
-          <Flex alignSelf="flex-end">
-            <Button mr={2} variant="outline" onClick={onZapCancel}>
-              Cancel
-            </Button>
-            <Button isDisabled={amount === 0} onClick={onZap}>
-              Zap
-            </Button>
-          </Flex>
-        </Flex>
+      {lnurl && (
+        <ZapModal
+          naddr={naddr}
+          event={event}
+          header={`Zap ${data?.name}`}
+          lnurl={lnurl}
+          isOpen={showZap}
+          onClose={onZapCancel}
+        />
       )}
-      <ZapModal
-        header={`Zap ${data?.name} ${amount} sats`}
-        invoice={invoice}
-        isOpen={showZapModal}
-        onClose={onZapCancel}
-      />
       <Reply
         relays={relays}
         root={event.id}

@@ -2,11 +2,13 @@ import { useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import ReactMarkdown, { uriTransformer } from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMark from "remark-mark-plus";
 import remarkMath from "remark-math";
 import remarkToc from "remark-toc";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
 import slugify from "slugify";
+import { Text } from "@chakra-ui/react";
 
 import HyperText from "./HyperText";
 import HashtagLink from "./HashtagLink";
@@ -277,7 +279,7 @@ function transformText(ps, tags) {
 }
 
 function nostrUriTransformer(uri) {
-  const nostrProtocol = 'nostr:';
+  const nostrProtocol = "nostr:";
 
   if (uri.startsWith(nostrProtocol)) {
     return uri;
@@ -286,7 +288,30 @@ function nostrUriTransformer(uri) {
   }
 }
 
-export default function Markdown({ tags = [], content }) {
+function Mark({ content, highlights }) {
+  const highlighters = highlights.filter((h) => h.content === content);
+  const pubkeys = useMemo(() => {
+    return Array.from(new Set(highlighters.map((e) => e.pubkey)));
+  }, [highlighters]);
+  return (
+    <>
+      <mark>{content}</mark>
+      <Text color="gray.400" fontSize="xs" fontWeight="normal">
+        {pubkeys.map((p, idx) => (
+          <>
+            <Mention key={p} pubkey={p} />
+            {idx < pubkeys.length - 2 && ", "}
+            {idx === pubkeys.length - 2 && " and "}
+            {idx === pubkeys.length - 1 && " "}
+          </>
+        ))}
+        highlighted.
+      </Text>
+    </>
+  );
+}
+
+export default function Markdown({ tags = [], content, highlights = [] }) {
   const components = useMemo(() => {
     return {
       h1: ({ children }) => (
@@ -352,6 +377,10 @@ export default function Markdown({ tags = [], content }) {
       img: ({ alt, src }) => {
         return <img key={src} alt={alt} src={src} />;
       },
+      mark: ({ children }) => {
+        const content = children?.at(0) ?? "";
+        return <Mark content={content} highlights={highlights} />;
+      },
       li: ({ children }) =>
         children && <li>{transformText(children, tags)}</li>,
       td: ({ children }) =>
@@ -361,7 +390,7 @@ export default function Markdown({ tags = [], content }) {
         return <HyperText link={props.href}>{props.children}</HyperText>;
       },
     };
-  }, [tags]);
+  }, [tags, highlights]);
 
   const replaceLinkHrefs = useCallback(
     () => (tree: Node) => {

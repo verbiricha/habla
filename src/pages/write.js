@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
-import { useNavigate } from "react-router-dom";
-import { Flex, Box, Text, Button, Heading } from "@chakra-ui/react";
+import { Flex, Box, Text, Heading } from "@chakra-ui/react";
 
 import {
   LONG_FORM_NOTE,
@@ -33,7 +32,6 @@ function DraftPreview({ ev, onClick }) {
 }
 
 export default function Write() {
-  const navigate = useNavigate();
   const [draft, setDraft] = useState();
   const { user } = useLoggedInUser();
   const { events } = useNostrEvents({

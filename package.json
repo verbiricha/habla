@@ -42,6 +42,7 @@
     "rehype-katex": "^6.0.2",
     "rehype-raw": "^6.1.1",
     "remark-gfm": "^3.0.1",
+    "remark-mark-plus": "^1.0.21",
     "remark-math": "^5.1.1",
     "remark-toc": "^8.0.1",
     "slugify": "^1.6.5",

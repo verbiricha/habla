@@ -118,6 +118,10 @@ article li::marker {
   color: #A966FF;
 }
 
+article li a {
+  color: #A966FF;
+}
+
 article li p {
   margin-top: -30px;
   margin-left: 16px;
@@ -130,5 +134,4 @@ article p > a  {
 article iframe {
   margin: 0 auto;
   border-radius: var(--border-radius);
-  max-width: 100%;
 }
