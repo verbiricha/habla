@@ -63,6 +63,7 @@ function HighlightDialog({ event, naddr, relays }) {
   const { user, relays: userRelays } = useSelector((s) => s.relay);
   const [highlighted, setHighlighted] = useState("");
   const selectedText = useMouseUpSelection();
+
   useEffect(() => {
     if (selectedText && selectedText !== highlighted) {
       onOpen();
@@ -83,7 +84,7 @@ function HighlightDialog({ event, naddr, relays }) {
       created_at: dateToUnix(),
       pubkey: user,
       tags: [
-        ["r", `https://habla.news/a/${naddr}`],
+        //["r", `https://habla.news/a/${naddr}`],
         ["a", getEventId(event)],
         ["p", user],
       ],

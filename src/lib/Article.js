@@ -10,10 +10,10 @@ import useCached from "./useCached";
 
 export default function Article({ d, pubkey, relays = [], reactions = [] }) {
   const toast = useToast();
-  const { user } = useLoggedInUser();
+  const { user, relays: userRelays } = useLoggedInUser();
   const isMe = user === pubkey;
   const [isEditing, setIsEditing] = useBoolean(false);
-  const { publish } = useNostr();
+  const { pool } = useNostr();
   const { seenByRelay, events } = useNostrEvents({
     filter: {
       authors: [pubkey],
@@ -27,7 +27,7 @@ export default function Article({ d, pubkey, relays = [], reactions = [] }) {
   });
   function rebroadcast() {
     try {
-      publish(ev);
+      pool.publish(userRelays, ev);
       toast({
         title: "Event rebroadcasted",
         status: "success",
