@@ -84,9 +84,8 @@ function HighlightDialog({ event, naddr, relays }) {
       created_at: dateToUnix(),
       pubkey: user,
       tags: [
-        //["r", `https://habla.news/a/${naddr}`],
         ["a", getEventId(event)],
-        ["p", user],
+        ["p", event.pubkey],
       ],
     };
 

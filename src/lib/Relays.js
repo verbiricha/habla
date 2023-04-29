@@ -47,7 +47,7 @@ function Relay({ url, isConnected }) {
   const { selectedRelay, remove } = useRelays();
   return (
     <>
-      <Flex alignItems="center" mb={2} key={url}>
+      <Flex alignItems="center" mb={2} key={url} wordBreak="breakWord">
         <RelayFavicon url={url}>
           {isConnected && <AvatarBadge boxSize="1.25em" bg="green.500" />}
         </RelayFavicon>
